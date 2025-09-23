@@ -9,13 +9,19 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    // Tampilkan form register
+    // ✅ Tampilkan form register
     public function showRegister()
     {
-        return view('register');
+        return view('login.register');
     }
 
-    // Proses register
+    // ✅ Tampilkan form login
+    public function showLogin()
+    {
+        return view('login.login');
+    }
+
+    // ✅ Proses register
     public function register(Request $request)
     {
         $request->validate([
@@ -26,21 +32,42 @@ class UserController extends Controller
 
         // Simpan user baru
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
         // Login otomatis setelah register
         Auth::login($user);
 
-        return redirect()->route('home');
+        // ✅ arahkan ke halaman home di folder login
+        return redirect()->route('login.home');
     }
 
-    // Logout
+    // ✅ Proses login
+    public function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            return redirect()->route('login.home');
+        }
+
+        return back()->withErrors([
+            'email' => 'Email atau password salah',
+        ]);
+    }
+
+    // ✅ Logout
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('user.showRegister');
+        return redirect()->route('user.showLogin');
+    }
+
+    // ✅ Halaman home
+    public function home()
+    {
+        return view('login.home');
     }
 }
