@@ -5,10 +5,12 @@
     <div class="card-body text-center p-4">
         <h2 class="mb-3">Halo, {{ Auth::user()->name }} 👋</h2>
         <p class="text-muted">Email: {{ Auth::user()->email }}</p>
-        
+
         <form action="{{ route('user.logout') }}" method="POST" class="mt-3">
             @csrf
-            <button type="submit" class="btn btn-danger w-100">Logout</button>
+            <button type="submit" class="btn btn-danger w-100 rounded-3">
+                Logout
+            </button>
         </form>
     </div>
 </div>
