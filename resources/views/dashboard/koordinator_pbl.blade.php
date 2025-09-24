@@ -1,0 +1,38 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="row">
+    <!-- Manajemen Kelompok -->
+    <div class="col-md-4">
+        <div class="card text-center shadow">
+            <div class="card-body">
+                <h5 class="card-title">Manajemen Kelompok</h5>
+                <p>Atur pembentukan & anggota kelompok</p>
+                <a href="{{ url('/kelompok') }}" class="btn btn-primary">Kelola</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monitoring Progres -->
+    <div class="col-md-4">
+        <div class="card text-center shadow">
+            <div class="card-body">
+                <h5 class="card-title">Monitoring Progres</h5>
+                <p>Lihat progres seluruh kelompok</p>
+                <a href="{{ url('/monitoring') }}" class="btn btn-info">Pantau</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rekap Laporan -->
+    <div class="col-md-4">
+        <div class="card text-center shadow">
+            <div class="card-body">
+                <h5 class="card-title">Rekap Laporan</h5>
+                <p>Rekap nilai & progres untuk evaluasi PBL</p>
+                <a href="{{ url('/laporan') }}" class="btn btn-success">Lihat</a>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

@@ -52,12 +52,15 @@
 
         .register-card {
             background: #fff;
-            padding: 2.5rem;
+            padding: 0.1rem; /* kurangi padding */
             border-radius: 15px;
             box-shadow: 0px 6px 20px rgba(0,0,0,0.15);
-            width: 100%; max-width: 380px;
+            width: 80%;
+            max-width: 380px; /* lebih kecil */
             text-align: center;
+
         }
+
         .register-card h3 {
             margin-bottom: 1.5rem;
             font-size: 1.5rem;
@@ -68,7 +71,7 @@
             display: block; font-size: 0.9rem;
             margin-bottom: 0.3rem; color: #333;
         }
-        .form-group input {
+        .form-group input, .form-group select {
             width: 100%; padding: 0.7rem;
             border: 1px solid #ccc; border-radius: 8px;
         }
@@ -104,7 +107,7 @@
         <section class="welcome-section">
             <h2>Daftar Akun</h2>
             <p>
-                Buat akun untuk mengakses <br>
+                Silahkan Daftar akun untuk mengakses <br>
                 Sistem Penilaian Kinerja Mahasiswa <br>
                 & Kelompok <strong>PBL TI</strong>
             </p>
@@ -136,6 +139,21 @@
                 <div class="form-group">
                     <label>Password</label>
                     <input type="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label>Konfirmasi Password</label>
+                    <input type="password" name="password_confirmation" required>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select name="role" required>
+                        <option value="">-- Pilih Role --</option>
+                        <option value="mahasiswa">Mahasiswa</option>
+                        <option value="dosen">Dosen</option>
+                        <option value="admin">Admin</option>
+                        <option value="koordinator_pbl">Koordinator PBL</option>
+                        <option value="koordinator_prodi">Koordinator Prodi</option>
+                    </select>
                 </div>
                 <button type="submit">Daftar</button>
                 <p class="login-link">

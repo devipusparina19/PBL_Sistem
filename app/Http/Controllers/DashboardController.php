@@ -6,10 +6,26 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    // Halaman utama dashboard
+    // Halaman utama dashboard sesuai role
     public function index()
     {
-        return view('dashboard');
+        $role = auth()->user()->role;
+
+        switch ($role) {
+    case 'mahasiswa':
+        return view('dashboard.mahasiswa');
+    case 'dosen':
+        return view('dashboard.dosen');
+    case 'koordinator_pbl':
+        return view('dashboard.koordinator_pbl');
+    case 'koordinator_prodi':
+        return view('dashboard.koordinator_prodi');
+    case 'admin':
+        return view('dashboard.admin');
+    default:
+        abort(403, 'Role tidak dikenali: ' . $role);
+}
+
     }
 
     // Menu Akun Mahasiswa
