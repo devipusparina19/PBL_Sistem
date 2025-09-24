@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\UserController;
+<<<<<<< HEAD
+=======
+use App\Http\Controllers\DosenController;
+>>>>>>> 36205af36f6d3e41141b61228ee17080a8f799e3
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Http\Request;
@@ -12,6 +16,9 @@ Route::get('/', [UserController::class, 'showRegister'])->name('user.showRegiste
 
 // Mahasiswa CRUD
 Route::resource('mahasiswa', MahasiswaController::class);
+
+// Dosen CRUD
+Route::resource('data_dosen', DosenController::class)->middleware('auth');
 
 // Register
 Route::get('/register', [UserController::class, 'showRegister'])->name('user.showRegister');
@@ -40,4 +47,8 @@ Route::get('/home', [UserController::class, 'home'])
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('pbl.dashboard');
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> 36205af36f6d3e41141b61228ee17080a8f799e3
