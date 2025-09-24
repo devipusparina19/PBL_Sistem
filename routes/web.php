@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\KelompokController;
 use Illuminate\Http\Request;
 
 // Halaman utama langsung ke register
@@ -41,3 +42,4 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('pbl.dashboard');
 });
+Route::resource('kelompok', KelompokController::class);
