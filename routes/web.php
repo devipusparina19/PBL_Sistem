@@ -3,12 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\UserController;
-<<<<<<< HEAD
 use App\Http\Controllers\DosenController;
-=======
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\DashboardController;
->>>>>>> 8ec5704826731b3272069065eebb937e63a007ec
 use Illuminate\Http\Request;
 
 // Halaman utama langsung ke register
@@ -18,7 +15,7 @@ Route::get('/', [UserController::class, 'showRegister'])->name('user.showRegiste
 Route::resource('mahasiswa', MahasiswaController::class);
 
 // Dosen CRUD
-Route::resource('dosen', DosenController::class)->middleware('auth');
+Route::resource('data_dosen', DosenController::class)->middleware('auth');
 
 // Register
 Route::get('/register', [UserController::class, 'showRegister'])->name('user.showRegister');
