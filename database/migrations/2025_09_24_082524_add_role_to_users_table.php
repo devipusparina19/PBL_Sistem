@@ -7,21 +7,33 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Jalankan migrasi.
      */
     public function up(): void
-{
-    Schema::table('users', function (Blueprint $table) {
-        $table->enum('role', ['admin','dosen','mahasiswa','koordinator_pbl','koordinator_prodi'])
-              ->default('mahasiswa')
-              ->after('password');
-    });
-}
+    {
+        Schema::table('users', function (Blueprint $table) {
+            // Cek dulu kalau belum ada kolom role, baru tambahkan
+            if (!Schema::hasColumn('users', 'role')) {
+                $table->enum('role', [
+                    'admin',
+                    'dosen',
+                    'mahasiswa',
+                    'koordinator_pbl',
+                    'koordinator_prodi'
+                ])->default('mahasiswa')->after('password');
+            }
+        });
+    }
 
-public function down(): void
-{
-    Schema::table('users', function (Blueprint $table) {
-        $table->dropColumn('role');
-    });
-}
+    /**
+     * Rollback migrasi.
+     */
+    public function down(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            if (Schema::hasColumn('users', 'role')) {
+                $table->dropColumn('role');
+            }
+        });
+    }
 };
