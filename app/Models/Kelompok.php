@@ -8,11 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Kelompok extends Model
 {
     use HasFactory;
-
-    class Kelompok extends Model
-{
-    use HasFactory;
-
     protected $table = 'kelompoks'; // nama tabel sesuai migration
     protected $primaryKey = 'id_kelompok'; // primary key sesuai migration
 
@@ -24,4 +19,4 @@ class Kelompok extends Model
         'nip'
     ];
 }
-}
+
