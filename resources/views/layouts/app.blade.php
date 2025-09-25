@@ -55,7 +55,7 @@
             <ul class="navbar-nav">
                 <li class="nav-item"><a class="nav-link" href="{{ url('/mahasiswa') }}">Akun Mahasiswa</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url('/dosen') }}">Dosen</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url('/milestone') }}">Milestone</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url('/milestones') }}">Milestones</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url('/koor') }}">Koordinator PBL</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ url('/ranking') }}">Ranking</a></li>
             </ul>

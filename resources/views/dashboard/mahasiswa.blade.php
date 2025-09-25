@@ -16,9 +16,9 @@
                     <div class="mb-3">
                         <i class="bi bi-journal-text text-success" style="font-size:2rem;"></i>
                     </div>
-                    <h5 class="card-title">Milestone / Logbook</h5>
+                    <h5 class="card-title">Milestones / Logbook</h5>
                     <p class="text-muted">Isi progres mingguan proyek Anda bersama kelompok.</p>
-                    <a href="{{ url('/milestone') }}" class="btn btn-success w-100">Isi Logbook</a>
+                    <a href="{{ url('/milestones') }}" class="btn btn-success w-100">Isi Logbook</a>
                 </div>
             </div>
         </div>

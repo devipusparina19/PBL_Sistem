@@ -8,6 +8,7 @@ use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KelompokController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\MilestoneController;
 
 // Halaman utama langsung ke register
 Route::get('/', [UserController::class, 'showRegister'])->name('user.showRegister');
@@ -43,4 +44,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('mahasiswa', MahasiswaController::class);
     Route::resource('data_dosen', DosenController::class);
     Route::resource('kelompok', KelompokController::class);
+
+    // Milestone routes
+    Route::resource('milestones', MilestoneController::class);
+
 });

@@ -41,9 +41,9 @@ class DashboardController extends Controller
     }
 
     // Menu Milestone
-    public function milestone()
+    public function milestones()
     {
-        return view('milestone.index');
+        return view('milestones.index');
     }
 
     // Menu Koordinator PBL
