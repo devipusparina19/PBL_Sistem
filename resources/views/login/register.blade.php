@@ -52,38 +52,44 @@
 
         .register-card {
             background: #fff;
-            padding: 0.1rem; /* kurangi padding */
+            padding: 1.5rem; 
             border-radius: 15px;
             box-shadow: 0px 6px 20px rgba(0,0,0,0.15);
             width: 80%;
-            max-width: 380px; /* lebih kecil */
+            max-width: 360px; 
             text-align: center;
-
         }
 
         .register-card h3 {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem; 
             font-size: 1.5rem;
             color: #0057e7;
         }
-        .form-group { text-align: left; margin-bottom: 1rem; }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 1rem; 
+        }
         .form-group label {
             display: block; font-size: 0.9rem;
             margin-bottom: 0.3rem; color: #333;
         }
         .form-group input, .form-group select {
-            width: 100%; padding: 0.7rem;
+            width: 100%; padding: 0.8rem; 
             border: 1px solid #ccc; border-radius: 8px;
+            font-size: 0.9rem;
         }
+
         .register-card button {
-            width: 100%; padding: 0.8rem;
+            width: 100%; padding: 0.8rem; 
             background: #0057e7; color: white;
             border: none; border-radius: 8px;
             font-size: 1rem; font-weight: bold;
-            cursor: pointer; margin-top: 0.5rem;
+            cursor: pointer; margin-top: 0.6rem;
         }
         .register-card button:hover { background: #0041b3; }
-        .login-link { margin-top: 1rem; font-size: 0.9rem; }
+
+        .login-link { margin-top: 0.8rem; font-size: 0.85rem; }
         .login-link a { color: #0057e7; font-weight: bold; text-decoration: none; }
 
         footer {

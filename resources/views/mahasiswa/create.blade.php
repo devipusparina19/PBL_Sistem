@@ -1,4 +1,3 @@
-<!-- resources/views/mahasiswa/create.blade.php -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -9,22 +8,23 @@
         body {
             font-family: Arial, sans-serif;
             background: #f4f6f9;
-            padding: 30px;
+            padding: 25px; 
         }
 
         h1 {
             text-align: center;
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 20px; 
+            font-size: 1.5rem; 
         }
 
         form {
-            max-width: 500px;
+            max-width: 450px; 
             margin: auto;
             background: white;
-            padding: 25px;
+            padding: 24px 28px; 
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
         }
 
         label {
@@ -32,31 +32,35 @@
             margin-bottom: 6px;
             font-weight: bold;
             color: #444;
+            font-size: 0.9rem;
         }
 
         input {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
+            padding: 9px 12px; 
+            margin-bottom: 14px;
             border-radius: 6px;
             border: 1px solid #ccc;
-            transition: border 0.3s;
+            transition: border 0.3s, box-shadow 0.3s;
+            font-size: 0.9rem;
         }
 
         input:focus {
             border-color: #2563eb;
             outline: none;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.07);
         }
 
         button {
             background: #2563eb;
             color: white;
-            padding: 10px 15px;
+            padding: 9px 16px; 
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            margin-right: 10px;
+            margin-right: 6px;
+            font-size: 0.9rem;
         }
 
         button:hover {
@@ -66,10 +70,11 @@
         a {
             text-decoration: none;
             color: #555;
-            padding: 10px 15px;
+            padding: 9px 16px; 
             border: 1px solid #ccc;
             border-radius: 6px;
             background: #f9fafb;
+            font-size: 0.9rem;
         }
 
         a:hover {
