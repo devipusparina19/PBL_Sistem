@@ -8,10 +8,16 @@
 
     <style>
         body {
-            background-color: #f8fafc; /* biru muda lembut */
+            background-color: #f8fafc; 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        main {
+            flex: 1; 
         }
         .navbar {
-            background: linear-gradient(90deg, #1e40af, #3b82f6); /* biru navy → biru terang */
+            background: linear-gradient(90deg, #1e40af, #3b82f6); 
         }
         .navbar-brand {
             font-weight: bold;
@@ -30,7 +36,7 @@
             color: white;
             text-align: center;
             padding: 0.8rem;
-            margin-top: 13rem;
+            margin-top: auto; 
         }
     </style>
 </head>
@@ -57,9 +63,9 @@
     </nav>
 
     <!-- Konten dinamis -->
-    <div class="container mt-4">
+    <main class="container mt-4">
         @yield('content')
-    </div>
+    </main>
 
     <!-- Footer -->
     <footer>
