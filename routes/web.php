@@ -9,24 +9,17 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KelompokController;
 use Illuminate\Http\Request;
 
-// Halaman utama langsung ke register
 Route::get('/', [UserController::class, 'showRegister'])->name('user.showRegister');
 
-// Mahasiswa CRUD
 Route::resource('mahasiswa', MahasiswaController::class);
-
-// Dosen CRUD
 Route::resource('data_dosen', DosenController::class)->middleware('auth');
 
-// Register
 Route::get('/register', [UserController::class, 'showRegister'])->name('user.showRegister');
 Route::post('/register', [UserController::class, 'register'])->name('user.register');
 
-// Login
 Route::get('/login', [UserController::class, 'showLogin'])->name('user.showLogin');
 Route::post('/login', [UserController::class, 'login'])->name('user.login');
 
-// Logout
 Route::post('/logout', function (Request $request) {
     Auth::logout();
     $request->session()->invalidate();
@@ -34,16 +27,11 @@ Route::post('/logout', function (Request $request) {
     return redirect()->route('user.showLogin');
 })->name('user.logout');
 
-// Home
 Route::get('/home', [UserController::class, 'home'])
     ->name('login.home')
     ->middleware('auth');
 
-// ===============================
-// 🚀 Dashboard PBL
-// ===============================
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])
-        ->name('pbl.dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('pbl.dashboard');
+    Route::resource('kelompok', KelompokController::class);
 });
-Route::resource('kelompok', KelompokController::class);

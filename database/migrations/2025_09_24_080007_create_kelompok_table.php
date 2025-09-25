@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kelompok', function (Blueprint $table) {
+        Schema::create('kelompoks', function (Blueprint $table) {
             $table->id('id_kelompok'); // primary key
             $table->string('kode_mk');
             $table->string('nama_kelompok');
