@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kelompoks', function (Blueprint $table) {
-            $table->id('id_kelompok'); // primary key
-            $table->string('kode_mk');
-            $table->string('nama_kelompok');
-            $table->text('deskripsi')->nullable();
-            $table->string('judul_proyek');
-            $table->string('nip'); // nanti bisa dijadikan foreign key
-            $table->timestamps();
-        });
+   Schema::create('kelompoks', function (Blueprint $table) {
+    $table->id('id_kelompok'); // primary key
+    $table->string('kode_mk');
+    $table->string('nama_kelompok');
+    $table->text('deskripsi')->nullable();
+    $table->string('judul_proyek');
+    $table->string('nip');
+    $table->timestamps();
+});
+
+
     }
 
     /**
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kelompok');
+        Schema::dropIfExists('kelompoks');
     }
 };
