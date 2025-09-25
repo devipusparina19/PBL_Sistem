@@ -25,9 +25,10 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|min:3',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6'
+            'name'     => 'required|min:3',
+            'email'    => 'required|email|unique:users',
+            'password' => 'required|min:6|confirmed', 
+            'role'     => 'required|in:admin,dosen,mahasiswa,koordinator_pbl,koordinator_prodi',
         ]);
 
         // Simpan user baru
@@ -35,22 +36,31 @@ class UserController extends Controller
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
+            'role'     => $request->role,
         ]);
 
         // Login otomatis setelah register
         Auth::login($user);
 
-        // ✅ arahkan ke halaman home di folder login
-        return redirect()->route('login.home');
+        // ✅ Arahkan ke dashboard sesuai role
+        return redirect()->route('pbl.dashboard');
     }
 
     // ✅ Proses login
     public function login(Request $request)
     {
+        $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required|min:6',
+        ]);
+
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            return redirect()->route('login.home');
+            $request->session()->regenerate();
+
+            // ✅ Arahkan ke dashboard sesuai role
+            return redirect()->route('pbl.dashboard');
         }
 
         return back()->withErrors([
@@ -59,13 +69,16 @@ class UserController extends Controller
     }
 
     // ✅ Logout
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect()->route('user.showLogin');
     }
 
-    // ✅ Halaman home
+    // (Opsional) Halaman home lama
     public function home()
     {
         return view('login.home');
