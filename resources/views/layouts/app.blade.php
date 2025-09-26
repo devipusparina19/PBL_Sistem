@@ -7,43 +7,56 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+        /* Background halaman mirip register.blade.php */
         body {
-            background-color: #f8fafc; 
+            background: linear-gradient(to bottom right, #dbeafe, #60a5fa);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            font-family: Arial, sans-serif;
         }
+
         main {
             flex: 1; 
         }
+
+        /* Navbar mirip header register.blade.php */
         .navbar {
-            background: linear-gradient(90deg, #1e40af, #3b82f6); 
+            background: rgba(255,255,255,0.3); /* transparan putih */
+            backdrop-filter: blur(6px);        /* efek blur */
         }
+
         .navbar-brand {
             font-weight: bold;
             font-size: 1.2rem;
+            color: navy !important;            /* warna teks logo */
         }
+
         .nav-link {
-            color: #e0f2fe !important;
-            font-weight: 500;
+            color: navy !important;            /* warna teks menu */
+            font-weight: 600;
         }
+
         .nav-link:hover, .nav-link.active {
-            color: #fff !important;
             text-decoration: underline;
+            color: navy !important;
         }
+
+        /* Footer mirip register.blade.php */
         footer {
-            background: #1e3a8a;
+            background: rgba(0,0,0,0.2);       /* semi transparan gelap */
             color: white;
             text-align: center;
             padding: 0.8rem;
             margin-top: auto; 
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg shadow-sm px-3">
-        <a class="navbar-brand text-white" href="{{ url('/dashboard') }}">
+        <a class="navbar-brand" href="{{ url('/dashboard') }}">
             Sistem PBL Mahasiswa TI
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"

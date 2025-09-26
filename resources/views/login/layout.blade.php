@@ -7,7 +7,7 @@
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body style="background: linear-gradient(90deg, #1e40af, #3b82f6);">
+<body style="background: linear-gradient(to bottom right, #dbeafe, #60a5fa);">
 
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="w-100" style="max-width: 420px;">
@@ -15,13 +15,6 @@
         </div>
     </div>
 
-<body class="bg-light">
-
-    <div class="container d-flex justify-content-center align-items-center vh-100">
-        <div class="w-100" style="max-width: 420px;">
-            @yield('content')
-        </div>
-    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
