@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Sistem PBL</title>
+    <title>Register - Sistem PBL Mahasiswa TI</title>
     <style>
         * {
             margin: 0; padding: 0; box-sizing: border-box;
@@ -101,7 +101,7 @@
 </head>
 <body>
     <header>
-        <div class="logo">Sistem PBL</div>
+        <div class="logo">Sistem PBL Mahasiswa TI</div>
         <nav>
             <a href="#">Home</a>
             <a href="#">About</a>
@@ -170,7 +170,7 @@
     </main>
 
     <footer>
-        🌐 Sistem PBL Mahasiswa TI
+        🌐 Sistem Penilaian Kinerja Mahasiswa & Kelompok PBL TI © {{ date('Y') }}
     </footer>
 </body>
 </html>
