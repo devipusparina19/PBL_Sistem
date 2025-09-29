@@ -85,7 +85,7 @@
     </style>
 </head>
 <body>
-    <h1>📚 Daftar Mahasiswa</h1>
+    <h1> Daftar Mahasiswa</h1>
 
     @if(session('success'))
         <p style="color: green; text-align:center;">{{ session('success') }}</p>

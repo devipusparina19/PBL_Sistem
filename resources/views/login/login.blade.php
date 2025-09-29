@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem PBL Mahasiswa TI - Login</title>
+    <title>Sistem PBL Mahasiswa TI</title>
     <style>
         /* reset */
         * {
@@ -140,17 +140,11 @@
             color: white;
             font-size: 0.9rem;
         }
-
-        .error {
-            color: red;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-        }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo">Sistem PBL Mahasiswa TI</div>
+        <div class="logo">Sistem PBL</div>
         <nav>
             <a href="#">Home</a>
             <a href="#">About</a>
@@ -160,7 +154,7 @@
 
     <main>
         <section class="welcome-section">
-            <h2>Selamat Datang</h2>
+            <h2>Selamat Datang </h2>
             <p>
                 Sistem Penilaian Kinerja Mahasiswa <br>
                 & Kelompok <strong>PBL TI</strong>
@@ -169,19 +163,11 @@
 
         <section class="login-card">
             <h3>Login</h3>
-
-            {{-- tampilkan error jika login gagal --}}
-            @if($errors->any())
-                <div class="error">
-                    {{ $errors->first() }}
-                </div>
-            @endif
-
             <form action="{{ route('user.login') }}" method="POST">
                 @csrf
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" name="email" value="{{ old('email') }}" required>
+                    <input type="email" name="email" required>
                 </div>
                 <div class="form-group">
                     <label>Password</label>
