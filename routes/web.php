@@ -49,8 +49,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/mahasiswa', fn() => view('dashboard.mahasiswa'))->name('mahasiswa.dashboard');
     Route::get('/dashboard/dosen', fn() => view('dashboard.dosen'))->name('dosen.dashboard');
     Route::get('/dashboard/admin', fn() => view('dashboard.admin'))->name('admin.dashboard');
-    Route::get('/dashboard/koordinatorpbl', fn() => view('dashboard.koordinatorpbl'))->name('koordinatorpbl.dashboard');
-    Route::get('/dashboard/koordinatorprodi', fn() => view('dashboard.koordinatorprodi'))->name('koordinatorprodi.dashboard');
+    Route::get('/dashboard/koordinator_pbl', fn() => view('dashboard.koordinator_pbl'))->name('koordinator_pbl.dashboard');
+    Route::get('/dashboard/koordinator_prodi', fn() => view('dashboard.koordinator_prodi'))->name('koordinator_prodi.dashboard');
 
     /*
     |--------------------------------------------------------------------------
