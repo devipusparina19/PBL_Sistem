@@ -132,7 +132,8 @@
                 </div>
             @endif
 
-            <form action="{{ route('user.register') }}" method="POST">
+            <form action="{{ route('user.store') }}" method="POST">
+
                 @csrf
                 <div class="form-group">
                     <label>Nama</label>

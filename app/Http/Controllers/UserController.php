@@ -3,35 +3,43 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class UserController extends Controller
 {
-    // ✅ Tampilkan form register
+    /**
+     * ✅ Tampilkan form register
+     */
     public function showRegister()
     {
-        return view('login.register');
+        return view('login.register'); 
+        // resources/views/login/register.blade.php
     }
 
-    // ✅ Tampilkan form login
+    /**
+     * ✅ Tampilkan form login
+     */
     public function showLogin()
     {
-        return view('login.login');
+        return view('login.login'); 
+        // resources/views/login/login.blade.php
     }
 
-    // ✅ Proses register
-    public function register(Request $request)
+    /**
+     * ✅ Proses register user baru
+     */
+    public function store(Request $request)
     {
         $request->validate([
-            'name'     => 'required|min:3',
-            'email'    => 'required|email|unique:users',
-            'password' => 'required|min:6|confirmed', 
-            'role'     => 'required|in:admin,dosen,mahasiswa,koordinator_pbl,koordinator_prodi',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'role'     => 'required|string|in:mahasiswa,dosen,admin,koordinator_pbl,koordinator_prodi',
         ]);
 
-        // Simpan user baru
+        // Simpan user ke database
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
@@ -42,11 +50,13 @@ class UserController extends Controller
         // Login otomatis setelah register
         Auth::login($user);
 
-        // ✅ Arahkan ke dashboard sesuai role
-        return redirect()->route('pbl.dashboard');
+        // Redirect sesuai role
+        return $this->redirectToDashboard($user);
     }
 
-    // ✅ Proses login
+    /**
+     * ✅ Proses login user
+     */
     public function login(Request $request)
     {
         $request->validate([
@@ -58,27 +68,44 @@ class UserController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-
-            // ✅ Arahkan ke dashboard sesuai role
-            return redirect()->route('pbl.dashboard');
+            return $this->redirectToDashboard(Auth::user());
         }
 
         return back()->withErrors([
-            'email' => 'Email atau password salah',
-        ]);
+            'email' => 'Email atau password salah!',
+        ])->withInput();
     }
 
-    // ✅ Logout
+    /**
+     * ✅ Proses logout
+     */
     public function logout(Request $request)
     {
         Auth::logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect()->route('user.showLogin');
     }
 
-    // (Opsional) Halaman home lama
+    /**
+     * ✅ Redirect sesuai role user
+     */
+    private function redirectToDashboard(User $user)
+    {
+        return match ($user->role) {
+            'admin'             => redirect()->route('admin.dashboard'),
+            'dosen'             => redirect()->route('dosen.dashboard'),
+            'koordinator_pbl'   => redirect()->route('koordinatorpbl.dashboard'),
+            'koordinator_prodi' => redirect()->route('koordinatorprodi.dashboard'),
+            default             => redirect()->route('mahasiswa.dashboard'),
+        };
+    }
+
+    /**
+     * (Opsional) halaman home lama
+     */
     public function home()
     {
         return view('login.home');

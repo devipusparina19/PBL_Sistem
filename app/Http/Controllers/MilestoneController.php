@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Milestone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class MilestoneController extends Controller
 {
@@ -19,39 +20,40 @@ class MilestoneController extends Controller
     }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'tanggal' => 'required|date',
-        'judul' => 'required|string|max:255',
-        'kelompok' => 'required|string|max:255',
-        'rincian' => 'required|string',
-        'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-    ]);
+    {
+        $request->validate([
+            'tanggal'  => 'required|date',
+            'judul'    => 'required|string|max:255',
+            'kelompok' => 'required|string|max:255',
+            'rincian'  => 'required|string',
+            'foto'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-    // ambil field penting saja
-    $data = $request->only(['tanggal', 'judul', 'kelompok', 'rincian']);
+        // ambil hanya field yang dibutuhkan
+        $data = $request->only(['tanggal', 'judul', 'kelompok', 'rincian']);
 
-    // simpan foto ke storage/app/public/dokumentasi
-    if ($request->hasFile('foto')) {
-        $data['foto'] = $request->file('foto')->store('dokumentasi', 'public');
+        // jika ada foto, simpan ke storage/app/public/dokumentasi
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')->store('dokumentasi', 'public');
+        }
+
+        Milestone::create($data);
+
+        return redirect()->route('milestones.index')
+                         ->with('success', 'Logbook berhasil ditambahkan!');
     }
 
-    Milestone::create($data);
+    public function destroy(Milestone $milestone)
+    {
+        // hapus file foto kalau ada
+        if ($milestone->foto && Storage::disk('public')->exists($milestone->foto)) {
+            Storage::disk('public')->delete($milestone->foto);
+        }
 
-    return redirect()->route('milestones.index')
-                     ->with('success', 'Logbook berhasil ditambahkan!');
-}
-public function destroy(Milestone $milestone)
-{
-    // hapus file foto kalau ada
-    if ($milestone->foto && \Storage::disk('public')->exists($milestone->foto)) {
-        \Storage::disk('public')->delete($milestone->foto);
+        // hapus data milestone dari database
+        $milestone->delete();
+
+        return redirect()->route('milestones.index')
+                         ->with('success', 'Logbook berhasil dihapus!');
     }
-
-    // hapus data milestone dari database
-    $milestone->delete();
-
-    return redirect()->route('milestones.index')
-                     ->with('success', 'Logbook berhasil dihapus!');
-}
 }
