@@ -7,44 +7,35 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        /* Background halaman mirip register.blade.php */
         body {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            background: #ffffff; /* putih bersih */
+            background: #ffffff;
             color: #1e293b;
         }
-     
         main {
             flex: 1; 
         }
-
-        /* Navbar mirip header register.blade.php */
         .navbar {
             background: #60a5fa;  
-            backdrop-filter: blur(6px);        /* efek blur */
+            backdrop-filter: blur(6px);
         }
-
         .navbar-brand {
             font-weight: bold;
             font-size: 1.2rem;
-            color: navy !important;            /* warna teks logo */
+            color: navy !important;
         }
-
         .nav-link {
-            color: navy !important;            /* warna teks menu */
+            color: navy !important;
             font-weight: 600;
         }
-
         .nav-link:hover, .nav-link.active {
             text-decoration: underline;
             color: navy !important;
         }
-
-        /* Footer mirip register.blade.php */
         footer {
-            background: #60a5fa; /* samakan dengan header */
+            background: #60a5fa;
             padding: 0.8rem; 
             text-align: center;
             color: white; 
@@ -65,12 +56,9 @@
 
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="{{ url('/mahasiswa') }}">Akun Mahasiswa</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url('/kelompok') }}">Kelompok</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url('/dosen') }}">Dosen</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url('/milestones') }}">Milestones</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url('/koor') }}">Koordinator PBL</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url('/ranking') }}">Ranking</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url('/') }}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url('/about') }}">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url('/contact') }}">Contact</a></li>
             </ul>
         </div>
     </nav>

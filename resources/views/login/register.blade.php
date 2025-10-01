@@ -108,11 +108,6 @@
 <body>
     <header>
         <div class="logo">Sistem PBL Mahasiswa TI</div>
-        <nav>
-            <a href="#">Home</a>
-            <a href="#">About</a>
-            <a href="#">Contact</a>
-        </nav>
     </header>
 
     <main>
@@ -177,7 +172,7 @@
     </main>
 
     <footer>
-        🌐 Sistem Penilaian Kinerja Mahasiswa & Kelompok PBL TI © {{ date('Y') }}
+        🌐 Sistem Penilaian Kinerja Mahasiswa & Kelompok © {{ date('Y') }}
     </footer>
 </body>
 </html>
