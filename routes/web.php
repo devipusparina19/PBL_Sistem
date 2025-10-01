@@ -43,6 +43,10 @@ Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 */
 Route::middleware('auth')->group(function () {
 
+    Route::get('/home', function () {
+         return view('home.home'); 
+    })->name('home');
+
     // Dashboard umum
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('pbl.dashboard');
 

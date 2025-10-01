@@ -33,6 +33,19 @@
             text-decoration: underline;
             color: #60a5fa !important; /* hover biru muda */
         }
+        .card-body {
+            display: flex;             
+            flex-direction: column;    /* Tata konten secara vertikal */
+        }
+        .card-body p.text-muted {
+            min-height: 2.5em; 
+            display: flex;     
+            align-items: center; 
+            justify-content: center; 
+        }
+        .card-body .btn {
+            margin-top: auto;          /* Dorong tombol ke bagian bawah */ 
+        }
         footer {
             background: #001f54; /* NAVY */
             padding: 0.8rem; 
@@ -54,7 +67,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link text-white {{ request()->is('/') ? 'active' : '' }}" href="{{ url('/') }}">Home</a>
+                    <a class="nav-link text-white {{ request()->is('/') ? 'active' : '' }}" href="{{ url('/home') }}">Home</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-white {{ request()->is('about') ? 'active' : '' }}" href="{{ url('/about') }}">About</a>
