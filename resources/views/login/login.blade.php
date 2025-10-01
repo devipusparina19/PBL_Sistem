@@ -17,7 +17,7 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      background: #ffffff; /* putih bersih */
+      background: #ffffff;
       color: #1e293b;
     }
 
@@ -37,22 +37,6 @@
       font-weight: bold;
       font-size: 1.2rem;
       color: white;
-    }
-
-    header nav {
-      display: flex;
-      gap: 1.5rem;
-    }
-
-    header nav a {
-      color: white;
-      font-weight: 600;
-      text-decoration: none;
-    }
-
-    header nav a:hover {
-      text-decoration: underline;
-      color: #60a5fa;
     }
 
     /* hamburger button */
@@ -114,6 +98,13 @@
       color: #0057e7;
     }
 
+    .error-message {
+      color: red;
+      font-size: 0.9rem;
+      margin-bottom: 0.8rem;
+      text-align: center;
+    }
+
     .form-group {
       text-align: left;
       margin-bottom: 1rem;
@@ -163,7 +154,7 @@
 
     /* footer */
     footer {
-      background: #001f54; /* NAVY */
+      background: #001f54;
       padding: 0.8rem;
       text-align: center;
       color: white;
@@ -172,25 +163,6 @@
 
     /* responsif */
     @media (max-width: 768px) {
-      header nav {
-        display: none;
-        flex-direction: column;
-        background: #001f54;
-        position: absolute;
-        top: 60px;
-        right: 5%;
-        padding: 1rem;
-        border-radius: 8px;
-      }
-
-      header nav.active {
-        display: flex;
-      }
-
-      .menu-toggle {
-        display: flex;
-      }
-
       main {
         flex-direction: column;
         text-align: center;
@@ -205,7 +177,7 @@
 <body>
   <!-- header -->
   <header>
-    <div class="logo">Sistem PBL Mahasiswa TI</div>
+    <div class="logo fw-bold text-white" href="#">Sistem PBL Mahasiswa TI</div>
     <div class="menu-toggle" id="menu-toggle">
       <span></span>
       <span></span>
@@ -225,15 +197,26 @@
 
     <section class="login-card">
       <h3>Login</h3>
+
+      <!-- tampilkan error global -->
+      @if(session('error'))
+        <p class="error-message">{{ session('error') }}</p>
+    @endif
       <form action="{{ route('user.login') }}" method="POST">
         @csrf
         <div class="form-group">
           <label>Email</label>
-          <input type="email" name="email" required>
+          <input type="email" name="email" value="{{ old('email') }}" required>
+          @error('email')
+            <p class="error-message">{{ $message }}</p>
+          @enderror
         </div>
         <div class="form-group">
           <label>Password</label>
           <input type="password" name="password" required>
+          @error('password')
+            <p class="error-message">{{ $message }}</p>
+          @enderror
         </div>
         <button type="submit">Login</button>
         <p class="register-link">
@@ -247,15 +230,5 @@
   <footer>
     🌐 Sistem Penilaian Kinerja Mahasiswa & Kelompok © {{ date('Y') }}
   </footer>
-
-  <!-- script toggle menu -->
-  <script>
-    const toggle = document.getElementById('menu-toggle');
-    const navbar = document.getElementById('navbar');
-
-    toggle.addEventListener('click', () => {
-      navbar.classList.toggle('active');
-    });
-  </script>
 </body>
 </html>

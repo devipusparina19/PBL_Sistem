@@ -31,50 +31,57 @@ class UserController extends Controller
      * ✅ Proses register user baru
      */
     public function store(Request $request)
-    {
-        $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'role'     => 'required|string|in:mahasiswa,dosen,admin,koordinator_pbl,koordinator_prodi',
-        ]);
+{
+    $request->validate([
+        'name'     => 'required|string|max:255',
+        'email'    => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8|confirmed',
+        'role'     => 'required|string|in:mahasiswa,dosen,admin,koordinator_pbl,koordinator_prodi',
+    ], [
+        'name.required'     => 'Nama wajib diisi.',
+        'email.required'    => 'Email wajib diisi.',
+        'email.email'       => 'Format email tidak valid.',
+        'email.unique'      => 'Email sudah terdaftar.',
+        'password.required' => 'Password wajib diisi.',
+        'password.min'      => 'Password minimal 8 karakter.',
+        'password.confirmed'=> 'Konfirmasi password tidak sesuai.',
+        'role.required'     => 'Role wajib dipilih.',
+        'role.in'           => 'Role yang dipilih tidak valid.',
+    ]);
 
-        // Simpan user ke database
-        $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role'     => $request->role,
-        ]);
+    // Simpan user ke database
+    $user = User::create([
+        'name'     => $request->name,
+        'email'    => $request->email,
+        'password' => Hash::make($request->password),
+        'role'     => $request->role,
+    ]);
 
-        // Login otomatis setelah register
-        Auth::login($user);
+    Auth::login($user);
 
-        // Redirect sesuai role
-        return $this->redirectToDashboard($user);
-    }
+    return $this->redirectToDashboard($user);
+}
 
     /**
      * ✅ Proses login user
      */
     public function login(Request $request)
-    {
-        $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required|min:6',
-        ]);
+{
+    $request->validate([
+        'email'    => 'required|email',
+        'password' => 'required|min:6',
+    ]);
 
-        $credentials = $request->only('email', 'password');
+    $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return $this->redirectToDashboard(Auth::user());
-        }
-
-        return back()->withErrors([
-            'email' => 'Email atau password salah!',
-        ])->withInput();
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+        return $this->redirectToDashboard(Auth::user());
     }
+
+    // ✅ kirim pesan error global (bukan per field)
+    return back()->with('error', 'Email atau password salah!')->withInput();
+}
 
     /**
      * ✅ Proses logout

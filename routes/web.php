@@ -34,7 +34,8 @@ Route::get('/login', [UserController::class, 'showLogin'])->name('user.showLogin
 Route::post('/login', [UserController::class, 'login'])->name('user.login');
 
 // Logout
-Route::post('/logout', [UserController::class, 'logout'])->name('user.logout');
+Route::post('/logout', [UserController::class, 'logout'])->name('logout');
+
 
 // contact
 
@@ -47,6 +48,10 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
+
+    Route::get('/home', function () {
+         return view('home.home'); 
+    })->name('home');
 
     // Dashboard umum
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('pbl.dashboard');
@@ -68,4 +73,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('data_dosen', DosenController::class);
     Route::resource('kelompok', KelompokController::class);
     Route::resource('milestones', MilestoneController::class);
+
+    Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profile/update', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+});
 });
