@@ -9,6 +9,6 @@
         <li class="list-group-item"><strong>Email:</strong> {{ $dosen->email }}</li>
         <li class="list-group-item"><strong>Mata Kuliah:</strong> {{ $dosen->mata_kuliah }}</li>
     </ul>
-    <a href="{{ route('dosen.index') }}" class="btn btn-secondary mt-3">Kembali</a>
+    <a href="{{ route('data_dosen.index') }}" class="btn btn-secondary mt-3">Kembali</a>
 </div>
 @endsection
