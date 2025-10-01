@@ -18,24 +18,23 @@
             flex: 1; 
         }
         .navbar {
-            background: #60a5fa;  
-            backdrop-filter: blur(6px);
+            background: #001f54;  /* NAVY */
         }
         .navbar-brand {
             font-weight: bold;
             font-size: 1.2rem;
-            color: navy !important;
+            color: white !important;
         }
         .nav-link {
-            color: navy !important;
+            color: white !important;
             font-weight: 600;
         }
         .nav-link:hover, .nav-link.active {
             text-decoration: underline;
-            color: navy !important;
+            color: #60a5fa !important; /* hover biru muda */
         }
         footer {
-            background: #60a5fa;
+            background: #001f54; /* NAVY */
             padding: 0.8rem; 
             text-align: center;
             color: white; 
@@ -49,7 +48,7 @@
         <a class="navbar-brand" href="{{ url('/dashboard') }}">
             Sistem PBL Mahasiswa TI
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>

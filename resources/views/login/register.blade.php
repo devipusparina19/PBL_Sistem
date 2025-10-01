@@ -20,16 +20,16 @@
         header {
             width: 100%;
             padding: 1rem 5%;
-            background: #60a5fa; /* biru muda */
+            background: #001f54; /* NAVY */
             display: flex; 
             justify-content: space-between; 
             align-items: center;
-            color: white; /* teks header jadi putih agar kontras */
+            color: white; /* teks header putih */
         }
-        header .logo { font-weight: bold; font-size: 1.2rem; color: navy; }
+        header .logo { font-weight: bold; font-size: 1.2rem; color: white; }
         header nav a {
             margin-left: 1.5rem;
-            color: navy; font-weight: 600; text-decoration: none;
+            color: white; font-weight: 600; text-decoration: none;
         }
         header nav a:hover { color: navy; }
 
@@ -97,7 +97,7 @@
         .login-link a { color: #0057e7; font-weight: bold; text-decoration: none; }
 
         footer {
-            background: #60a5fa; /* samakan dengan header */
+            background: #001f54; /* NAVY */
             padding: 0.8rem; 
             text-align: center;
             color: white; 
