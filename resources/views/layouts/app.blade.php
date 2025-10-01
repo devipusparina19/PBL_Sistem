@@ -44,24 +44,38 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg shadow-sm px-3">
-        <a class="navbar-brand" href="{{ url('/dashboard') }}">
-            Sistem PBL Mahasiswa TI
-        </a>
-        <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+    <nav class="navbar navbar-expand-lg" style="background-color:#001f54;">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-white" href="#">Sistem PBL Mahasiswa TI</a>
+        <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="{{ url('/') }}">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url('/about') }}">About</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ url('/contact') }}">Contact</a></li>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ request()->is('/') ? 'active' : '' }}" href="{{ url('/') }}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ request()->is('about') ? 'active' : '' }}" href="{{ url('/about') }}">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ request()->is('contact') ? 'active' : '' }}" href="{{ url('/contact') }}">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ request()->is('profile') ? 'active' : '' }}" href="{{ route('profile.show') }}">Profil Saya</a>
+                </li>
+                <li class="nav-item">
+                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-link nav-link text-white" style="text-decoration:none;">Logout</button>
+                    </form>
+                </li>
             </ul>
         </div>
-    </nav>
-
+    </div>
+</nav>
+    
     <!-- Konten dinamis -->
     <main class="container mt-4">
         @yield('content')

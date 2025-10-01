@@ -177,7 +177,7 @@
 <body>
   <!-- header -->
   <header>
-    <div class="logo">Sistem PBL Mahasiswa TI</div>
+    <div class="logo fw-bold text-white" href="#">Sistem PBL Mahasiswa TI</div>
     <div class="menu-toggle" id="menu-toggle">
       <span></span>
       <span></span>
