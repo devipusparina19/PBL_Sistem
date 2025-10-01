@@ -1,8 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h2 class="mb-4 fw-bold text-primary">Dashboard Admin</h2>
+<div class="text-center mb-5">
+        <h2 class="fw-bold text-primary">Sistem Penilaian Kinerja Mahasiswa dan Kelompok PBL</h2>
+        <p class="text-muted">Selamat datang, {{ Auth::user()->name }} (Admin)</p>
+    </div>
+
 
     <div class="row g-4">
         <!-- Manajemen Akun -->

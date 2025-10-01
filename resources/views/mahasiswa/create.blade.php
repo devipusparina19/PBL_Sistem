@@ -1,109 +1,70 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Mahasiswa</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-            padding: 25px; 
-        }
+@extends('layouts.app')
 
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px; 
-            font-size: 1.5rem; 
-        }
+@section('content')
+<div class="container mt-4">
+    <h1 class="mb-4">Tambah Mahasiswa</h1>
 
-        form {
-            max-width: 450px; 
-            margin: auto;
-            background: white;
-            padding: 24px 28px; 
-            border-radius: 10px;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-        }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: bold;
-            color: #444;
-            font-size: 0.9rem;
-        }
-
-        input {
-            width: 100%;
-            padding: 9px 12px; 
-            margin-bottom: 14px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            transition: border 0.3s, box-shadow 0.3s;
-            font-size: 0.9rem;
-        }
-
-        input:focus {
-            border-color: #2563eb;
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.07);
-        }
-
-        button {
-            background: #2563eb;
-            color: white;
-            padding: 9px 16px; 
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-right: 6px;
-            font-size: 0.9rem;
-        }
-
-        button:hover {
-            background: #1e40af;
-        }
-
-        a {
-            text-decoration: none;
-            color: #555;
-            padding: 9px 16px; 
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            background: #f9fafb;
-            font-size: 0.9rem;
-        }
-
-        a:hover {
-            background: #e5e7eb;
-        }
-    </style>
-</head>
-<body>
-    <h1>➕ Tambah Mahasiswa</h1>
+    {{-- Tampilkan error validasi --}}
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <form action="{{ route('mahasiswa.store') }}" method="POST">
         @csrf
-        <label>NIM</label>
-        <input type="text" name="nim" required>
 
-        <label>Nama</label>
-        <input type="text" name="nama" required>
+        <div class="mb-3">
+            <label for="nim" class="form-label">NIM</label>
+            <input type="text" class="form-control @error('nim') is-invalid @enderror"
+                   id="nim" name="nim" value="{{ old('nim') }}" required>
+            @error('nim')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
 
-        <label>Angkatan</label>
-        <input type="text" name="angkatan" required>
+        <div class="mb-3">
+            <label for="nama" class="form-label">Nama</label>
+            <input type="text" class="form-control @error('nama') is-invalid @enderror"
+                   id="nama" name="nama" value="{{ old('nama') }}" required>
+            @error('nama')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
 
-        <label>Email</label>
-        <input type="email" name="email" required>
+        <div class="mb-3">
+            <label for="angkatan" class="form-label">Angkatan</label>
+            <input type="text" class="form-control @error('angkatan') is-invalid @enderror"
+                   id="angkatan" name="angkatan" value="{{ old('angkatan') }}" required>
+            @error('angkatan')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
 
-        <label>Password</label>
-        <input type="password" name="password" required>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control @error('email') is-invalid @enderror"
+                   id="email" name="email" value="{{ old('email') }}" required>
+            @error('email')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
 
-        <button type="submit">Simpan</button>
-        <a href="{{ route('mahasiswa.index') }}">Kembali</a>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control @error('password') is-invalid @enderror"
+                   id="password" name="password" required>
+            @error('password')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <button type="submit" class="btn btn-primary">Simpan</button>
+        <a href="{{ route('mahasiswa.index') }}" class="btn btn-secondary">Kembali</a>
     </form>
-</body>
-</html>
+</div>
+@endsection

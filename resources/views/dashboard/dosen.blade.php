@@ -2,6 +2,11 @@
 
 @section('content')
 <div class="row">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-primary">Sistem Penilaian Kinerja Mahasiswa dan Kelompok PBL</h2>
+        <p class="text-muted">Selamat datang, {{ Auth::user()->name }} (Dosen)</p>
+    </div>
+
     <!-- Validasi Milestone -->
     <div class="col-md-4">
         <div class="card text-center shadow">
