@@ -13,14 +13,18 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            background: linear-gradient(to bottom right, #dbeafe, #60a5fa);
+            background: #ffffff; /* putih bersih */
+            color: #1e293b;
         }
+
         header {
             width: 100%;
             padding: 1rem 5%;
-            background: rgba(255,255,255,0.3);
-            display: flex; justify-content: space-between; align-items: center;
-            backdrop-filter: blur(6px);
+            background: #60a5fa; /* biru muda */
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            color: white; /* teks header jadi putih agar kontras */
         }
         header .logo { font-weight: bold; font-size: 1.2rem; color: navy; }
         header nav a {
@@ -93,9 +97,11 @@
         .login-link a { color: #0057e7; font-weight: bold; text-decoration: none; }
 
         footer {
-            background: rgba(0,0,0,0.2);
-            padding: 0.8rem; text-align: center;
-            color: white; font-size: 0.9rem;
+            background: #60a5fa; /* samakan dengan header */
+            padding: 0.8rem; 
+            text-align: center;
+            color: white; 
+            font-size: 0.9rem;
         }
     </style>
 </head>

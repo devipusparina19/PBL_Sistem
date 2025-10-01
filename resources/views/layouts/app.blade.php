@@ -9,20 +9,20 @@
     <style>
         /* Background halaman mirip register.blade.php */
         body {
-            background: linear-gradient(to bottom right, #dbeafe, #60a5fa);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            font-family: Arial, sans-serif;
+            background: #ffffff; /* putih bersih */
+            color: #1e293b;
         }
-
+     
         main {
             flex: 1; 
         }
 
         /* Navbar mirip header register.blade.php */
         .navbar {
-            background: rgba(255,255,255,0.3); /* transparan putih */
+            background: #60a5fa;  
             backdrop-filter: blur(6px);        /* efek blur */
         }
 
@@ -44,11 +44,10 @@
 
         /* Footer mirip register.blade.php */
         footer {
-            background: rgba(0,0,0,0.2);       /* semi transparan gelap */
-            color: white;
+            background: #60a5fa; /* samakan dengan header */
+            padding: 0.8rem; 
             text-align: center;
-            padding: 0.8rem;
-            margin-top: auto; 
+            color: white; 
             font-size: 0.9rem;
         }
     </style>
