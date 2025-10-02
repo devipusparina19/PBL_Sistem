@@ -67,7 +67,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link text-white {{ request()->is('/') ? 'active' : '' }}" href="{{ url('/home') }}">Home</a>
+                    <a class="nav-link text-white {{ request()->is('home') ? 'active' : '' }}" href="{{ url('/home') }}">Home</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-white {{ request()->is('about') ? 'active' : '' }}" href="{{ url('/about') }}">About</a>

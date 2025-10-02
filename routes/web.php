@@ -22,12 +22,9 @@ use App\Http\Controllers\ContactController;
 // Halaman utama langsung ke register
 Route::get('/', [UserController::class, 'showRegister'])->name('user.showRegister');
 
-
 // Register
 Route::get('/register', [UserController::class, 'showRegister'])->name('user.showRegister');
 Route::post('/register', [UserController::class, 'store'])->name('user.store');
-
-
 
 // Login
 Route::get('/login', [UserController::class, 'showLogin'])->name('user.showLogin');
@@ -54,6 +51,16 @@ Route::middleware('auth')->group(function () {
           return view('home.home'); 
     })->name('home');
 
+    // ✅ About Page (TAMBAHAN)
+    Route::get('/about', function () {
+        return view('about');
+    })->name('about');
+
+    // ✅ Contact Page (TAMBAHAN)
+    Route::get('/contact', function () {
+        return view('contact');
+    })->name('contact');
+
     // Dashboard umum
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('pbl.dashboard');
 
@@ -75,7 +82,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('kelompok', KelompokController::class);
     Route::resource('milestones', MilestoneController::class);
 
+
     // Route Profile (Dipindahkan dari blok bersarang ke blok utama yang sudah dilindungi 'auth')
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile/update', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
 });
+
+    
+
