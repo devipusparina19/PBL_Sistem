@@ -11,6 +11,7 @@ use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KelompokController;
 use App\Http\Controllers\MilestoneController;
+use App\Http\Controllers\ContactController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +36,11 @@ Route::post('/login', [UserController::class, 'login'])->name('user.login');
 // Logout
 Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
+
+// contact
+
+Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +68,7 @@ Route::middleware('auth')->group(function () {
     | Resource CRUD Routes
     |--------------------------------------------------------------------------
     */
+    
     Route::resource('mahasiswa', MahasiswaController::class);
     Route::resource('data_dosen', DosenController::class);
     Route::resource('kelompok', KelompokController::class);

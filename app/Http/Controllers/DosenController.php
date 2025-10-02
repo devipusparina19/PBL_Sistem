@@ -7,15 +7,23 @@ use Illuminate\Http\Request;
 
 class DosenController extends Controller
 {
-    public function index()
-    {
-        $dosens = Dosen::all();
-        return view('dosen.index', compact('dosens'));
-    }
+    public function index(Request $request)
+{
+    $search = $request->input('search');
+
+    $dosens = Dosen::when($search, function($query, $search) {
+        return $query->where('nama', 'like', "%{$search}%")
+                     ->orWhere('nip', 'like', "%{$search}%")
+                     ->orWhere('email', 'like', "%{$search}%");
+    })->paginate(10);
+
+    return view('data_dosen.index_data', compact('dosens'));
+}
+
 
     public function create()
     {
-        return view('dosen.create');
+        return view('data_dosen.create_data');
     }
 
     public function store(Request $request)
@@ -28,17 +36,17 @@ class DosenController extends Controller
         ]);
 
         Dosen::create($request->all());
-        return redirect()->route('dosen.index')->with('success', 'Dosen berhasil ditambahkan.');
+        return redirect()->route('data_dosen.index')->with('success', 'Dosen berhasil ditambahkan.');
     }
 
     public function show(Dosen $dosen)
     {
-        return view('dosen.show', compact('dosen'));
+        return view('data_dosen.show_data', compact('dosen'));
     }
 
     public function edit(Dosen $dosen)
     {
-        return view('dosen.edit', compact('dosen'));
+        return view('data_dosen.edit_data', compact('dosen'));
     }
 
     public function update(Request $request, Dosen $dosen)
@@ -51,12 +59,14 @@ class DosenController extends Controller
         ]);
 
         $dosen->update($request->all());
-        return redirect()->route('dosen.index')->with('success', 'Dosen berhasil diperbarui.');
+        return redirect()->route('data_dosen.index')->with('success', 'Dosen berhasil diperbarui.');
     }
 
-    public function destroy(Dosen $dosen)
+     public function destroy($id)
     {
+        $dosen = Dosen::findOrFail($id);
         $dosen->delete();
-        return redirect()->route('dosen.index')->with('success', 'Dosen berhasil dihapus.');
-    }
+
+        return redirect()->route('data_dosen.index')->with('success', 'Dosen berhasil dihapus.');
+}
 }
