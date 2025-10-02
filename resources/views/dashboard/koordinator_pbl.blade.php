@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-primary">Sistem Penilaian Kinerja Mahasiswa dan Kelompok PBL</h2>
+        <p class="text-muted">Selamat datang, {{ Auth::user()->name }} (Koordinatot PBL)</p>
+    </div>
 <div class="row">
     <!-- Manajemen Kelompok -->
     <div class="col-md-4">
