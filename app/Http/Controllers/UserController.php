@@ -33,10 +33,10 @@ class UserController extends Controller
     public function store(Request $request)
 {
     $request->validate([
-        'name'     => 'required|string|max:255',
-        'email'    => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:8|confirmed',
-        'role'     => 'required|string|in:mahasiswa,dosen,admin,koordinator_pbl,koordinator_prodi',
+        'name'      => 'required|string|max:255',
+        'email'     => 'required|string|email|max:255|unique:users',
+        'password'  => 'required|string|min:8|confirmed',
+        'role'      => 'required|string|in:mahasiswa,dosen,admin,koordinator_pbl,koordinator_prodi',
     ], [
         'name.required'     => 'Nama wajib diisi.',
         'email.required'    => 'Email wajib diisi.',
@@ -51,10 +51,10 @@ class UserController extends Controller
 
     // Simpan user ke database
     $user = User::create([
-        'name'     => $request->name,
-        'email'    => $request->email,
-        'password' => Hash::make($request->password),
-        'role'     => $request->role,
+        'name'      => $request->name,
+        'email'     => $request->email,
+        'password'  => Hash::make($request->password),
+        'role'      => $request->role,
     ]);
 
     Auth::login($user);
@@ -68,8 +68,8 @@ class UserController extends Controller
     public function login(Request $request)
 {
     $request->validate([
-        'email'    => 'required|email',
-        'password' => 'required|min:6',
+        'email'     => 'required|email',
+        'password'  => 'required|min:6',
     ]);
 
     $credentials = $request->only('email', 'password');
@@ -104,8 +104,9 @@ class UserController extends Controller
         return match ($user->role) {
             'admin'             => redirect()->route('admin.dashboard'),
             'dosen'             => redirect()->route('dosen.dashboard'),
-            'koordinator_pbl'   => redirect()->route('koordinatorpbl.dashboard'),
-            'koordinator_prodi' => redirect()->route('koordinatorprodi.dashboard'),
+            // PERBAIKAN: Tambahkan underscore (_) agar sesuai dengan web.php
+            'koordinator_pbl'   => redirect()->route('koordinator_pbl.dashboard'), 
+            'koordinator_prodi' => redirect()->route('koordinator_prodi.dashboard'),
             default             => redirect()->route('mahasiswa.dashboard'),
         };
     }
