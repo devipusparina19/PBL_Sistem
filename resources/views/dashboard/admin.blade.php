@@ -45,7 +45,7 @@
                     </div>
                     <h5 class="card-title fw-bold">Data Dosen</h5>
                     <p class="text-muted">Tambah/edit data dosen</p>
-                    <a href="{{ url('/dosen') }}" class="btn btn-info w-100">Kelola</a>
+                    <a href="{{ url('/data_dosen') }}" class="btn btn-info w-100">Kelola</a>
                 </div>
             </div>
         </div>
