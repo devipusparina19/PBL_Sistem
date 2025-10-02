@@ -41,6 +41,7 @@ class DosenController extends Controller
 
     public function show(Dosen $dosen)
     {
+
         return view('data_dosen.show_data', compact('dosen'));
     }
 
@@ -49,18 +50,29 @@ class DosenController extends Controller
         return view('data_dosen.edit_data', compact('dosen'));
     }
 
-    public function update(Request $request, Dosen $dosen)
-    {
-        $request->validate([
-            'nama' => 'required',
-            'nip' => 'required|unique:dosens,nip,' . $dosen->id,
-            'email' => 'required|email|unique:dosens,email,' . $dosen->id,
-            'mata_kuliah' => 'required',
-        ]);
-
-        $dosen->update($request->all());
-        return redirect()->route('data_dosen.index')->with('success', 'Dosen berhasil diperbarui.');
+    public function update(Request $request, $id)
+{
+    $request->validate([
+        'nama' => 'required|string|max:255',
+        'nip' => 'required|string|max:20|unique:dosen,nip,'.$id,
+        'email' => 'required|email|unique:dosen,email,'.$id,
+        'no_telepon' => 'nullable|string|max:15',
+        'mata_kuliah' => 'nullable|array',
+        'mata_kuliah.*' => 'exists:mata_kuliah,id'
+    ]);
+    
+    $dosen = Dosen::findOrFail($id);
+    $dosen->update($request->except('mata_kuliah'));
+    
+    // Sync mata kuliah
+    if ($request->has('mata_kuliah')) {
+        $dosen->mataKuliah()->sync($request->mata_kuliah);
+    } else {
+        $dosen->mataKuliah()->detach();
     }
+    
+    return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil diperbarui');
+}
 
      public function destroy($id)
     {
