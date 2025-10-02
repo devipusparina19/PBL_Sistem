@@ -1,73 +1,91 @@
-@extends('login.layout')
+@extends('layouts.app')
 
 @section('content')
-<div class="container-fluid mt-5">
-    <div class="card shadow-lg border-0 rounded-3">
-        <!-- Header -->
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">📚 Data Dosen</h4>
-            <a href="{{ route('data_dosen.create') }}" class="btn btn-light btn-sm">
-                ➕ Tambah Dosen
-            </a>
-        </div>
+<div class="container mt-4">
+    <h1 class="mb-4">Daftar Dosen</h1>
 
-        <!-- Notifikasi -->
-        <div class="card-body">
-            @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
+    {{-- Pesan sukses --}}
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
-            <!-- Pencarian -->
-            <form method="GET" action="{{ route('data_dosen.index') }}" class="mb-3 d-flex">
+    {{-- Form Pencarian dan Tombol Tambah --}}
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <form action="{{ route('data_dosen.index') }}" method="GET" class="d-flex">
                 <input type="text" name="search" class="form-control me-2" 
-                       placeholder="🔍 Cari nama / NIP / email..."
+                       placeholder="Cari nama / NIP / email / mata kuliah..." 
                        value="{{ request('search') }}">
-                <button type="submit" class="btn btn-outline-primary">Cari</button>
+                <button type="submit" class="btn btn-secondary">Cari</button>
+                @if(request('search'))
+                    <a href="{{ route('data_dosen.index') }}" class="btn btn-outline-secondary ms-2">Reset</a>
+                @endif
             </form>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ route('data_dosen.create') }}" class="btn btn-primary">➕ Tambah Dosen</a>
+        </div>
+    </div>
 
-            <!-- Tabel -->
-            <div class="table-responsive" style="min-height: 500px;">
-                <table class="table table-striped table-hover align-middle text-center w-100">
+    {{-- Tabel daftar dosen --}}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
                     <thead class="table-dark">
                         <tr>
-                            <th>#</th>
+                            <th>No</th>
                             <th>Nama</th>
                             <th>NIP</th>
                             <th>Email</th>
+                            <th>No. Telepon</th>
                             <th>Mata Kuliah</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($dosens as $index => $dosen)
-                        <tr>
-                            <td>{{ $loop->iteration + ($dosens->currentPage()-1) * $dosens->perPage() }}</td>
-                            <td>{{ $dosen->nama }}</td>
-                            <td>{{ $dosen->nip }}</td>
-                            <td>{{ $dosen->email }}</td>
-                            <td>{{ $dosen->mata_kuliah }}</td>
-                            <td>
-                                <a href="{{ route('data_dosen.show', $dosen->id) }}" class="btn btn-info btn-sm">Lihat</a>
-                                <a href="{{ route('data_dosen.edit', $dosen->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                <form action="{{ route('data_dosen.destroy', $dosen->id) }}" 
-                                      method="POST" class="d-inline"
-                                      onsubmit="return confirm('Yakin ingin menghapus dosen ini?')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                                </form>
-                            </td>
-                        </tr>
+                        @forelse($dosens as $item)
+                            <tr>
+                                <td>{{ $loop->iteration + ($dosens->currentPage() - 1) * $dosens->perPage() }}</td>
+                                <td>{{ $item->nama }}</td>
+                                <td>{{ $item->nip }}</td>
+                                <td>{{ $item->email }}</td>
+                                <td>{{ $item->no_telepon ?? '-' }}</td>
+                                <td>
+                                    @if($item->mataKuliah && $item->mataKuliah->count() > 0)
+                                        @foreach($item->mataKuliah as $mk)
+                                            <span class="badge bg-info me-1">{{ $mk->nama_mk }}</span>
+                                        @endforeach
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    {{-- Tombol Lihat --}}
+                                    <a href="{{ route('data_dosen.show', $item->id) }}" class="btn btn-sm btn-info">Lihat</a>
+                                    
+                                    {{-- Tombol Edit --}}
+                                    <a href="{{ route('data_dosen.edit', $item->id) }}" class="btn btn-sm btn-warning">Edit</a>
+
+                                    {{-- Tombol Hapus --}}
+                                    <form action="{{ route('data_dosen.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-danger">Hapus</button>
+                                    </form>
+                                </td>
+                            </tr>
                         @empty
-                        <tr>
-                            <td colspan="6" class="text-muted">Tidak ada data dosen</td>
-                        </tr>
+                            <tr>
+                                <td colspan="7" class="text-center">Tidak ada data dosen</td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
 
-            <!-- Pagination -->
-            <div class="d-flex justify-content-end mt-3">
+            {{-- Pagination --}}
+            <div class="d-flex justify-content-center mt-3">
                 {{ $dosens->links() }}
             </div>
         </div>
