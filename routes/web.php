@@ -44,10 +44,11 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 | Protected Routes (Butuh Login)
 |--------------------------------------------------------------------------
 */
+// BLOK UTAMA DIBUKA DI SINI
 Route::middleware('auth')->group(function () {
 
     Route::get('/home', function () {
-         return view('home.home'); 
+          return view('home.home'); 
     })->name('home');
 
     // ✅ About Page (TAMBAHAN)
@@ -63,13 +64,13 @@ Route::middleware('auth')->group(function () {
     // Dashboard umum
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('pbl.dashboard');
 
-    // Dashboard per role
+    // Dashboard per role (Mempertahankan route Koordinator_PBL dan Koordinator_Prodi secara terpisah)
     Route::get('/dashboard/mahasiswa', fn() => view('dashboard.mahasiswa'))->name('mahasiswa.dashboard');
     Route::get('/dashboard/dosen', fn() => view('dashboard.dosen'))->name('dosen.dashboard');
     Route::get('/dashboard/admin', fn() => view('dashboard.admin'))->name('admin.dashboard');
     Route::get('/dashboard/koordinator_pbl', fn() => view('dashboard.koordinator_pbl'))->name('koordinator_pbl.dashboard');
     Route::get('/dashboard/koordinator_prodi', fn() => view('dashboard.koordinator_prodi'))->name('koordinator_prodi.dashboard');
-
+    
     /*
     |--------------------------------------------------------------------------
     | Resource CRUD Routes
@@ -81,8 +82,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('kelompok', KelompokController::class);
     Route::resource('milestones', MilestoneController::class);
 
-    Route::middleware(['auth'])->group(function () {
-        Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
-        Route::post('/profile/update', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
-    });
+
+    // Route Profile (Dipindahkan dari blok bersarang ke blok utama yang sudah dilindungi 'auth')
+    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profile/update', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
 });
+
+    
+
