@@ -1,92 +1,66 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-
-// Controllers
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\MahasiswaController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KelompokController;
-use App\Http\Controllers\MilestoneController;
-use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProfileController;
 
-/*
-|--------------------------------------------------------------------------
-| Public Routes (Tanpa Login)
-|--------------------------------------------------------------------------
-*/
+// ================================
+// HOME / DASHBOARD
+// ================================
+Route::middleware(['auth'])->group(function () {
+    Route::get('/home', [DashboardController::class, 'index'])->name('home');
 
-// Halaman utama langsung ke register
-Route::get('/', [UserController::class, 'showRegister'])->name('user.showRegister');
-
-// Register
-Route::get('/register', [UserController::class, 'showRegister'])->name('user.showRegister');
-Route::post('/register', [UserController::class, 'store'])->name('user.store');
-
-// Login
-Route::get('/login', [UserController::class, 'showLogin'])->name('user.showLogin');
-Route::post('/login', [UserController::class, 'login'])->name('user.login');
-
-// Logout
-Route::post('/logout', [UserController::class, 'logout'])->name('logout');
-
-
-// contact
-
-Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
-Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
-
-/*
-|--------------------------------------------------------------------------
-| Protected Routes (Butuh Login)
-|--------------------------------------------------------------------------
-*/
-// BLOK UTAMA DIBUKA DI SINI
-Route::middleware('auth')->group(function () {
-
-    Route::get('/home', function () {
-          return view('home.home'); 
-    })->name('home');
-
-    // ✅ About Page (TAMBAHAN)
-    Route::get('/about', function () {
-        return view('about');
-    })->name('about');
-
-    // ✅ Contact Page (TAMBAHAN)
-    Route::get('/contact', function () {
-        return view('contact');
-    })->name('contact');
-
-    // Dashboard umum
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('pbl.dashboard');
-
-    // Dashboard per role (Mempertahankan route Koordinator_PBL dan Koordinator_Prodi secara terpisah)
-    Route::get('/dashboard/mahasiswa', fn() => view('dashboard.mahasiswa'))->name('mahasiswa.dashboard');
-    Route::get('/dashboard/dosen', fn() => view('dashboard.dosen'))->name('dosen.dashboard');
-    Route::get('/dashboard/admin', fn() => view('dashboard.admin'))->name('admin.dashboard');
-    Route::get('/dashboard/koordinator_pbl', fn() => view('dashboard.koordinator_pbl'))->name('koordinator_pbl.dashboard');
-    Route::get('/dashboard/koordinator_prodi', fn() => view('dashboard.koordinator_prodi'))->name('koordinator_prodi.dashboard');
-    
-    /*
-    |--------------------------------------------------------------------------
-    | Resource CRUD Routes
-    |--------------------------------------------------------------------------
-    */
-    
-    Route::resource('mahasiswa', MahasiswaController::class);
-    Route::resource('data_dosen', DosenController::class);
-    Route::resource('kelompok', KelompokController::class);
-    Route::resource('milestones', MilestoneController::class);
-
-
-    // Route Profile (Dipindahkan dari blok bersarang ke blok utama yang sudah dilindungi 'auth')
-    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
-    Route::post('/profile/update', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    // Profil
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
 
-    
+// ================================
+// DOSEN
+// ================================
+Route::prefix('dosen')->middleware(['auth'])->group(function () {
+    Route::get('/', [DosenController::class, 'index'])->name('dosen.index');
+    Route::get('/create', [DosenController::class, 'create'])->name('dosen.create');
+    Route::post('/store', [DosenController::class, 'store'])->name('dosen.store');
+    Route::get('/{dosen}', [DosenController::class, 'show'])->name('dosen.show');
+    Route::get('/{dosen}/edit', [DosenController::class, 'edit'])->name('dosen.edit');
+    Route::put('/{dosen}', [DosenController::class, 'update'])->name('dosen.update');
+    Route::delete('/{dosen}', [DosenController::class, 'destroy'])->name('dosen.destroy');
+});
 
+// ================================
+// MAHASISWA
+// ================================
+Route::prefix('mahasiswa')->middleware(['auth'])->group(function () {
+    Route::get('/', [MahasiswaController::class, 'index'])->name('mahasiswa.index');
+    Route::get('/create', [MahasiswaController::class, 'create'])->name('mahasiswa.create');
+    Route::post('/store', [MahasiswaController::class, 'store'])->name('mahasiswa.store');
+    Route::get('/{mahasiswa}', [MahasiswaController::class, 'show'])->name('mahasiswa.show');
+    Route::get('/{mahasiswa}/edit', [MahasiswaController::class, 'edit'])->name('mahasiswa.edit');
+    Route::put('/{mahasiswa}', [MahasiswaController::class, 'update'])->name('mahasiswa.update');
+    Route::delete('/{mahasiswa}', [MahasiswaController::class, 'destroy'])->name('mahasiswa.destroy');
+});
+
+// ================================
+// KELOMPOK PBL
+// ================================
+Route::prefix('kelompok')->middleware(['auth'])->group(function () {
+    Route::get('/', [KelompokController::class, 'index'])->name('kelompok.index');
+    Route::get('/create', [KelompokController::class, 'create'])->name('kelompok.create');
+    Route::post('/store', [KelompokController::class, 'store'])->name('kelompok.store');
+    Route::get('/{kelompok}', [KelompokController::class, 'show'])->name('kelompok.show');
+    Route::get('/{kelompok}/edit', [KelompokController::class, 'edit'])->name('kelompok.edit');
+    Route::put('/{kelompok}', [KelompokController::class, 'update'])->name('kelompok.update');
+    Route::delete('/{kelompok}', [KelompokController::class, 'destroy'])->name('kelompok.destroy');
+});
+
+// ================================
+// LOGOUT
+// ================================
+Route::post('/logout', function () {
+    auth()->logout();
+    return redirect()->route('home');
+})->name('logout');

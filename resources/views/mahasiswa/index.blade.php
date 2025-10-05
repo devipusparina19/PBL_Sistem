@@ -11,27 +11,28 @@
 
     <!-- Notifikasi Sukses -->
     @if(session('success'))
-        <div class="alert alert-success">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
     <div class="table-responsive">
-        <table class="table table-bordered table-striped">
+        <table class="table table-bordered table-striped table-hover">
             <thead class="table-dark">
                 <tr>
-                    <th>No</th>
-                    <th>NIM</th>
-                    <th>Nama</th>
-                    <th>Angkatan</th>
-                    <th>Email</th>
-                    <th>Aksi</th>
+                    <th scope="col">No</th>
+                    <th scope="col">NIM</th>
+                    <th scope="col">Nama</th>
+                    <th scope="col">Angkatan</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($mahasiswas as $index => $m)
+                @forelse($mahasiswas as $m)
                     <tr>
-                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $loop->iteration }}</td>
                         <td>{{ $m->nim }}</td>
                         <td>{{ $m->nama }}</td>
                         <td>{{ $m->angkatan }}</td>
@@ -39,8 +40,7 @@
                         <td>
                             <a href="{{ route('mahasiswa.show', $m->id) }}" class="btn btn-info btn-sm">Lihat</a>
                             <a href="{{ route('mahasiswa.edit', $m->id) }}" class="btn btn-warning btn-sm">Edit</a>
-
-                            <form action="{{ route('mahasiswa.destroy', $m->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah yakin ingin menghapus?');">
+                            <form action="{{ route('mahasiswa.destroy', $m->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah yakin ingin menghapus data ini?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
