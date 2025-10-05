@@ -13,18 +13,18 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            background: #ffffff; /* putih bersih */
+            background: #ffffff;
             color: #1e293b;
         }
 
         header {
             width: 100%;
             padding: 1rem 5%;
-            background: #001f54; /* NAVY */
-            display: flex; 
-            justify-content: space-between; 
+            background: #001f54;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            color: white; /* teks header putih */
+            color: white;
         }
         header .logo { font-weight: bold; font-size: 1.2rem; color: white; }
         header nav a {
@@ -56,40 +56,49 @@
 
         .register-card {
             background: #fff;
-            padding: 1.5rem; 
+            padding: 1.5rem;
             border-radius: 15px;
             box-shadow: 0px 6px 20px rgba(0,0,0,0.15);
             width: 80%;
-            max-width: 360px; 
+            max-width: 360px;
             text-align: center;
         }
 
         .register-card h3 {
-            margin-bottom: 1.2rem; 
+            margin-bottom: 1.2rem;
             font-size: 1.5rem;
             color: #0057e7;
         }
 
         .form-group {
             text-align: left;
-            margin-bottom: 1rem; 
+            margin-bottom: 1rem;
         }
         .form-group label {
-            display: block; font-size: 0.9rem;
-            margin-bottom: 0.3rem; color: #333;
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+            color: #333;
         }
         .form-group input, .form-group select {
-            width: 100%; padding: 0.8rem; 
-            border: 1px solid #ccc; border-radius: 8px;
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
             font-size: 0.9rem;
         }
 
         .register-card button {
-            width: 100%; padding: 0.8rem; 
-            background: #0057e7; color: white;
-            border: none; border-radius: 8px;
-            font-size: 1rem; font-weight: bold;
-            cursor: pointer; margin-top: 0.6rem;
+            width: 100%;
+            padding: 0.8rem;
+            background: #0057e7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 0.6rem;
         }
         .register-card button:hover { background: #0041b3; }
 
@@ -97,10 +106,10 @@
         .login-link a { color: #0057e7; font-weight: bold; text-decoration: none; }
 
         footer {
-            background: #001f54; /* NAVY */
-            padding: 0.8rem; 
+            background: #001f54;
+            padding: 0.8rem;
             text-align: center;
-            color: white; 
+            color: white;
             font-size: 0.9rem;
         }
     </style>
@@ -114,7 +123,7 @@
         <section class="welcome-section">
             <h2>Daftar Akun</h2>
             <p>
-                Silahkan Daftar akun untuk mengakses <br>
+                Silahkan daftar akun untuk mengakses <br>
                 Sistem Penilaian Kinerja Mahasiswa <br>
                 & Kelompok <strong>PBL TI</strong>
             </p>
@@ -134,7 +143,6 @@
             @endif
 
             <form action="{{ route('user.store') }}" method="POST">
-
                 @csrf
                 <div class="form-group">
                     <label>Nama</label>
@@ -152,6 +160,31 @@
                     <label>Konfirmasi Password</label>
                     <input type="password" name="password_confirmation" required>
                 </div>
+
+                <!-- ✅ Tambahan Angkatan -->
+                <div class="form-group">
+                    <label>Angkatan</label>
+                    <select name="angkatan" required>
+                        <option value="">-- Pilih Angkatan --</option>
+                        @for ($i = date('Y'); $i >= 2019; $i--)
+                            <option value="{{ $i }}">{{ $i }}</option>
+                        @endfor
+                    </select>
+                </div>
+
+                <!-- ✅ Tambahan Kelas -->
+                <div class="form-group">
+                    <label>Kelas</label>
+                    <select name="kelas" required>
+                        <option value="">-- Pilih Kelas --</option>
+                        <option value="3A">3A</option>
+                        <option value="3B">3B</option>
+                        <option value="3C">3C</option>
+                        <option value="3D">3D</option>
+                        <option value="3E">3E</option>
+                    </select>
+                </div>
+
                 <div class="form-group">
                     <label>Role</label>
                     <select name="role" required>
@@ -163,6 +196,7 @@
                         <option value="koordinator_prodi">Koordinator Prodi</option>
                     </select>
                 </div>
+
                 <button type="submit">Daftar</button>
                 <p class="login-link">
                     Sudah punya akun? <a href="{{ route('user.showLogin') }}">Login di sini</a>

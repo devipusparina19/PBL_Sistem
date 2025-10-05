@@ -32,13 +32,14 @@ class ProfileController extends Controller
         }
 
         if ($request->hasFile('photo')) {
-            $filename = time() . '.' . $request->photo->extension();
-            $request->photo->move(public_path('uploads/profile'), $filename);
-            $user->photo = 'uploads/profile/' . $filename;
-        }
-
-        $user->save();
-
-        return back()->with('success', 'Profil berhasil diperbarui!');
+    // hapus foto lama kalau ada
+    if ($user->photo && file_exists(public_path($user->photo))) {
+        unlink(public_path($user->photo));
     }
+
+    $filename = time() . '.' . $request->photo->extension();
+    $request->photo->move(public_path('uploads/profile'), $filename);
+    $user->photo = 'uploads/profile/' . $filename;
+}
+}
 }

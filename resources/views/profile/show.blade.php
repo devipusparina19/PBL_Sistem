@@ -10,7 +10,7 @@
 
     <div class="row">
         <div class="col-md-4 text-center">
-            <img src="{{ $user->photo ? Storage::url($user->photo) : asset('default-avatar.png') }}" 
+            <img src="{{ $user->photo ? asset($user->photo) : asset('default-avatar.png') }}" 
                  class="rounded-circle mb-3" width="150" height="150" alt="Foto Profil">
         </div>
         <div class="col-md-8">
