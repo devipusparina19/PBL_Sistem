@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -38,30 +37,20 @@ class ProfileController extends Controller
 
         // Update photo jika ada file yang diupload
         if ($request->hasFile('photo')) {
-<<<<<<< HEAD
-    // hapus foto lama kalau ada
-    if ($user->photo && file_exists(public_path($user->photo))) {
-        unlink(public_path($user->photo));
-=======
             // Hapus foto lama jika ada
             if ($user->photo && file_exists(public_path($user->photo))) {
                 unlink(public_path($user->photo));
             }
 
+            // Simpan foto baru
             $filename = time() . '.' . $request->photo->extension();
             $request->photo->move(public_path('uploads/profile'), $filename);
             $data['photo'] = 'uploads/profile/' . $filename;
         }
 
+        // Update data user
         $user->update($data);
 
         return back()->with('success', 'Profil berhasil diperbarui!');
->>>>>>> 77ae7f0558866fb536e7c790c66db044f33b8084
     }
-
-    $filename = time() . '.' . $request->photo->extension();
-    $request->photo->move(public_path('uploads/profile'), $filename);
-    $user->photo = 'uploads/profile/' . $filename;
-}
-}
 }
