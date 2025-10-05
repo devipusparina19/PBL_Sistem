@@ -8,18 +8,17 @@ use Illuminate\Http\Request;
 class DosenController extends Controller
 {
     public function index(Request $request)
-{
-    $search = $request->input('search');
+    {
+        $search = $request->input('search');
 
-    $dosens = Dosen::when($search, function($query, $search) {
-        return $query->where('nama', 'like', "%{$search}%")
-                     ->orWhere('nip', 'like', "%{$search}%")
-                     ->orWhere('email', 'like', "%{$search}%");
-    })->paginate(10);
+        $dosens = Dosen::when($search, function($query, $search) {
+            return $query->where('nama', 'like', "%{$search}%")
+                         ->orWhere('nip', 'like', "%{$search}%")
+                         ->orWhere('email', 'like', "%{$search}%");
+        })->paginate(10);
 
-    return view('data_dosen.index_data', compact('dosens'));
-}
-
+        return view('data_dosen.index_data', compact('dosens'));
+    }
 
     public function create()
     {
@@ -36,12 +35,11 @@ class DosenController extends Controller
         ]);
 
         Dosen::create($request->all());
-        return redirect()->route('data_dosen.index')->with('success', 'Dosen berhasil ditambahkan.');
+        return redirect()->route('dosen.index')->with('success', 'Dosen berhasil ditambahkan.');
     }
 
     public function show(Dosen $dosen)
     {
-
         return view('data_dosen.show_data', compact('dosen'));
     }
 
@@ -50,35 +48,32 @@ class DosenController extends Controller
         return view('data_dosen.edit_data', compact('dosen'));
     }
 
-    public function update(Request $request, $id)
-{
-    $request->validate([
-        'nama' => 'required|string|max:255',
-        'nip' => 'required|string|max:20|unique:dosen,nip,'.$id,
-        'email' => 'required|email|unique:dosen,email,'.$id,
-        'no_telepon' => 'nullable|string|max:15',
-        'mata_kuliah' => 'nullable|array',
-        'mata_kuliah.*' => 'exists:mata_kuliah,id'
-    ]);
-    
-    $dosen = Dosen::findOrFail($id);
-    $dosen->update($request->except('mata_kuliah'));
-    
-    // Sync mata kuliah
-    if ($request->has('mata_kuliah')) {
-        $dosen->mataKuliah()->sync($request->mata_kuliah);
-    } else {
-        $dosen->mataKuliah()->detach();
-    }
-    
-    return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil diperbarui');
-}
-
-     public function destroy($id)
+    public function update(Request $request, Dosen $dosen)
     {
-        $dosen = Dosen::findOrFail($id);
-        $dosen->delete();
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'nip' => 'required|string|max:20|unique:dosens,nip,'.$dosen->id,
+            'email' => 'required|email|unique:dosens,email,'.$dosen->id,
+            'no_telepon' => 'nullable|string|max:15',
+            'mata_kuliah' => 'nullable|array',
+            'mata_kuliah.*' => 'exists:mata_kuliah,id'
+        ]);
 
-        return redirect()->route('data_dosen.index')->with('success', 'Dosen berhasil dihapus.');
-}
+        $dosen->update($request->except('mata_kuliah'));
+
+        // Sync mata kuliah
+        if ($request->has('mata_kuliah')) {
+            $dosen->mataKuliah()->sync($request->mata_kuliah);
+        } else {
+            $dosen->mataKuliah()->detach();
+        }
+
+        return redirect()->route('dosen.index')->with('success', 'Data dosen berhasil diperbarui');
+    }
+
+    public function destroy(Dosen $dosen)
+    {
+        $dosen->delete();
+        return redirect()->route('dosen.index')->with('success', 'Dosen berhasil dihapus.');
+    }
 }
