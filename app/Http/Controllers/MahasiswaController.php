@@ -12,12 +12,7 @@ class MahasiswaController extends Controller
      */
     public function index()
     {
-        // ✅ Urut berdasarkan angkatan (terbaru), lalu kelas, lalu nama
-        $mahasiswas = Mahasiswa::orderBy('angkatan', 'desc')
-                                ->orderBy('kelas', 'asc')
-                                ->orderBy('nama', 'asc')
-                                ->paginate(10);
-
+        $mahasiswas = Mahasiswa::latest()->paginate(10);
         return view('mahasiswa.index', compact('mahasiswas'));
     }
 
@@ -38,7 +33,6 @@ class MahasiswaController extends Controller
             'nim' => 'required|unique:mahasiswas',
             'nama' => 'required',
             'angkatan' => 'required',
-            'kelas' => 'required',
             'email' => 'required|email|unique:mahasiswas',
             'password' => 'required|min:6',
         ]);
@@ -47,7 +41,6 @@ class MahasiswaController extends Controller
             'nim' => $request->nim,
             'nama' => $request->nama,
             'angkatan' => $request->angkatan,
-            'kelas' => $request->kelas,
             'email' => $request->email,
             'password' => bcrypt($request->password),
         ]);
@@ -80,7 +73,6 @@ class MahasiswaController extends Controller
         $request->validate([
             'nama' => 'required',
             'angkatan' => 'required',
-            'kelas' => 'required',
             'email' => 'required|email|unique:mahasiswas,email,' . $mahasiswa->id,
             'password' => 'nullable|min:6',
         ]);
@@ -88,7 +80,6 @@ class MahasiswaController extends Controller
         $data = [
             'nama' => $request->nama,
             'angkatan' => $request->angkatan,
-            'kelas' => $request->kelas,
             'email' => $request->email,
         ];
 

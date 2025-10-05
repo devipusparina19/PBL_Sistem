@@ -37,9 +37,19 @@ class UserController extends Controller
         'email'     => 'required|string|email|max:255|unique:users',
         'password'  => 'required|string|min:8|confirmed',
         'role'      => 'required|string|in:mahasiswa,dosen,admin,koordinator_pbl,koordinator_prodi',
+    ], [
+        'name.required'     => 'Nama wajib diisi.',
+        'email.required'    => 'Email wajib diisi.',
+        'email.email'       => 'Format email tidak valid.',
+        'email.unique'      => 'Email sudah terdaftar.',
+        'password.required' => 'Password wajib diisi.',
+        'password.min'      => 'Password minimal 8 karakter.',
+        'password.confirmed'=> 'Konfirmasi password tidak sesuai.',
+        'role.required'     => 'Role wajib dipilih.',
+        'role.in'           => 'Role yang dipilih tidak valid.',
     ]);
 
-    // ✅ Simpan user ke database
+    // Simpan user ke database
     $user = User::create([
         'name'      => $request->name,
         'email'     => $request->email,
@@ -47,24 +57,10 @@ class UserController extends Controller
         'role'      => $request->role,
     ]);
 
-    // ✅ Kalau role mahasiswa → otomatis tambah ke tabel mahasiswa
-    if ($user->role === 'mahasiswa') {
-        \App\Models\Mahasiswa::create([
-            'nama'     => $user->name,
-            'email'    => $user->email,
-            'nim'      => 'NIM' . rand(10000, 99999), // bisa diganti auto dari form
-            'angkatan' => date('Y'), // otomatis tahun sekarang
-            'password' => $user->password, // disamakan (hash)
-            // tambahkan 'kelas' => $request->kelas kalau nanti ada input kelas
-        ]);
-    }
-
-    // ✅ Login otomatis
     Auth::login($user);
 
     return $this->redirectToDashboard($user);
 }
-
 
     /**
      * ✅ Proses login user
