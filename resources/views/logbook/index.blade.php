@@ -2,9 +2,9 @@
 
 @section('content')
 <div class="container mt-4">
-    <h2 class="fw-bold text-primary mb-4">Milestone / Logbook</h2>
+    <h2 class="fw-bold text-primary mb-4">Logbook</h2>
 
-    <a href="{{ route('milestones.create') }}" class="btn btn-primary mb-3">Isi Logbook</a>
+    <a href="{{ route('logbook.create') }}" class="btn btn-primary mb-3">Isi Logbook</a>
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -14,6 +14,7 @@
         <thead class="table-light">
             <tr>
                 <th>Tanggal</th>
+                <th>Minggu ke</th>
                 <th>Judul</th>
                 <th>Kelompok</th>
                 <th>Rincian</th>
@@ -22,21 +23,22 @@
             </tr>
         </thead>
         <tbody>
-            @forelse($milestones as $milestone)
+            @forelse($logbooks as $logbook)
                 <tr>
-                    <td>{{ $milestone->tanggal }}</td>
-                    <td>{{ $milestone->judul }}</td>
-                    <td>{{ $milestone->kelompok }}</td>
-                    <td>{{ $milestone->rincian }}</td>
-                    <td>
-                        @if($milestone->foto)
-                            <img src="{{ asset('storage/' . $milestone->foto) }}" alt="Foto" width="120" class="rounded">
+                    <td>{{ $logbook->tanggal }}</td>
+                    <td>{{ $logbook->minggu_ke }}</td>
+                    <td>{{ $logbook->judul }}</td>
+                    <td>{{ $logbook->kelompok }}</td>
+                    <td>{{ $logbook->rincian }}</td>
+                    <td class="text-center">
+                        @if($logbook->foto)
+                            <img src="{{ asset('storage/' . $logbook->foto) }}" alt="Foto" width="120">
                         @else
                             <span class="text-muted">-</span>
                         @endif
                     </td>
                     <td>
-                        <form action="{{ route('milestones.destroy', $milestone->id) }}" method="POST" onsubmit="return confirm('Yakin mau hapus data ini?')" class="d-inline">
+                        <form action="{{ route('logbook.destroy', $logbook->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin untuk menghapus data ini?')" class="d-inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm">Hapus</button>

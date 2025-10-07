@@ -41,6 +41,12 @@ class DashboardController extends Controller
         $dosen = Dosen::all(); // atau filter sesuai kebutuhan
         return view('dosen.home', compact('dosen'));
     }
+    
+    // Menu Logbook
+    public function logbook()
+    {
+        return view('logbook.index');
+    }
 
     // Menu Milestone
     public function milestones()
