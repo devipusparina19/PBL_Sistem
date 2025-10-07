@@ -1,4 +1,3 @@
-<!-- resources/views/mahasiswa/edit.blade.php -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -34,7 +33,7 @@
             color: #444;
         }
 
-        input {
+        input, select {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
@@ -43,7 +42,7 @@
             transition: border 0.3s;
         }
 
-        input:focus {
+        input:focus, select:focus {
             border-color: #2563eb;
             outline: none;
         }
@@ -94,6 +93,16 @@
 
         <label>Nama</label>
         <input type="text" name="nama" value="{{ $mahasiswa->nama }}" required>
+
+        <label>Kelas</label>
+        <select name="kelas" required>
+            <option value="">-- Pilih Kelas --</option>
+            <option value="TI 3A" {{ old('kelas') == 'TI 3A' ? 'selected' : '' }}>TI 3A</option>
+            <option value="TI 3B" {{ old('kelas') == 'TI 3B' ? 'selected' : '' }}>TI 3B</option>
+            <option value="TI 3C" {{ old('kelas') == 'TI 3C' ? 'selected' : '' }}>TI 3C</option>
+            <option value="TI 3D" {{ old('kelas') == 'TI 3D' ? 'selected' : '' }}>TI 3D</option>
+            <option value="TI 3E" {{ old('kelas') == 'TI 3E' ? 'selected' : '' }}>TI 3E</option>
+        </select>
 
         <label>Angkatan</label>
         <input type="text" name="angkatan" value="{{ $mahasiswa->angkatan }}" required>

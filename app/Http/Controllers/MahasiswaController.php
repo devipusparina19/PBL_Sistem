@@ -12,7 +12,14 @@ class MahasiswaController extends Controller
      */
     public function index()
     {
-        $mahasiswas = Mahasiswa::latest()->paginate(10);
+        // urutkan berdasarkan kelas (A-Z) dan nama (A-Z)
+        $mahasiswas = Mahasiswa::orderBy('kelas', 'asc')
+                        ->orderBy('nama', 'asc')
+                        ->get();
+
+        // versi lama tetap ada, tapi sekarang pakai urutan baru di atas
+        // $mahasiswas = Mahasiswa::latest()->paginate(10);
+
         return view('mahasiswa.index', compact('mahasiswas'));
     }
 
@@ -32,6 +39,7 @@ class MahasiswaController extends Controller
         $request->validate([
             'nim' => 'required|unique:mahasiswas',
             'nama' => 'required',
+            'kelas' => 'required', 
             'angkatan' => 'required',
             'email' => 'required|email|unique:mahasiswas',
             'password' => 'required|min:6',
@@ -40,6 +48,7 @@ class MahasiswaController extends Controller
         Mahasiswa::create([
             'nim' => $request->nim,
             'nama' => $request->nama,
+            'kelas' => $request->kelas, 
             'angkatan' => $request->angkatan,
             'email' => $request->email,
             'password' => bcrypt($request->password),
@@ -72,6 +81,7 @@ class MahasiswaController extends Controller
     {
         $request->validate([
             'nama' => 'required',
+            'kelas' => 'required', 
             'angkatan' => 'required',
             'email' => 'required|email|unique:mahasiswas,email,' . $mahasiswa->id,
             'password' => 'nullable|min:6',
@@ -79,6 +89,7 @@ class MahasiswaController extends Controller
 
         $data = [
             'nama' => $request->nama,
+            'kelas' => $request->kelas, 
             'angkatan' => $request->angkatan,
             'email' => $request->email,
         ];

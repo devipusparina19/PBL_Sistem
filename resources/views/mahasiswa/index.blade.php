@@ -33,6 +33,7 @@
                     <th>No</th>
                     <th>NIM</th>
                     <th>Nama</th>
+                    <th>Kelas</th>
                     <th>Angkatan</th>
                     <th>Email</th>
                     @unless($isRestricted)
@@ -46,6 +47,7 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $m->nim }}</td>
                         <td>{{ $m->nama }}</td>
+                        <td>{{ $m->kelas }}</td>
                         <td>{{ $m->angkatan }}</td>
                         <td>{{ $m->email }}</td>
                         @unless($isRestricted)
@@ -62,7 +64,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="{{ $isRestricted ? 5 : 6 }}" class="text-center">Data mahasiswa tidak tersedia.</td>
+                        <td colspan="{{ $isRestricted ? 6 : 7 }}" class="text-center">Data mahasiswa tidak tersedia.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -70,3 +72,48 @@
     </div>
 </div>
 @endsection
+
+{{-- ✅ Tambahan CSS agar tombol aksi tidak hilang atau turun --}}
+<style>
+    .table td, .table th {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .table td:last-child {
+        white-space: nowrap; /* Supaya tombol tidak pecah ke baris baru */
+    }
+
+    .btn-sm {
+        padding: 5px 10px;
+        margin: 2px;
+        font-size: 0.85rem;
+        border-radius: 5px;
+    }
+
+    .btn-info {
+        background-color: #0dcaf0;
+        border: none;
+        color: #fff;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        border: none;
+        color: #fff;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border: none;
+        color: #fff;
+    }
+
+    .btn-info:hover { background-color: #0bb4d8; }
+    .btn-warning:hover { background-color: #e0a800; }
+    .btn-danger:hover { background-color: #bb2d3b; }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+</style>
