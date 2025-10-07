@@ -180,7 +180,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('user.store') }}" method="POST">
+            <form action="{{ route('register') }}" method="POST">
                 @csrf
                 <div class="form-group">
                     <label>Nama</label>
@@ -211,7 +211,7 @@
                 </div>
                 <button type="submit">Daftar</button>
                 <p class="login-link">
-                    Sudah punya akun? <a href="{{ route('user.showLogin') }}">Login di sini</a>
+                    Sudah punya akun? <a href="{{ route('login') }}">Login di sini</a>
                 </p>
             </form>
         </section>

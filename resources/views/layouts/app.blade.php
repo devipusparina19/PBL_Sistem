@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem PBL Mahasiswa TI</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title', 'Sistem PBL Mahasiswa TI')</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <style>
         body {
@@ -106,6 +108,8 @@
             width: 100%;
         }
     </style>
+
+    @stack('styles')
 </head>
 <body>
     <!-- Navbar -->
@@ -121,9 +125,12 @@
                     <li class="nav-item"><a class="nav-link text-white" href="{{ url('/about') }}">About</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="{{ url('/contact') }}">Contact</a></li>
                     <li class="nav-item">
-                        <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                        <!-- Tombol Logout -->
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
                             @csrf
-                            <button type="submit" class="btn btn-link nav-link text-white" style="text-decoration:none;">Log Out</button>
+                            <button type="submit" class="btn btn-link nav-link text-white px-0" style="text-decoration:none;">
+                                <i class="bi bi-box-arrow-right"></i> Log Out
+                            </button>
                         </form>
                     </li>
                 </ul>
@@ -154,6 +161,19 @@
 
         <!-- Konten -->
         <div class="main-content">
+            {{-- Flash Message --}}
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @elseif (session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
             @yield('content')
         </div>
     </div>
@@ -164,6 +184,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    @stack('scripts')
 </body>
 </html>
