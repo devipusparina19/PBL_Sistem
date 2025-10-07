@@ -31,19 +31,22 @@ class DashboardController extends Controller
     // Menu Akun Mahasiswa
     public function mahasiswa()
     {
-        return view('mahasiswa.index');
+    $mahasiswa = Mahasiswa::all(); // atau filter sesuai kebutuhan
+    return view('Mahasiswa.home', compact('Mahasiswa'));
     }
 
     // Menu Dosen
     public function dosen()
     {
-        return view('dosen.index');
+        $dosen = Dosen::all(); // atau filter sesuai kebutuhan
+        return view('dosen.home', compact('dosen'));
     }
 
     // Menu Milestone
     public function milestones()
     {
-        return view('milestones.index');
+        $milestones = Milestone::all(); // atau filter sesuai kebutuhan
+        return view('milestones.index', compact('milestones'));
     }
 
     // Menu Koordinator PBL

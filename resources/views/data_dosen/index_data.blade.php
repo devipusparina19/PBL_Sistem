@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+    $restrictedRoles = ['mahasiswa', 'dosen', 'koordinator_prodi', 'koordinator_pbl'];
+    $isRestricted = in_array(auth()->user()->role, $restrictedRoles);
+@endphp
+
 <div class="container mt-4">
     <h1 class="mb-4">Daftar Dosen</h1>
 
@@ -12,18 +17,22 @@
     {{-- Form Pencarian dan Tombol Tambah --}}
     <div class="row mb-3">
         <div class="col-md-8">
-            <form action="{{ route('data_dosen.index') }}" method="GET" class="d-flex">
-                <input type="text" name="search" class="form-control me-2" 
-                       placeholder="Cari nama / NIP / email / mata kuliah..." 
+            <form action="{{ route('dosen.index') }}" method="GET" class="d-flex">
+                <input type="text" name="search" class="form-control me-2"
+                       placeholder="Cari nama / NIP / email / mata kuliah..."
                        value="{{ request('search') }}">
                 <button type="submit" class="btn btn-secondary">Cari</button>
                 @if(request('search'))
-                    <a href="{{ route('data_dosen.index') }}" class="btn btn-outline-secondary ms-2">Reset</a>
+                    <a href="{{ route('dosen.index') }}" class="btn btn-outline-secondary ms-2">Reset</a>
                 @endif
             </form>
         </div>
+
+        {{-- Tombol Tambah --}}
         <div class="col-md-4 text-end">
-            <a href="{{ route('data_dosen.create') }}" class="btn btn-primary">➕ Tambah Dosen</a>
+            @unless($isRestricted)
+                <a href="{{ route('dosen.create') }}" class="btn btn-primary">➕ Tambah Dosen</a>
+            @endunless
         </div>
     </div>
 
@@ -31,7 +40,7 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered table-striped">
+                <table class="table table-bordered table-striped align-middle">
                     <thead class="table-dark">
                         <tr>
                             <th>No</th>
@@ -40,7 +49,9 @@
                             <th>Email</th>
                             <th>No. Telepon</th>
                             <th>Mata Kuliah</th>
-                            <th>Aksi</th>
+                            @unless($isRestricted)
+                                <th width="180">Aksi</th>
+                            @endunless
                         </tr>
                     </thead>
                     <tbody>
@@ -60,24 +71,23 @@
                                         <span class="text-muted">-</span>
                                     @endif
                                 </td>
-                                <td>
-                                    {{-- Tombol Lihat --}}
-                                    <a href="{{ route('data_dosen.show', $item->id) }}" class="btn btn-sm btn-info">Lihat</a>
-                                    
-                                    {{-- Tombol Edit --}}
-                                    <a href="{{ route('data_dosen.edit', $item->id) }}" class="btn btn-sm btn-warning">Edit</a>
 
-                                    {{-- Tombol Hapus --}}
-                                    <form action="{{ route('data_dosen.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-danger">Hapus</button>
-                                    </form>
-                                </td>
+                                {{-- Kolom Aksi hanya jika bukan role terbatas --}}
+                                @unless($isRestricted)
+                                    <td>
+                                        <a href="{{ route('dosen.show', $item->id) }}" class="btn btn-sm btn-info">Lihat</a>
+                                        <a href="{{ route('dosen.edit', $item->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                        <form action="{{ route('dosen.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-sm btn-danger">Hapus</button>
+                                        </form>
+                                    </td>
+                                @endunless
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center">Tidak ada data dosen</td>
+                                <td colspan="{{ $isRestricted ? 6 : 7 }}" class="text-center text-muted">Tidak ada data dosen</td>
                             </tr>
                         @endforelse
                     </tbody>

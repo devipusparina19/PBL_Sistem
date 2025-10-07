@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem PBL Mahasiswa TI</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <style>
         body {
@@ -30,16 +31,17 @@
             font-weight: 600;
         }
 
-        .nav-link:hover, .nav-link.active {
+        .nav-link:hover,
+        .nav-link.active {
             text-decoration: underline;
             color: #60a5fa !important; /* hover biru muda */
         }
 
         /* --- Sidebar --- */
         .sidebar {
-            width: 300px; /* diperlebar dari 250px */
+            width: 300px;
             background: #f3f4f6;
-            min-height: calc(100vh - 56px); /* tinggi penuh dikurangi navbar */
+            min-height: calc(100vh - 56px);
             padding-top: 25px;
             display: flex;
             flex-direction: column;
@@ -50,7 +52,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 14px 28px; /* diperlebar padding agar lebih lega */
+            padding: 14px 28px;
             color: #1e293b;
             text-decoration: none;
             font-weight: 500;
@@ -134,21 +136,21 @@
             <a href="{{ url('/home') }}" class="{{ request()->is('home') ? 'active' : '' }}">
                 <i class="bi bi-house-door-fill"></i> Home
             </a>
-            <a href="{{ url('/data-dosen') }}" class="{{ request()->is('data-dosen') ? 'active' : '' }}">
+            <a href="{{ url('/dosen') }}" class="{{ request()->is('dosen') ? 'active' : '' }}">
                 <i class="bi bi-person-badge-fill"></i> Data Dosen
             </a>
-            <a href="{{ url('/data-mahasiswa') }}" class="{{ request()->is('data-mahasiswa') ? 'active' : '' }}">
+            <a href="{{ url('/mahasiswa') }}" class="{{ request()->is('mahasiswa') ? 'active' : '' }}">
                 <i class="bi bi-mortarboard-fill"></i> Data Mahasiswa
             </a>
-            <a href="{{ url('/kelompok-pbl') }}" class="{{ request()->is('kelompok-pbl') ? 'active' : '' }}">
+            <a href="{{ url('/kelompok') }}" class="{{ request()->is('kelompok') ? 'active' : '' }}">
                 <i class="bi bi-people-fill"></i> Kelompok PBL
             </a>
             <a href="{{ url('/profile') }}" class="{{ request()->is('profile') ? 'active' : '' }}">
-                <i class="bi bi-person-circle me-2 fs-5"></i> Profile
+                <i class="bi bi-person-circle"></i> Profile
             </a>
         </div>
 
-        <!-- Konten -->
+        <!-- Konten Utama -->
         <div class="main-content">
             @yield('content')
         </div>
@@ -160,6 +162,5 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </body>
 </html>
