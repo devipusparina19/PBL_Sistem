@@ -129,7 +129,6 @@
         box-shadow: 0 -2px 8px rgba(0,0,0,0.25);
     }
 </style>
-</style>
 </head>
 <body>
     <header>

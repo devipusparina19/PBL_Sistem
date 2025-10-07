@@ -5,64 +5,86 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistem PBL Mahasiswa TI</title>
   <style>
+    /* reset */
     * {
-        margin: 0; padding: 0; box-sizing: border-box;
-        font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
     }
+
     body {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-        background: url('background-pbl.jpg') no-repeat center center fixed;
-        background-size: cover;
-        color: white;
-        position: relative;
-        overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background:
+        linear-gradient(rgba(0, 25, 75, 0.45), rgba(0, 25, 75, 0.45)),
+        url("{{ asset('background-pbl.jpg') }}") no-repeat center center/cover;
+      color: #ffffff;
     }
 
-    /* Blur ringan agar foto tetap kelihatan */
-    body::before {
-        content: "";
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: inherit;
-        filter: blur(4px) brightness(0.85);
-        z-index: -1;
-    }
-
+    /* header */
     header {
-        width: 100%;
-        padding: 1rem 5%;
-        background: rgba(0, 31, 84, 0.85);
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center;
-        color: white;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+      width: 100%;
+      padding: 1rem 5%;
+      background: rgba(0, 31, 84, 0.8);
+      backdrop-filter: blur(6px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      position: relative;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.25);
     }
-    header .logo { font-weight: bold; font-size: 1.2rem; color: white; }
 
+    header .logo {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: white;
+    }
+
+    /* hamburger button */
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .menu-toggle span {
+      height: 3px;
+      width: 25px;
+      background: white;
+      margin: 4px 0;
+      border-radius: 2px;
+    }
+
+    /* konten utama */
     main {
-        flex: 1;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 8%;
+      flex: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 8%;
+      flex-wrap: wrap;
+      gap: 2rem;
     }
 
     .welcome-section {
-        max-width: 450px;
-        text-align: left;
-        color: white;
-        text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      max-width: 450px;
+      color: #f1f5f9;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
     }
+
     .welcome-section h2 {
-        font-size: 3rem; font-weight: 800;
-        margin-bottom: 1rem; line-height: 1.2;
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      line-height: 1.2;
     }
+
     .welcome-section p {
-        font-size: 1.2rem; line-height: 1.6;
+      font-size: 1.1rem;
+      line-height: 1.6;
     }
 
     /* login card */
