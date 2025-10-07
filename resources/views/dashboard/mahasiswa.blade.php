@@ -9,21 +9,21 @@
     </div>
 
     <div class="row g-4">
-        <!-- Milestone / Logbook -->
+        <!-- Logbook -->
 <div class="col-md-4">
     <div class="card h-100 shadow-sm border-0 rounded-3">
         <div class="card-body text-center">
             <div class="mb-3">
                 <i class="bi bi-journal-text text-primary" style="font-size:2rem;"></i>
             </div>
-            <h5 class="card-title">Milestones / Logbook</h5>
+            <h5 class="card-title">Logbook</h5>
             <p class="text-muted">Isi progres mingguan proyek Anda bersama kelompok.</p>
-            <a href="{{ url('/milestones') }}" class="btn btn-primary w-100 text-white">Isi Logbook</a>
+            <a href="{{ url('/logbook') }}" class="btn btn-primary w-100 text-white">Isi Logbook</a>
         </div>
     </div>
 </div>
 
-<!-- Nilai & Umpan Balik -->
+<!-- Penilaian -->
 <div class="col-md-4">
     <div class="card h-100 shadow-sm border-0 rounded-3">
         <div class="card-body text-center">

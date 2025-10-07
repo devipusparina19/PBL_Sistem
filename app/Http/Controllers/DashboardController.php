@@ -39,6 +39,12 @@ class DashboardController extends Controller
     {
         return view('dosen.index');
     }
+    
+    // Menu Logbook
+    public function logbook()
+    {
+        return view('logbook.index');
+    }
 
     // Menu Milestone
     public function milestones()

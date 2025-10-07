@@ -10,6 +10,7 @@ use App\Http\Controllers\DosenController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KelompokController;
+use App\Http\Controllers\LogbookController;
 use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\ContactController;
 
@@ -80,7 +81,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('mahasiswa', MahasiswaController::class);
     Route::resource('data_dosen', DosenController::class);
     Route::resource('kelompok', KelompokController::class);
-    Route::resource('milestones', MilestoneController::class);
+    Route::resource('logbook', LogbookController::class);
 
 
     // Route Profile (Dipindahkan dari blok bersarang ke blok utama yang sudah dilindungi 'auth')
