@@ -9,10 +9,12 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    {{-- Tombol Tambah --}}
-    <div class="mb-3">
-        <a href="{{ route('kelompok.create') }}" class="btn btn-primary">Tambah Kelompok</a>
-    </div>
+    {{-- Tombol Tambah (hanya untuk role tertentu) --}}
+    @if(!in_array(auth()->user()->role, ['mahasiswa', 'dosen', 'koordinator_prodi', 'koordinator_pbl']))
+        <div class="mb-3">
+            <a href="{{ route('kelompok.create') }}" class="btn btn-primary">Tambah Kelompok</a>
+        </div>
+    @endif
 
     {{-- Tabel daftar kelompok --}}
     <table class="table table-bordered table-striped">
@@ -37,15 +39,16 @@
                     <td>{{ $item->nip }}</td>
                     <td>{{ $item->deskripsi ?? '-' }}</td>
                     <td>
-                        {{-- Tombol Edit --}}
-                        <a href="{{ route('kelompok.edit', $item->id_kelompok) }}" class="btn btn-sm btn-warning">Edit</a>
+                        {{-- Tombol Edit & Hapus hanya untuk role tertentu --}}
+                        @if(!in_array(auth()->user()->role, ['mahasiswa', 'dosen', 'koordinator_prodi', 'koordinator_pbl']))
+                            <a href="{{ route('kelompok.edit', $item->id_kelompok) }}" class="btn btn-sm btn-warning">Edit</a>
 
-                        {{-- Tombol Hapus --}}
-                        <form action="{{ route('kelompok.destroy', $item->id_kelompok) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-danger">Hapus</button>
-                        </form>
+                            <form action="{{ route('kelompok.destroy', $item->id_kelompok) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-sm btn-danger">Hapus</button>
+                            </form>
+                        @endif
                     </td>
                 </tr>
             @empty

@@ -6,10 +6,14 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Data Kelompok</h2>
-        <a href="{{ route('kelompok.create') }}" class="btn btn-primary">Tambah Kelompok</a>
+
+        {{-- Tombol Tambah hanya untuk role selain yang dibatasi --}}
+        @if(!in_array(auth()->user()->role, ['mahasiswa', 'dosen', 'koordinator_prodi', 'koordinator_pbl']))
+            <a href="{{ route('kelompok.create') }}" class="btn btn-primary">Tambah Kelompok</a>
+        @endif
     </div>
 
-    <!-- Notifikasi Sukses -->
+    {{-- Notifikasi Sukses --}}
     @if(session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
@@ -33,13 +37,15 @@
                         <td>{{ $kelompok->nama }}</td>
                         <td>{{ $kelompok->deskripsi }}</td>
                         <td>
-                            <a href="{{ route('kelompok.edit', $kelompok->id) }}" class="btn btn-warning btn-sm">Edit</a>
-
-                            <form action="{{ route('kelompok.destroy', $kelompok->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah yakin ingin menghapus?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                            </form>
+                            {{-- Tombol Edit & Hapus hanya untuk role tertentu --}}
+                            @if(!in_array(auth()->user()->role, ['mahasiswa', 'dosen', 'koordinator_prodi', 'koordinator_pbl']))
+                                <a href="{{ route('kelompok.edit', $kelompok->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                <form action="{{ route('kelompok.destroy', $kelompok->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah yakin ingin menghapus?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                </form>
+                            @endif
                         </td>
                     </tr>
                 @empty

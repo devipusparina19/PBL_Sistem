@@ -6,10 +6,14 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>Data Mahasiswa</h2>
-        <a href="{{ route('mahasiswa.create') }}" class="btn btn-primary">Tambah Data Mahasiswa</a>
+
+        {{-- Tombol Tambah hanya untuk role tertentu --}}
+        @unless(in_array(auth()->user()->role, ['mahasiswa', 'dosen', 'koordinator_prodi', 'koordinator_pbl']))
+            <a href="{{ route('mahasiswa.create') }}" class="btn btn-primary">Tambah Data Mahasiswa</a>
+        @endunless
     </div>
 
-    <!-- Notifikasi Sukses -->
+    {{-- Notifikasi Sukses --}}
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
@@ -39,12 +43,16 @@
                         <td>{{ $m->email }}</td>
                         <td>
                             <a href="{{ route('mahasiswa.show', $m->id) }}" class="btn btn-info btn-sm">Lihat</a>
-                            <a href="{{ route('mahasiswa.edit', $m->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                            <form action="{{ route('mahasiswa.destroy', $m->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah yakin ingin menghapus data ini?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                            </form>
+
+                            {{-- Tombol Edit & Hapus hanya untuk role tertentu --}}
+                            @unless(in_array(auth()->user()->role, ['mahasiswa', 'dosen', 'koordinator_prodi', 'koordinator_pbl']))
+                                <a href="{{ route('mahasiswa.edit', $m->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                <form action="{{ route('mahasiswa.destroy', $m->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah yakin ingin menghapus data ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                </form>
+                            @endunless
                         </td>
                     </tr>
                 @empty
