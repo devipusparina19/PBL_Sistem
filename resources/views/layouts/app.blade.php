@@ -100,6 +100,10 @@
             text-align: center;
             color: white;
             font-size: 0.9rem;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
         }
     </style>
 </head>
