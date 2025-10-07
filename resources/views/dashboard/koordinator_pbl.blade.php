@@ -14,7 +14,7 @@
             <div class="card-body">
                 <h5 class="card-title">Manajemen Kelompok</h5>
                 <p>Atur pembentukan & anggota kelompok</p>
-                <a href="{{ url('/kelompok') }}" class="btn btn-primary">Kelola</a>
+                <a href="{{ url('/kelompok') }}" class="btn btn-primary text-white">Kelola</a>
             </div>
         </div>
     </div>
@@ -25,7 +25,7 @@
             <div class="card-body">
                 <h5 class="card-title">Monitoring Progres</h5>
                 <p>Lihat progres seluruh kelompok</p>
-                <a href="{{ url('/monitoring') }}" class="btn btn-info">Pantau</a>
+                <a href="{{ url('/monitoring') }}" class="btn btn-primary text-white">Pantau</a>
             </div>
         </div>
     </div>
@@ -36,7 +36,7 @@
             <div class="card-body">
                 <h5 class="card-title">Rekap Laporan</h5>
                 <p>Rekap nilai & progres untuk evaluasi PBL</p>
-                <a href="{{ url('/laporan') }}" class="btn btn-success">Lihat</a>
+                <a href="{{ url('/laporan') }}" class="btn btn-primary text-white">Lihat</a>
             </div>
         </div>
     </div>

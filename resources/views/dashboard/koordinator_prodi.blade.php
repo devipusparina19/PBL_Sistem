@@ -14,7 +14,7 @@
             <div class="card-body">
                 <h5 class="card-title">Monitoring Keseluruhan</h5>
                 <p>Pantau progres mahasiswa & kelompok</p>
-                <a href="{{ url('/monitoring/all') }}" class="btn btn-info">Pantau</a>
+                <a href="{{ url('/monitoring/all') }}" class="btn btn-primary text-white">Pantau</a>
             </div>
         </div>
     </div>
@@ -25,7 +25,7 @@
             <div class="card-body">
                 <h5 class="card-title">Laporan Penilaian</h5>
                 <p>Akses rekap penilaian akhir untuk evaluasi</p>
-                <a href="{{ url('/laporan/akhir') }}" class="btn btn-success">Lihat</a>
+                <a href="{{ url('/laporan/akhir') }}" class="btn btn-primary text-white">Lihat</a>
             </div>
         </div>
     </div>
