@@ -17,20 +17,24 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      background: #ffffff;
-      color: #1e293b;
+      background:
+        linear-gradient(rgba(0, 25, 75, 0.45), rgba(0, 25, 75, 0.45)),
+        url("{{ asset('background-pbl.jpg') }}") no-repeat center center/cover;
+      color: #ffffff;
     }
 
     /* header */
     header {
       width: 100%;
       padding: 1rem 5%;
-      background: #001f54; /* NAVY */
+      background: rgba(0, 31, 84, 0.8);
+      backdrop-filter: blur(6px);
       display: flex;
       justify-content: space-between;
       align-items: center;
       color: white;
       position: relative;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.25);
     }
 
     header .logo {
@@ -67,35 +71,39 @@
 
     .welcome-section {
       max-width: 450px;
-      color: #0a2a66;
+      color: #f1f5f9;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
     }
 
     .welcome-section h2 {
-      font-size: 2.5rem;
+      font-size: 3rem;
       font-weight: 800;
       margin-bottom: 1rem;
       line-height: 1.2;
     }
 
     .welcome-section p {
-      font-size: 1.1rem;
+      font-size: 1.5rem;
       line-height: 1.6;
     }
 
+    /* login card */
     .login-card {
-      background: #fff;
+      background: rgba(255, 255, 255, 0.93);
       padding: 2.5rem;
       border-radius: 15px;
-      box-shadow: 0px 6px 20px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.25);
       width: 100%;
       max-width: 380px;
       text-align: center;
+      color: #1e293b;
     }
 
     .login-card h3 {
       margin-bottom: 1.5rem;
-      font-size: 1.5rem;
-      color: #0057e7;
+      font-size: 1.6rem;
+      color: #003399;
+      font-weight: 700;
     }
 
     .error-message {
@@ -114,7 +122,8 @@
       display: block;
       font-size: 0.9rem;
       margin-bottom: 0.3rem;
-      color: #333;
+      color: #111827;
+      font-weight: 500;
     }
 
     .form-group input {
@@ -135,10 +144,12 @@
       font-weight: bold;
       cursor: pointer;
       margin-top: 0.5rem;
+      transition: 0.3s;
     }
 
     .login-card button:hover {
       background: #0041b3;
+      transform: scale(1.02);
     }
 
     .register-link {
@@ -152,13 +163,42 @@
       text-decoration: none;
     }
 
+    /* tombol google */
+    .google-login {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      color: #444;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 0.6rem 0.8rem;
+      font-weight: bold;
+      margin-top: 1rem;
+      text-decoration: none;
+      transition: 0.3s;
+      width: 100%;
+    }
+
+    .google-login:hover {
+      background: #f8f8f8;
+      transform: scale(1.02);
+    }
+
+    .google-login img {
+      width: 18px;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
     /* footer */
     footer {
-      background: #001f54;
+      background: rgba(0, 31, 84, 0.85);
       padding: 0.8rem;
       text-align: center;
       color: white;
       font-size: 0.9rem;
+      box-shadow: 0 -3px 10px rgba(0,0,0,0.2);
     }
 
     /* responsif */
@@ -201,7 +241,8 @@
       <!-- tampilkan error global -->
       @if(session('error'))
         <p class="error-message">{{ session('error') }}</p>
-    @endif
+      @endif
+
       <form action="{{ route('user.login') }}" method="POST">
         @csrf
         <div class="form-group">
@@ -219,6 +260,13 @@
           @enderror
         </div>
         <button type="submit">Login</button>
+
+        <!-- Tombol Login Google -->
+        <a href="{{ route('login.google') }}" class="google-login">
+          <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo">
+          Login dengan Akun Politala
+        </a>
+
         <p class="register-link">
           Belum punya akun? <a href="{{ route('user.showRegister') }}">Daftar sekarang</a>
         </p>

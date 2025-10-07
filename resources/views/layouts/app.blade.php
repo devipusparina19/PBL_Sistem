@@ -138,13 +138,13 @@
             <a href="{{ url('/home') }}" class="{{ request()->is('home') ? 'active' : '' }}">
                 <i class="bi bi-house-door-fill"></i> Home
             </a>
-            <a href="{{ url('/data-dosen') }}" class="{{ request()->is('data-dosen') ? 'active' : '' }}">
+            <a href="{{ url('/dosen') }}" class="{{ request()->is('dosen') ? 'active' : '' }}">
                 <i class="bi bi-person-badge-fill"></i> Data Dosen
             </a>
-            <a href="{{ url('/data-mahasiswa') }}" class="{{ request()->is('data-mahasiswa') ? 'active' : '' }}">
+            <a href="{{ url('/mahasiswa') }}" class="{{ request()->is('mahasiswa') ? 'active' : '' }}">
                 <i class="bi bi-mortarboard-fill"></i> Data Mahasiswa
             </a>
-            <a href="{{ url('/kelompok-pbl') }}" class="{{ request()->is('kelompok-pbl') ? 'active' : '' }}">
+            <a href="{{ url('/kelompok') }}" class="{{ request()->is('kelompok') ? 'active' : '' }}">
                 <i class="bi bi-people-fill"></i> Kelompok PBL
             </a>
             <a href="{{ url('/profile') }}" class="{{ request()->is('profile') ? 'active' : '' }}">
