@@ -18,9 +18,15 @@
         </div>
 
         <div class="mb-3">
-            <label>Minggu ke</label>
-            <input type="text" name="minggu_ke" class="form-control" value="{{ $weekOfMonth }}" readonly>
-            <small class="text-muted">Minggu ke-{{ $weekOfMonth }} dari bulan ini</small>
+           <label for="minggu_ke" class="form-label">Minggu ke</label>
+           <select name="minggu_ke" id="minggu_ke" class="form-select" required>
+                <option value="">-- Pilih Minggu --</option>
+                @for ($i = 1; $i <= 16; $i++)
+                    <option value="{{ $i }}" {{ old('minggu_ke') == $i ? 'selected' : '' }}>
+                        Minggu ke-{{ $i }}
+                    </option>
+                @endfor
+            </select>
         </div>
 
         <div class="mb-3">

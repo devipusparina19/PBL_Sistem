@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <style>
-        body {
-            min-height: 100vh;
+        html, body {
+            height: 100%;
             background: #ffffff;
             color: #1e293b;
             display: flex;
@@ -102,10 +102,7 @@
             text-align: center;
             color: white;
             font-size: 0.9rem;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
+            margin-top: auto;
         }
     </style>
 
