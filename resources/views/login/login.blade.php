@@ -76,14 +76,14 @@
     }
 
     .welcome-section h2 {
-      font-size: 2.5rem;
+      font-size: 3rem;
       font-weight: 800;
       margin-bottom: 1rem;
       line-height: 1.2;
     }
 
     .welcome-section p {
-      font-size: 1.1rem;
+      font-size: 1.5rem;
       line-height: 1.6;
     }
 
