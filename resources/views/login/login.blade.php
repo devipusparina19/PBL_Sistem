@@ -163,6 +163,34 @@
       text-decoration: none;
     }
 
+    /* tombol google */
+    .google-login {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      color: #444;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 0.6rem 0.8rem;
+      font-weight: bold;
+      margin-top: 1rem;
+      text-decoration: none;
+      transition: 0.3s;
+      width: 100%;
+    }
+
+    .google-login:hover {
+      background: #f8f8f8;
+      transform: scale(1.02);
+    }
+
+    .google-login img {
+      width: 18px;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
     /* footer */
     footer {
       background: rgba(0, 31, 84, 0.85);
@@ -232,6 +260,13 @@
           @enderror
         </div>
         <button type="submit">Login</button>
+
+        <!-- Tombol Login Google -->
+        <a href="{{ route('login.google') }}" class="google-login">
+          <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo">
+          Login dengan Akun Politala
+        </a>
+
         <p class="register-link">
           Belum punya akun? <a href="{{ route('user.showRegister') }}">Daftar sekarang</a>
         </p>

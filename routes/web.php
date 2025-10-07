@@ -12,6 +12,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KelompokController;
 use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Auth\GoogleController; // ✅ Tambahan controller Google
+use App\Http\Controllers\ProfileController; // ✅ Tambahkan biar route profile dikenali
 
 /*
 |--------------------------------------------------------------------------
@@ -30,12 +32,14 @@ Route::post('/register', [UserController::class, 'store'])->name('user.store');
 Route::get('/login', [UserController::class, 'showLogin'])->name('user.showLogin');
 Route::post('/login', [UserController::class, 'login'])->name('user.login');
 
+// ✅ Tambahan: Login via Google
+Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
+Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
+
 // Logout
 Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
-
-// contact
-
+// Contact (Publik)
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
@@ -44,19 +48,19 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 | Protected Routes (Butuh Login)
 |--------------------------------------------------------------------------
 */
-// BLOK UTAMA DIBUKA DI SINI
+
 Route::middleware('auth')->group(function () {
 
     Route::get('/home', function () {
-          return view('home.home'); 
+        return view('home.home'); 
     })->name('home');
 
-    // ✅ About Page (TAMBAHAN)
+    // ✅ About Page
     Route::get('/about', function () {
         return view('about');
     })->name('about');
 
-    // ✅ Contact Page (TAMBAHAN)
+    // ✅ Contact Page (versi dalam login)
     Route::get('/contact', function () {
         return view('contact');
     })->name('contact');
@@ -64,7 +68,7 @@ Route::middleware('auth')->group(function () {
     // Dashboard umum
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('pbl.dashboard');
 
-    // Dashboard per role (Mempertahankan route Koordinator_PBL dan Koordinator_Prodi secara terpisah)
+    // Dashboard per role
     Route::get('/dashboard/mahasiswa', fn() => view('dashboard.mahasiswa'))->name('mahasiswa.dashboard');
     Route::get('/dashboard/dosen', fn() => view('dashboard.dosen'))->name('dosen.dashboard');
     Route::get('/dashboard/admin', fn() => view('dashboard.admin'))->name('admin.dashboard');
@@ -82,13 +86,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('kelompok', KelompokController::class);
     Route::resource('milestones', MilestoneController::class);
 
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
-    // Route Profile (Dipindahkan dari blok bersarang ke blok utama yang sudah dilindungi 'auth')
-    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
-    Route::post('/profile/update', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
-
-
+    // Dosen Resource tambahan (boleh tetap)
     Route::resource('dosen', DosenController::class);
-
 });
-
