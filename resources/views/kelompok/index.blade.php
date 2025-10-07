@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+    $restrictedRoles = ['mahasiswa', 'dosen', 'koordinator_prodi', 'koordinator_pbl'];
+    $isRestricted = in_array(auth()->user()->role, $restrictedRoles);
+@endphp
+
 <div class="container mt-4">
     <h1 class="mb-4">Daftar Kelompok</h1>
 
@@ -10,54 +15,58 @@
     @endif
 
     {{-- Tombol Tambah (hanya untuk role tertentu) --}}
-    @if(!in_array(auth()->user()->role, ['mahasiswa', 'dosen', 'koordinator_prodi', 'koordinator_pbl']))
+    @unless($isRestricted)
         <div class="mb-3">
             <a href="{{ route('kelompok.create') }}" class="btn btn-primary">Tambah Kelompok</a>
         </div>
-    @endif
+    @endunless
 
     {{-- Tabel daftar kelompok --}}
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>No</th>
-                <th>Kode MK</th>
-                <th>Nama Kelompok</th>
-                <th>Judul Proyek</th>
-                <th>NIP</th>
-                <th>Deskripsi</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($kelompok as $item)
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
                 <tr>
-                    <td>{{ $loop->iteration + ($kelompok->currentPage() - 1) * $kelompok->perPage() }}</td>
-                    <td>{{ $item->kode_mk }}</td>
-                    <td>{{ $item->nama_kelompok }}</td>
-                    <td>{{ $item->judul_proyek }}</td>
-                    <td>{{ $item->nip }}</td>
-                    <td>{{ $item->deskripsi ?? '-' }}</td>
-                    <td>
-                        {{-- Tombol Edit & Hapus hanya untuk role tertentu --}}
-                        @if(!in_array(auth()->user()->role, ['mahasiswa', 'dosen', 'koordinator_prodi', 'koordinator_pbl']))
-                            <a href="{{ route('kelompok.edit', $item->id_kelompok) }}" class="btn btn-sm btn-warning">Edit</a>
+                    <th>No</th>
+                    <th>Kode MK</th>
+                    <th>Nama Kelompok</th>
+                    <th>Judul Proyek</th>
+                    <th>NIP</th>
+                    <th>Deskripsi</th>
+                    @unless($isRestricted)
+                        <th>Aksi</th>
+                    @endunless
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($kelompok as $item)
+                    <tr>
+                        <td>{{ $loop->iteration + ($kelompok->currentPage() - 1) * $kelompok->perPage() }}</td>
+                        <td>{{ $item->kode_mk }}</td>
+                        <td>{{ $item->nama_kelompok }}</td>
+                        <td>{{ $item->judul_proyek }}</td>
+                        <td>{{ $item->nip }}</td>
+                        <td>{{ $item->deskripsi ?? '-' }}</td>
 
-                            <form action="{{ route('kelompok.destroy', $item->id_kelompok) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-sm btn-danger">Hapus</button>
-                            </form>
-                        @endif
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="7" class="text-center">Belum ada data kelompok</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+                        {{-- Kolom Aksi hanya untuk role yang diperbolehkan --}}
+                        @unless($isRestricted)
+                            <td>
+                                <a href="{{ route('kelompok.edit', $item->id_kelompok) }}" class="btn btn-sm btn-warning">Edit</a>
+                                <form action="{{ route('kelompok.destroy', $item->id_kelompok) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-sm btn-danger">Hapus</button>
+                                </form>
+                            </td>
+                        @endunless
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="{{ $isRestricted ? 6 : 7 }}" class="text-center">Belum ada data kelompok</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
     {{-- Pagination --}}
     <div class="d-flex justify-content-center">
