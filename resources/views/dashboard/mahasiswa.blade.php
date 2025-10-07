@@ -30,7 +30,7 @@
             <div class="mb-3">
                 <i class="bi bi-bar-chart-line text-primary" style="font-size:2rem;"></i>
             </div>
-            <h5 class="card-title">Nilai & Umpan Balik</h5>
+            <h5 class="card-title">Nilai</h5>
             <p class="text-muted">Lihat hasil penilaian dari dosen pembimbing dan penguji.</p>
             <a href="{{ url('/nilai') }}" class="btn btn-primary w-100 text-white">Lihat Nilai</a>
         </div>
