@@ -2,8 +2,11 @@
 
 @section('content')
 <div class="container py-5">
+<<<<<<< HEAD
+=======
 
     <!-- Header -->
+>>>>>>> 93b5bdd61729f40c6fd80479324a7eaa73b5bcfa
     <div class="text-center mb-5">
         <h2 class="fw-semibold text-primary mb-2" style="font-size: 1.9rem;">
             Sistem Penilaian Kinerja Mahasiswa dan Kelompok PBL
@@ -14,6 +17,44 @@
         <hr class="mx-auto mt-3" style="width: 80px; height: 3px; background-color: #0d6efd; border: none;">
     </div>
 
+<<<<<<< HEAD
+    <div class="row g-4 justify-content-center">
+        <!-- Validasi Milestone -->
+        <div class="col-md-4">
+            <div class="card text-center shadow h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Validasi Milestone</h5>
+                    <p class="card-text flex-grow-1">Periksa dan setujui progres mahasiswa</p>
+                    <a href="{{ url('milestone/validasi') }}" class="btn btn-primary text-white mt-auto">Validasi</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Nilai -->
+        <div class="col-md-4">
+            <div class="card text-center shadow h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Input Nilai</h5>
+                    <p class="card-text flex-grow-1">Beri penilaian laporan, presentasi, kontribusi</p>
+                    <a href="{{ url('/nilai/input') }}" class="btn btn-primary text-white mt-auto">Input</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monitoring Progres -->
+        <div class="col-md-4">
+            <div class="card text-center shadow h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Monitoring Progres</h5>
+                    <p class="card-text flex-grow-1">Pantau logbook mahasiswa/kelompok</p>
+                    <a href="{{ url('/monitoring') }}" class="btn btn-primary text-white mt-auto">Pantau</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+=======
     <!-- Cards Section -->
     <div class="row g-4 justify-content-center">
         
@@ -119,3 +160,4 @@
     }
 </style>
 @endsection
+>>>>>>> 93b5bdd61729f40c6fd80479324a7eaa73b5bcfa

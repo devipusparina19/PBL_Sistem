@@ -33,28 +33,34 @@ class DosenController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required',
-            'nip' => 'required|unique:dosens',
-            'email' => 'required|email|unique:dosens',
-            'mata_kuliah' => 'required',
+            'nama' => 'required|string|max:255',
+            'nip' => 'required|string|max:50|unique:dosens,nip',
+            'email' => 'required|email|unique:dosens,email',
+            'no_telepon' => 'nullable|string|max:20',
+            'kelas' => 'nullable|string|max:50',
+            'mata_kuliah' => 'nullable|string|max:100',
         ]);
 
         Dosen::create($request->all());
-        return redirect()->route('dosen.index')->with('success', 'Dosen berhasil ditambahkan.');
+        return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil ditambahkan!');
     }
 
-    public function show(Dosen $dosen)
+    public function show($id)
     {
+        $dosen = Dosen::findOrFail($id);
         return view('data_dosen.show_data', compact('dosen'));
     }
 
-    public function edit(Dosen $dosen)
+    public function edit($id)
     {
+        $dosen = Dosen::findOrFail($id);
         return view('data_dosen.edit_data', compact('dosen'));
     }
 
-    public function update(Request $request, Dosen $dosen)
+    public function update(Request $request, $id)
     {
+        $dosen = Dosen::findOrFail($id);
+
         $request->validate([
             'nama' => 'required|string|max:255',
             'nip' => 'required|string|max:20|unique:dosens,nip,' . $dosen->id,
@@ -75,27 +81,23 @@ class DosenController extends Controller
         return redirect()->route('dosen.index')->with('success', 'Data dosen berhasil diperbarui');
     }
 
-    public function destroy(Dosen $dosen)
+    public function destroy($id)
     {
+        $dosen = Dosen::findOrFail($id);
         $dosen->delete();
-        return redirect()->route('dosen.index')->with('success', 'Dosen berhasil dihapus.');
+        return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil dihapus!');
     }
-
 
     /* ========================================================
      |  BAGIAN 2 — FITUR TAMBAHAN: INPUT NILAI MAHASISWA
      ======================================================== */
     public function inputNilai()
-{
-    // ambil semua mahasiswa untuk dropdown input
-    $mahasiswa = \App\Models\Mahasiswa::orderBy('nama', 'asc')->get();
+    {
+        $mahasiswa = Mahasiswa::orderBy('nama', 'asc')->get();
+        $nilai = Nilai::with('mahasiswa')->latest()->get();
+        return view('dosen.input_nilai', compact('mahasiswa', 'nilai'));
+    }
 
-    // ambil semua nilai untuk ditampilkan di tabel bawah
-    $nilai = \App\Models\Nilai::with('mahasiswa')->latest()->get();
-
-    // kirim keduanya ke view
-    return view('dosen.input_nilai', compact('mahasiswa', 'nilai'));
-}
     public function storeNilai(Request $request)
     {
         $request->validate([

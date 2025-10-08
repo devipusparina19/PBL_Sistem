@@ -7,21 +7,19 @@
 @endphp
 
 <div class="container mt-4">
-    <h1 class="mb-4">Daftar Kelompok</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Daftar Kelompok</h1>
+        @unless($isRestricted)
+            <a href="{{ route('kelompok.create') }}" class="btn btn-primary">
+                Tambah Kelompok
+            </a>
+        @endunless
+    </div>
 
-    {{-- Pesan sukses --}}
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    {{-- Tombol Tambah (hanya untuk role tertentu) --}}
-    @unless($isRestricted)
-        <div class="mb-3">
-            <a href="{{ route('kelompok.create') }}" class="btn btn-primary">Tambah Kelompok</a>
-        </div>
-    @endunless
-
-    {{-- Tabel daftar kelompok --}}
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
@@ -45,17 +43,19 @@
                         <td>{{ $item->nama_kelompok }}</td>
                         <td>{{ $item->judul_proyek }}</td>
                         <td>{{ $item->nip }}</td>
-                        <td>{{ $item->deskripsi ?? '-' }}</td>
+                        <td style="white-space: pre-line; word-break: keep-all;">{{ $item->deskripsi ?? '-' }}</td>
 
-                        {{-- Kolom Aksi hanya untuk role yang diperbolehkan --}}
                         @unless($isRestricted)
                             <td>
-                                <a href="{{ route('kelompok.edit', $item->id_kelompok) }}" class="btn btn-sm btn-warning">Edit</a>
-                                <form action="{{ route('kelompok.destroy', $item->id_kelompok) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-sm btn-danger">Hapus</button>
-                                </form>
+                                <div class="d-flex gap-1">
+                                    <a href="{{ route('kelompok.show', $item->id_kelompok) }}" class="btn btn-sm btn-info">Lihat</a>
+                                    <a href="{{ route('kelompok.edit', $item->id_kelompok) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    <form action="{{ route('kelompok.destroy', $item->id_kelompok) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-danger">Hapus</button>
+                                    </form>
+                                </div>
                             </td>
                         @endunless
                     </tr>
@@ -68,9 +68,28 @@
         </table>
     </div>
 
-    {{-- Pagination --}}
     <div class="d-flex justify-content-center">
         {{ $kelompok->links() }}
     </div>
 </div>
+
+<style>
+    .btn-sm {
+        padding: 5px 10px;
+        font-size: 0.85rem;
+        border-radius: 5px;
+        color: #000 !important;
+        border: none;
+        white-space: nowrap;
+        margin: 2px;
+    }
+
+    .btn-info { background-color: #0dcaf0; }
+    .btn-warning { background-color: #ffc107; }
+    .btn-danger { background-color: #dc3545; }
+
+    .btn-info:hover { background-color: #0bb4d8 !important; color: #000 !important; }
+    .btn-warning:hover { background-color: #e0a800 !important; color: #000 !important; }
+    .btn-danger:hover { background-color: #bb2d3b !important; color: #000 !important; }
+</style>
 @endsection

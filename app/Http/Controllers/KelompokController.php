@@ -14,6 +14,12 @@ class KelompokController extends Controller
         return view('kelompok.index', compact('kelompok'));
     }
 
+    // menampilkan detail kelompok
+    public function show(Kelompok $kelompok)
+    {
+        return view('kelompok.show', compact('kelompok'));
+    }
+
     // menampilkan form tambah kelompok
     public function create()
     {
