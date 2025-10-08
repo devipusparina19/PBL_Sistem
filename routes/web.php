@@ -55,20 +55,31 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 */
 Route::middleware('auth')->group(function () {
 
-    // ======= Dashboard Umum =======
-    Route::get('/home', fn() => view('home.home'))->name('home');
-    Route::get('/about', fn() => view('about'))->name('about');
-    Route::get('/contact/dashboard', fn() => view('contact'))->name('contact.dashboard');
-
-    // Dashboard utama
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('pbl.dashboard');
-
     // ======= Dashboard Per Role =======
-    Route::get('/dashboard/mahasiswa', fn() => view('dashboard.mahasiswa'))->name('mahasiswa.dashboard');
-    Route::get('/dashboard/dosen', fn() => view('dashboard.dosen'))->name('dosen.dashboard');
-    Route::get('/dashboard/admin', fn() => view('dashboard.admin'))->name('admin.dashboard');
-    Route::get('/dashboard/koordinator_pbl', fn() => view('dashboard.koordinator_pbl'))->name('koordinator_pbl.dashboard');
-    Route::get('/dashboard/koordinator_prodi', fn() => view('dashboard.koordinator_prodi'))->name('koordinator_prodi.dashboard');
+    // Dashboard Mahasiswa
+Route::get('/dashboard/mahasiswa', function () {
+    return view('dashboard.mahasiswa');
+})->name('mahasiswa.dashboard')->middleware('auth');
+
+// Dashboard Dosen
+Route::get('/dashboard/dosen', function () {
+    return view('dashboard.dosen');
+})->name('dosen.dashboard')->middleware('auth');
+
+// Dashboard Admin
+Route::get('/dashboard/admin', function () {
+    return view('dashboard.admin');
+})->name('admin.dashboard')->middleware('auth');
+
+// Dashboard Koordinator PBL
+Route::get('/dashboard/koordinator_pbl', function () {
+    return view('dashboard.koordinator_pbl');
+})->name('koordinator_pbl.dashboard')->middleware('auth');
+
+// Dashboard Koordinator Prodi
+Route::get('/dashboard/koordinator_prodi', function () {
+    return view('dashboard.koordinator_prodi');
+})->name('koordinator_prodi.dashboard')->middleware('auth');
 
     // ======= CRUD Data =======
     Route::resource('mahasiswa', MahasiswaController::class);
