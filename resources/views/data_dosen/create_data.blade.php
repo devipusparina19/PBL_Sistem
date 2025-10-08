@@ -88,7 +88,7 @@
             @enderror
         </div>
 
-        <div class="d-flex justify-content-between">
+        <div class="d-flex gap-2 mt-4">
             <a href="{{ route('data_dosen.index') }}" class="btn btn-secondary">Kembali</a>
             <button type="submit" class="btn btn-primary">Simpan</button>
         </div>

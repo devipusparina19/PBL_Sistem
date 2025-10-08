@@ -7,21 +7,19 @@
 @endphp
 
 <div class="container mt-4">
-    <h1 class="mb-4">Daftar Kelompok</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Daftar Kelompok</h1>
+        @unless($isRestricted)
+            <a href="{{ route('kelompok.create') }}" class="btn btn-primary">
+                Tambah Kelompok
+            </a>
+        @endunless
+    </div>
 
-    {{-- Pesan sukses --}}
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    {{-- Tombol Tambah (hanya untuk role tertentu) --}}
-    @unless($isRestricted)
-        <div class="mb-3">
-            <a href="{{ route('kelompok.create') }}" class="btn btn-primary">Tambah Kelompok</a>
-        </div>
-    @endunless
-
-    {{-- Tabel daftar kelompok --}}
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
@@ -45,9 +43,8 @@
                         <td>{{ $item->nama_kelompok }}</td>
                         <td>{{ $item->judul_proyek }}</td>
                         <td>{{ $item->nip }}</td>
-                        <td style="white-space: pre-line;">{{ $item->deskripsi ?? '-' }}</td>
+                        <td style="white-space: pre-line; word-break: keep-all;">{{ $item->deskripsi ?? '-' }}</td>
 
-                        {{-- Kolom Aksi hanya untuk role yang diperbolehkan --}}
                         @unless($isRestricted)
                             <td>
                                 <div class="d-flex gap-1">
@@ -71,13 +68,11 @@
         </table>
     </div>
 
-    {{-- Pagination --}}
     <div class="d-flex justify-content-center">
         {{ $kelompok->links() }}
     </div>
 </div>
 
-{{-- CSS khusus tombol --}}
 <style>
     .btn-sm {
         padding: 5px 10px;
@@ -85,7 +80,7 @@
         border-radius: 5px;
         color: #000 !important;
         border: none;
-        white-space: nowrap; /* tombol tidak turun ke baris baru */
+        white-space: nowrap;
         margin: 2px;
     }
 

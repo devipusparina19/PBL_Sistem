@@ -18,7 +18,7 @@
         }
 
         .navbar {
-            background: #001f54; /* NAVY */
+            background: #001f54;
         }
 
         .navbar-brand {
@@ -34,12 +34,11 @@
 
         .nav-link:hover, .nav-link.active {
             text-decoration: underline;
-            color: #60a5fa !important; /* hover biru muda */
+            color: #60a5fa !important;
         }
 
-        /* --- Sidebar --- */
         .sidebar {
-            width: 300px; /* diperlebar dari 250px */
+            width: 300px;
             background: #f3f4f6;
             min-height: calc(100vh - 56px);
             padding-top: 25px;
@@ -70,20 +69,6 @@
             width: 22px;
             text-align: center;
             font-size: 1.1rem;
-        }
-
-        .sidebar-footer {
-            margin-top: auto;
-            background: #001f54;
-            padding: 14px 28px;
-        }
-
-        .sidebar-footer a {
-            color: white;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .content-wrapper {
@@ -122,7 +107,6 @@
                     <li class="nav-item"><a class="nav-link text-white" href="{{ url('/about') }}">About</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="{{ url('/contact') }}">Contact</a></li>
                     <li class="nav-item">
-                        <!-- Tombol Logout -->
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
                             @csrf
                             <button type="submit" class="btn btn-link nav-link text-white px-0" style="text-decoration:none;">
@@ -142,23 +126,16 @@
             <a href="{{ url('/home') }}" class="{{ request()->is('home') ? 'active' : '' }}">
                 <i class="bi bi-house-door-fill"></i> Home
             </a>
-<<<<<<< HEAD
 
-=======
-        @if(auth()->user()->role === 'mahasiswa')
-    <a href="{{ url('dashboard/kelompok') }}" 
-       class="{{ request()->is('dashboard/kelompok') ? 'active' : '' }}">
-        <i class="bi bi-people-fill"></i> Dashboard Kelompok
-    </a>
-@endif
-
+            <a href="{{ url('dashboard/kelompok') }}" class="{{ request()->is('dashboard/kelompok') ? 'active' : '' }}">
+                <i class="bi bi-people-fill"></i> Dashboard Kelompok
             </a>
->>>>>>> d4202b9b7aeab9a4317cd2ba0faf4b6f4637954f
-            <a href="{{ url('/dosen') }}" class="{{ request()->is('dosen') ? 'active' : '' }}">
+
+            {{-- ✅ FIX: Link Data Dosen sekarang ke /data_dosen --}}
+            <a href="{{ url('/data_dosen') }}" class="{{ request()->is('data_dosen*') ? 'active' : '' }}">
                 <i class="bi bi-person-badge-fill"></i> Data Dosen
             </a>
 
-            <!-- ✅ Tambahan Menu Mata Kuliah -->
             <a href="{{ url('/mata_kuliah') }}" class="{{ request()->is('mata_kuliah*') ? 'active' : '' }}">
                 <i class="bi bi-book-fill"></i> Data Mata Kuliah
             </a>
@@ -166,9 +143,11 @@
             <a href="{{ url('/mahasiswa') }}" class="{{ request()->is('mahasiswa') ? 'active' : '' }}">
                 <i class="bi bi-mortarboard-fill"></i> Data Mahasiswa
             </a>
+
             <a href="{{ url('/kelompok') }}" class="{{ request()->is('kelompok') ? 'active' : '' }}">
                 <i class="bi bi-people-fill"></i> Kelompok PBL
             </a>
+
             <a href="{{ url('/profile') }}" class="{{ request()->is('profile') ? 'active' : '' }}">
                 <i class="bi bi-person-circle me-2 fs-5"></i> Profile
             </a>
@@ -199,7 +178,6 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     @stack('scripts')
 </body>
 </html>

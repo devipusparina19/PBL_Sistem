@@ -21,22 +21,22 @@
 
     <div class="mb-3">
         <label class="form-label">No. Telepon</label>
-        <input type="text" class="form-control" value="{{ $dosen->no_telepon }}" readonly>
+        <input type="text" class="form-control" value="{{ $dosen->no_telepon ?? '-' }}" readonly>
     </div>
 
     <div class="mb-3">
         <label class="form-label">Kelas</label>
-        <input type="text" class="form-control" value="{{ $dosen->kelas }}" readonly>
+        <input type="text" class="form-control" value="{{ $dosen->kelas ?? '-' }}" readonly>
     </div>
 
     <div class="mb-3">
         <label class="form-label">Mata Kuliah</label>
-        <input type="text" class="form-control" value="{{ $dosen->mata_kuliah }}" readonly>
+        <input type="text" class="form-control" value="{{ $dosen->mata_kuliah ?? '-' }}" readonly>
     </div>
 
-    <div class="d-flex justify-content-between mt-4">
+    <div class="d-flex gap-2 mt-4">
         <a href="{{ route('data_dosen.index') }}" class="btn btn-secondary">Kembali</a>
-        <a href="{{ route('data_dosen.edit', $dosen->id) }}" class="btn btn-primary">Edit</a>
+        <a href="{{ route('data_dosen.edit', $dosen) }}" class="btn btn-primary">Edit</a>
     </div>
 </div>
 @endsection

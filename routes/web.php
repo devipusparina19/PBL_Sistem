@@ -17,7 +17,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 
-
 /*
 |--------------------------------------------------------------------------
 | Public Routes (Tanpa Login)
@@ -67,7 +66,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/koordinator_pbl', fn() => view('dashboard.koordinator_pbl'))->name('koordinator_pbl.dashboard');
     Route::get('/dashboard/koordinator_prodi', fn() => view('dashboard.koordinator_prodi'))->name('koordinator_prodi.dashboard');
 
-    // ✅ CRUD
+    // ✅ CRUD — nama route tetap “data_dosen”
     Route::resource('mahasiswa', MahasiswaController::class);
     Route::resource('data_dosen', DosenController::class);
     Route::resource('mata_kuliah', MataKuliahController::class);
@@ -78,12 +77,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
-    // ✅ Dosen Resource tambahan
-    Route::resource('dosen', DosenController::class);
-
-    //Dashboard Kelompok
+    // Dashboard Kelompok
     Route::get('/dashboard/kelompok', function () {
-    return view('dashboard.kelompok');
-});
-
+        return view('dashboard.kelompok');
+    });
 });

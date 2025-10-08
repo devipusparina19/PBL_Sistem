@@ -2,21 +2,22 @@
 
 @section('content')
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1>Data Mata Kuliah</h1>
+    <h1 class="mb-4">Daftar Mata Kuliah</h1>
 
-        {{-- Tombol Tambah --}}
+    {{-- Form pencarian + tombol tambah --}}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <form action="{{ route('mata_kuliah.index') }}" method="GET" class="d-flex" style="width: 80%;">
+            <input type="text" name="search" 
+                   class="form-control me-2"
+                   placeholder="Cari kode, nama mata kuliah, atau NIP dosen..."
+                   value="{{ request('search') }}">
+            <button type="submit" class="btn btn-secondary">Cari</button>
+        </form>
+
         <a href="{{ route('mata_kuliah.create') }}" class="btn btn-primary">
             Tambah Mata Kuliah
         </a>
     </div>
-
-    {{-- Form pencarian --}}
-    <form method="GET" action="{{ route('mata_kuliah.index') }}" class="mb-3">
-        <input type="text" name="search" class="form-control"
-               placeholder="Cari kode, nama mata kuliah, atau NIP dosen..."
-               value="{{ request('search') }}">
-    </form>
 
     {{-- Tabel data mata kuliah --}}
     <div class="table-responsive">
