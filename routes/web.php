@@ -28,20 +28,16 @@ Route::get('/register', [UserController::class, 'showRegister'])->name('user.sho
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 
 // Login
-Route::get('/login', [UserController::class, 'showLogin'])->name('login');
-Route::post('/login', [UserController::class, 'login'])->name('user.login');
+Route::get('/login', [UserController::class, 'showLogin'])->name('login.form');
+Route::post('/login', [UserController::class, 'login'])->name('login');
 
 // Google Login
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
 
-// Logout
-Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
-
 // Contact publik
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -65,13 +61,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/koordinator_pbl', fn() => view('dashboard.koordinator_pbl'))->name('koordinator_pbl.dashboard');
     Route::get('/dashboard/koordinator_prodi', fn() => view('dashboard.koordinator_prodi'))->name('koordinator_prodi.dashboard');
 
-    // CRUD Resource
+    // CRUD data
     Route::resource('mahasiswa', MahasiswaController::class);
     Route::resource('dosen', DosenController::class);
     Route::resource('kelompok', KelompokController::class);
     Route::resource('logbook', LogbookController::class);
 
-    // Milestone routes
+    // =====================
+    // Milestone Routes
+    // =====================
+    
+    // Member Routes
+    Route::get('/milestone/view', [MilestoneController::class, 'indexForMember'])->name('milestone.view');
     Route::get('/milestone/input/{id}', [MilestoneController::class, 'create'])->name('milestone.create');
     Route::post('/milestone/input/{id}', [MilestoneController::class, 'store'])->name('milestone.store');
 
@@ -81,14 +82,45 @@ Route::middleware('auth')->group(function () {
     // Edit milestone
     Route::get('/milestone/edit/{id}', [MilestoneController::class, 'edit'])->name('milestone.edit');
     Route::post('/milestone/edit/{id}', [MilestoneController::class, 'update'])->name('milestone.update');
-    Route::get('/milestone/view', [MilestoneController::class, 'indexForMember'])->name('milestone.view')->middleware('auth');
-    Route::middleware(['auth', 'role:dosen'])->group(function () {
-    Route::get('/validasi-milestone', [MilestoneController::class, 'validasi'])->name('milestone.validasi');
-    Route::post('/validasi-milestone/{id}', [MilestoneController::class, 'updateStatus'])->name('milestone.updateStatus');
-});
 
+    // Dosen / Validasi Routes
+    Route::middleware('role:dosen')->group(function () {
+        Route::get('/milestone/validasi', [MilestoneController::class, 'indexForDosen'])->name('milestone.validasi');
+        Route::post('/milestone/validasi/{id}', [MilestoneController::class, 'updateStatus'])->name('milestone.updateStatus');
+    });
 
-    // Profile
+    /*
+    |--------------------------------------------------------------------------
+    | NILAI MAHASISWA (Dosen)
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai.index');
+    Route::post('/nilai', [NilaiController::class, 'store'])->name('nilai.store');
+    Route::get('/nilai/{id}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');
+    Route::put('/nilai/{id}', [NilaiController::class, 'update'])->name('nilai.update');
+    Route::delete('/nilai/{id}', [NilaiController::class, 'destroy'])->name('nilai.destroy');
+
+    /*
+    |--------------------------------------------------------------------------
+    | MANAJEMEN AKUN (Admin)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['isAdmin'])->group(function () {
+        Route::get('/manajemen_akun', [AdminController::class, 'manajemenAkun'])->name('manajemen_akun');
+
+        Route::get('/akun', [AkunController::class, 'index'])->name('akun.index');
+        Route::get('/akun/create', [AkunController::class, 'create'])->name('akun.create');
+        Route::post('/akun', [AkunController::class, 'store'])->name('akun.store');
+        Route::get('/akun/edit/{id}', [AkunController::class, 'edit'])->name('akun.edit');
+        Route::put('/akun/update/{id}', [AkunController::class, 'update'])->name('akun.update');
+        Route::delete('/akun/delete/{id}', [AkunController::class, 'destroy'])->name('akun.destroy');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROFIL
+    |--------------------------------------------------------------------------
+    */
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
