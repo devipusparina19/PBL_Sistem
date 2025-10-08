@@ -23,7 +23,6 @@
       color: #ffffff;
     }
 
-    /* header */
     header {
       width: 100%;
       padding: 1rem 5%;
@@ -43,22 +42,6 @@
       color: white;
     }
 
-    /* hamburger button */
-    .menu-toggle {
-      display: none;
-      flex-direction: column;
-      cursor: pointer;
-    }
-
-    .menu-toggle span {
-      height: 3px;
-      width: 25px;
-      background: white;
-      margin: 4px 0;
-      border-radius: 2px;
-    }
-
-    /* konten utama */
     main {
       flex: 1;
       display: flex;
@@ -87,7 +70,6 @@
       line-height: 1.6;
     }
 
-    /* Register Card – putih lembut menyatu */
     .register-card {
         background: rgba(255, 255, 255, 0.98);
         backdrop-filter: saturate(180%) brightness(1.05);
@@ -181,68 +163,85 @@
             @endif
 
             <form action="{{ route('register') }}" method="POST">
-    @csrf
-    <div class="form-group">
-        <label>Nama</label>
-        <input type="text" name="name" required>
-    </div>
-    <div class="form-group">
-        <label>Email</label>
-        <input type="email" name="email" required>
-    </div>
-    <div class="form-group">
-        <label>Password</label>
-        <input type="password" name="password" required>
-    </div>
-    <div class="form-group">
-        <label>Konfirmasi Password</label>
-        <input type="password" name="password_confirmation" required>
-    </div>
-    <div class="form-group">
-        <label>Role</label>
-        <select name="role" required>
-            <option value="">-- Pilih Role --</option>
-            <option value="mahasiswa">Mahasiswa</option>
-            <option value="dosen">Dosen</option>
-            <option value="admin">Admin</option>
-            <option value="koordinator_pbl">Koordinator PBL</option>
-            <option value="koordinator_prodi">Koordinator Prodi</option>
-        </select>
-    </div>
+                @csrf
+                <div class="form-group">
+                    <label>Nama</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label>Konfirmasi Password</label>
+                    <input type="password" name="password_confirmation" required>
+                </div>
 
-    <div class="form-group">
-        <label>Kelompok</label>
-        <select name="role_kelompok" required>
-            <option value="">-- Pilih Kelompok --</option>
-            <option value="1">Kelompok 1</option>
-            <option value="2">Kelompok 2</option>
-            <option value="3">Kelompok 3</option>
-            <option value="4">Kelompok 4</option>
-            <option value="5">Kelompok 5</option>
-            <option value="6">Kelompok 6</option>
-        </select>
-    </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select name="role" id="role" required>
+                        <option value="">-- Pilih Role --</option>
+                        <option value="mahasiswa">Mahasiswa</option>
+                        <option value="dosen">Dosen</option>
+                        <option value="admin">Admin</option>
+                        <option value="koordinator_pbl">Koordinator PBL</option>
+                        <option value="koordinator_prodi">Koordinator Prodi</option>
+                    </select>
+                </div>
 
-    <div class="form-group">
-        <label>Role di Kelompok</label>
-        <select name="role_di_kelompok" required>
-            <option value="">-- Pilih Role --</option>
-            <option value="ketua">Ketua</option>
-            <option value="anggota">Anggota</option>
-        </select>
-    </div>
+                <!-- Fields khusus mahasiswa -->
+                <div id="mahasiswa-fields" style="display:none;">
+                    <div class="form-group">
+                        <label>Kelompok</label>
+                        <select name="role_kelompok">
+                            <option value="">-- Pilih Kelompok --</option>
+                            <option value="1">Kelompok 1</option>
+                            <option value="2">Kelompok 2</option>
+                            <option value="3">Kelompok 3</option>
+                            <option value="4">Kelompok 4</option>
+                            <option value="5">Kelompok 5</option>
+                            <option value="6">Kelompok 6</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Role di Kelompok</label>
+                        <select name="role_di_kelompok">
+                            <option value="">-- Pilih Role --</option>
+                            <option value="ketua">Ketua</option>
+                            <option value="anggota">Anggota</option>
+                        </select>
+                    </div>
+                </div>
 
-    <button type="submit">Daftar</button>
-    <p class="login-link">
-        Sudah punya akun? <a href="{{ route('login') }}">Login di sini</a>
-    </p>
-</form>
+                <button type="submit">Daftar</button>
+                <p class="login-link">
+                    Sudah punya akun? <a href="{{ route('login') }}">Login di sini</a>
+                </p>
+            </form>
         </section>
     </main>
-
 
     <footer>
         🌐 Sistem Penilaian Kinerja Mahasiswa & Kelompok © {{ date('Y') }}
     </footer>
+
+    <script>
+        const roleSelect = document.getElementById('role');
+        const mahasiswaFields = document.getElementById('mahasiswa-fields');
+
+        roleSelect.addEventListener('change', function() {
+            if(this.value === 'mahasiswa') {
+                mahasiswaFields.style.display = 'block';
+                mahasiswaFields.querySelectorAll('select').forEach(s => s.required = true);
+            } else {
+                mahasiswaFields.style.display = 'none';
+                mahasiswaFields.querySelectorAll('select').forEach(s => s.required = false);
+            }
+        });
+    </script>
 </body>
 </html>
