@@ -16,7 +16,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 
-
 /*
 |--------------------------------------------------------------------------
 | Public Routes (Tanpa Login)
@@ -25,25 +24,24 @@ use App\Http\Controllers\Auth\LogoutController;
 
 // Halaman utama langsung ke register
 Route::get('/', [UserController::class, 'showRegister'])->name('user.showRegister');
-
-// ✅ REGISTER (tidak butuh login)
 Route::get('/register', [UserController::class, 'showRegister'])->name('user.showRegister');
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 
-// ✅ LOGIN (tidak butuh login)
+// Login
 Route::get('/login', [UserController::class, 'showLogin'])->name('login');
 Route::post('/login', [UserController::class, 'login'])->name('user.login');
 
-// ✅ GOOGLE LOGIN
+// Google Login
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
 
-// ✅ LOGOUT
+// Logout
 Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 
-// ✅ CONTACT (publik)
+// Contact publik
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -52,36 +50,48 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 */
 Route::middleware('auth')->group(function () {
 
+    // Dashboard umum
     Route::get('/home', fn() => view('home.home'))->name('home');
     Route::get('/about', fn() => view('about'))->name('about');
-    Route::get('/contact', fn() => view('contact'))->name('contact');
+    Route::get('/contact/dashboard', fn() => view('contact'))->name('contact.dashboard');
 
-    // ✅ Dashboard utama
+    // Dashboard utama
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('pbl.dashboard');
 
-    // ✅ Dashboard per role
+    // Dashboard per role
     Route::get('/dashboard/mahasiswa', fn() => view('dashboard.mahasiswa'))->name('mahasiswa.dashboard');
     Route::get('/dashboard/dosen', fn() => view('dashboard.dosen'))->name('dosen.dashboard');
     Route::get('/dashboard/admin', fn() => view('dashboard.admin'))->name('admin.dashboard');
     Route::get('/dashboard/koordinator_pbl', fn() => view('dashboard.koordinator_pbl'))->name('koordinator_pbl.dashboard');
     Route::get('/dashboard/koordinator_prodi', fn() => view('dashboard.koordinator_prodi'))->name('koordinator_prodi.dashboard');
 
-    // ✅ CRUD
+    // CRUD Resource
     Route::resource('mahasiswa', MahasiswaController::class);
-    Route::resource('data_dosen', DosenController::class);
+    Route::resource('dosen', DosenController::class);
     Route::resource('kelompok', KelompokController::class);
     Route::resource('logbook', LogbookController::class);
 
-    // ✅ Profile
+    // =====================
+    // Milestone Routes
+    // =====================
+    
+    // Member Routes
+    Route::get('/milestone/view', [MilestoneController::class, 'indexForMember'])->name('milestone.view');
+    Route::get('/milestone/input/{id}', [MilestoneController::class, 'create'])->name('milestone.create');
+    Route::post('/milestone/input/{id}', [MilestoneController::class, 'store'])->name('milestone.store');
+    Route::get('/milestone/edit/{id}', [MilestoneController::class, 'edit'])->name('milestone.edit');
+    Route::post('/milestone/edit/{id}', [MilestoneController::class, 'update'])->name('milestone.update');
+
+    // Dosen / Validasi Routes
+    Route::middleware('role:dosen')->group(function () {
+        Route::get('/milestone/validasi', [MilestoneController::class, 'indexForDosen'])->name('milestone.validasi');
+        Route::post('/milestone/validasi/{id}', [MilestoneController::class, 'updateStatus'])->name('milestone.updateStatus');
+    });
+
+    // Profile
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
-    // ✅ Dosen Resource tambahan
-    Route::resource('dosen', DosenController::class);
-
-    //Dashboard Kelompok
-    Route::get('/dashboard/kelompok', function () {
-    return view('dashboard.kelompok');
-});
-
+    // Dashboard Kelompok
+    Route::get('/dashboard/kelompok', fn() => view('dashboard.kelompok'))->name('dashboard.kelompok');
 });
