@@ -4,27 +4,21 @@
 <div class="container mt-5">
     <!-- Header -->
     <div class="text-center mb-5">
-        <h2 class="fw-bold text-dark mb-2">Dashboard Kelompok PBL</h2>
-        <p class="text-muted fs-5">
-            Selamat datang, 
-            <strong>{{ Auth::user()->name ?? 'Mahasiswa' }}</strong>
-        </p>
-        <hr class="header-line mx-auto mb-4">
+        <h2 class="fw-bold text-primary">Dashboard Kelompok PBL</h2>
+        <p class="text-muted">Selamat datang, <strong>{{ Auth::user()->name ?? 'Mahasiswa' }}</strong></p>
     </div>
 
     <!-- Card Section -->
     <div class="row justify-content-center g-4">
         <!-- Milestone -->
         <div class="col-md-5">
-            <div class="card border-0 shadow-sm h-100 rounded-4 hover-card">
+            <div class="card border-0 shadow-lg h-100 rounded-4 hover-card">
                 <div class="card-body text-center p-4">
-                    <div class="icon-circle bg-primary text-white mb-3">
-                        <i class="bi bi-journal-check fs-3"></i>
+                    <div class="mb-3 text-primary fs-1">
+                        <i class="bi bi-journal-check"></i>
                     </div>
-                    <h5 class="fw-semibold text-dark mb-2">Input Milestone</h5>
-                    <p class="text-secondary small mb-4">
-                        Laporkan progres dan pencapaian proyek setiap minggu.
-                    </p>
+                    <h5 class="fw-bold text-dark">Input Milestone</h5>
+                    <p class="text-muted small mb-4">Laporkan progres dan pencapaian proyek setiap minggu.</p>
 
                     @if(auth()->user()->role_di_kelompok === 'ketua')
                         <a href="{{ url('/milestone/input/' . auth()->user()->role_kelompok) }}" 
@@ -43,17 +37,15 @@
 
         <!-- Penilaian Teman Sejawat -->
         <div class="col-md-5">
-            <div class="card border-0 shadow-sm h-100 rounded-4 hover-card">
+            <div class="card border-0 shadow-lg h-100 rounded-4 hover-card">
                 <div class="card-body text-center p-4">
-                    <div class="icon-circle bg-success text-white mb-3">
-                        <i class="bi bi-people-fill fs-3"></i>
+                    <div class="mb-3 text-primary fs-1">
+                        <i class="bi bi-people-fill"></i>
                     </div>
-                    <h5 class="fw-semibold text-dark mb-2">Penilaian Teman Sejawat</h5>
-                    <p class="text-secondary small mb-4">
-                        Nilai kinerja rekan satu kelompok secara objektif dan transparan.
-                    </p>
+                    <h5 class="fw-bold text-dark">Penilaian Teman Sejawat</h5>
+                    <p class="text-muted small mb-4">Nilai kinerja rekan satu kelompok secara objektif dan transparan.</p>
                     <a href="{{ url('/penilaian/sejawat') }}" 
-                       class="btn btn-success w-100 fw-semibold">
+                       class="btn btn-primary w-100 fw-semibold">
                         Beri Penilaian
                     </a>
                 </div>
@@ -62,56 +54,39 @@
     </div>
 </div>
 
-<!-- Style untuk tampilan profesional -->
+<!-- Style Profesional Konsisten -->
 <style>
 body {
-    background-color: #f8f9fa;
+    background-color: #ffffff;
     font-family: "Segoe UI", Arial, sans-serif;
-}
-
-.header-line {
-    width: 80px;
-    height: 3px;
-    background-color: #0d6efd;
-    border: none;
-    border-radius: 2px;
 }
 
 .card {
     background-color: #ffffff;
     border: 1px solid #e9ecef;
-}
-
-.hover-card {
-    transition: all 0.25s ease;
+    transition: all 0.3s ease;
 }
 
 .hover-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+    transform: translateY(-6px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
-/* Lingkaran ikon di atas setiap card */
-.icon-circle {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
+.card-body i {
+    transition: color 0.3s ease;
+}
+.hover-card:hover i {
+    color: #0d6efd !important;
 }
 
-/* Tombol */
 .btn {
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 10px 0;
     transition: all 0.25s ease;
 }
-
 .btn:hover {
-    opacity: 0.9;
     transform: scale(1.02);
+    opacity: 0.95;
 }
 </style>
 @endsection
