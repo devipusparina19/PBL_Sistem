@@ -16,6 +16,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Public Routes (Tanpa Login)
@@ -77,4 +78,10 @@ Route::middleware('auth')->group(function () {
 
     // ✅ Dosen Resource tambahan
     Route::resource('dosen', DosenController::class);
+
+    //Dashboard Kelompok
+    Route::get('/dashboard/kelompok', function () {
+    return view('dashboard.kelompok');
+});
+
 });
