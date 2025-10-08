@@ -145,7 +145,10 @@ footer {
       </div>
     @endif
 
-    <form action="{{ route('register') }}" method="POST">
+    <form action="{{ route('user.register') }}" method="POST">
+    @csrf
+    <!-- isi inputan -->
+</form>
       @csrf
       <div class="form-group">
         <label>Nama</label>
@@ -202,8 +205,9 @@ footer {
 
       <button type="submit">Daftar</button>
       <p class="login-link">
-        Sudah punya akun? <a href="{{ route('login') }}">Login di sini</a>
-      </p>
+        Sudah punya akun? <a href="{{ route('login') }}">Login sekarang</a>
+</a>
+    </p>
     </form>
   </section>
 </main>

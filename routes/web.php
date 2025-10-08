@@ -19,6 +19,7 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AkunController;
 use App\Http\Controllers\NilaiController;
+use App\Http\Controllers\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,9 +35,16 @@ Route::get('/register', [UserController::class, 'showRegister'])->name('register
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 
 // Login (fix: tambahkan route `user.login` agar tidak error)
-Route::get('/login', [UserController::class, 'showLogin'])->name('login.form');
-Route::post('/login', [UserController::class, 'login'])->name('user.login');
+Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('user.login');
+Route::post('/logout', [LoginController::class, 'logout'])->name('user.logout');
 
+Route::get('/register', [LoginController::class, 'showRegister'])->name('register');
+Route::post('/register', [LoginController::class, 'register'])->name('user.register');
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard')->middleware('auth');
 // Logout
 Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 
