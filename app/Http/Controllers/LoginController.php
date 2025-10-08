@@ -10,44 +10,66 @@ use App\Models\Mahasiswa;
 
 class LoginController extends Controller
 {
-    // Tampilkan form login
+    // ===== TAMPILKAN FORM LOGIN =====
     public function showLogin()
     {
-        return view('login.login'); // resources/views/login/login.blade.php
+        return view('login.login');
     }
 
-    // Proses login
+    // ===== PROSES LOGIN =====
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate(); // buat sesi baru setelah login
-            return redirect()->route('dashboard'); // arahkan ke dashboard
+            $request->session()->regenerate();
+
+            $user = Auth::user();
+
+            // Arahkan langsung ke dashboard sesuai role
+            switch ($user->role) {
+                case 'mahasiswa':
+                    return redirect()->route('mahasiswa.dashboard');
+                case 'dosen':
+                    return redirect()->route('dosen.dashboard');
+                case 'admin':
+                    return redirect()->route('admin.dashboard');
+                case 'koordinator_pbl':
+                    return redirect()->route('koordinator_pbl.dashboard');
+                case 'koordinator_prodi':
+                    return redirect()->route('koordinator_prodi.dashboard');
+                default:
+                    Auth::logout();
+                    return redirect()->route('user.showLogin')->withErrors([
+                        'email' => 'Role pengguna tidak dikenali.',
+                    ]);
+            }
         }
 
-        return back()->withErrors(['email' => 'Email atau password salah.']);
+        return back()->withErrors([
+            'email' => 'Email atau password salah.',
+        ]);
     }
 
-    // Proses logout
+    // ===== PROSES LOGOUT =====
     public function logout(Request $request)
     {
         Auth::logout();
-        $request->session()->invalidate();      
+        $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('user.showLogin');
     }
 
-    // Tampilkan form register mahasiswa
+    // ===== FORM REGISTER =====
     public function showRegister()
     {
-        return view('login.register'); // buat resources/views/login/register.blade.php
+        return view('login.register');
     }
 
-    // Proses register mahasiswa
+    // ===== PROSES REGISTER =====
     public function register(Request $request)
     {
-        // Validasi input
         $request->validate([
             'name' => 'required|string|max:255',
             'nim' => 'required|string|unique:mahasiswas,nim',
@@ -55,7 +77,7 @@ class LoginController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        // Buat user untuk login
+        // Buat akun user (default mahasiswa)
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -63,7 +85,7 @@ class LoginController extends Controller
             'role' => 'mahasiswa',
         ]);
 
-        // Buat data mahasiswa di tabel mahasiswa
+        // Tambahkan ke tabel mahasiswa
         Mahasiswa::create([
             'user_id' => $user->id,
             'nim' => $request->nim,
@@ -75,6 +97,6 @@ class LoginController extends Controller
         // Login otomatis
         Auth::login($user);
 
-        return redirect()->route('dashboard');
+        return redirect()->route('mahasiswa.dashboard');
     }
 }
