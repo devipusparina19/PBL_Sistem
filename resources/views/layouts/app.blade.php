@@ -142,8 +142,9 @@
             <a href="{{ url('/home') }}" class="{{ request()->is('home') ? 'active' : '' }}">
                 <i class="bi bi-house-door-fill"></i> Home
             </a>
-            <a href="{{ url('kelompok') }}" class="{{ request()->is('kelompok') ? 'active' : '' }}">
-                <i class="bi bi-people-fill"></i> Dashboard Kelompok
+         <a href="{{ url('dashboard/kelompok') }}" class="{{ request()->is('dashboard/kelompok') ? 'active' : '' }}">
+    <i class="bi bi-people-fill"></i> Dashboard Kelompok
+</a>
             </a>
             <a href="{{ url('/dosen') }}" class="{{ request()->is('dosen') ? 'active' : '' }}">
                 <i class="bi bi-person-badge-fill"></i> Data Dosen
