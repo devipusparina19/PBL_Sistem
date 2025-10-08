@@ -45,17 +45,20 @@
                         <td>{{ $item->nama_kelompok }}</td>
                         <td>{{ $item->judul_proyek }}</td>
                         <td>{{ $item->nip }}</td>
-                        <td>{{ $item->deskripsi ?? '-' }}</td>
+                        <td style="white-space: pre-line;">{{ $item->deskripsi ?? '-' }}</td>
 
                         {{-- Kolom Aksi hanya untuk role yang diperbolehkan --}}
                         @unless($isRestricted)
                             <td>
-                                <a href="{{ route('kelompok.edit', $item->id_kelompok) }}" class="btn btn-sm btn-warning">Edit</a>
-                                <form action="{{ route('kelompok.destroy', $item->id_kelompok) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-sm btn-danger">Hapus</button>
-                                </form>
+                                <div class="d-flex gap-1">
+                                    <a href="{{ route('kelompok.show', $item->id_kelompok) }}" class="btn btn-sm btn-info">Lihat</a>
+                                    <a href="{{ route('kelompok.edit', $item->id_kelompok) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    <form action="{{ route('kelompok.destroy', $item->id_kelompok) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-danger">Hapus</button>
+                                    </form>
+                                </div>
                             </td>
                         @endunless
                     </tr>
@@ -73,4 +76,25 @@
         {{ $kelompok->links() }}
     </div>
 </div>
+
+{{-- CSS khusus tombol --}}
+<style>
+    .btn-sm {
+        padding: 5px 10px;
+        font-size: 0.85rem;
+        border-radius: 5px;
+        color: #000 !important;
+        border: none;
+        white-space: nowrap; /* tombol tidak turun ke baris baru */
+        margin: 2px;
+    }
+
+    .btn-info { background-color: #0dcaf0; }
+    .btn-warning { background-color: #ffc107; }
+    .btn-danger { background-color: #dc3545; }
+
+    .btn-info:hover { background-color: #0bb4d8 !important; color: #000 !important; }
+    .btn-warning:hover { background-color: #e0a800 !important; color: #000 !important; }
+    .btn-danger:hover { background-color: #bb2d3b !important; color: #000 !important; }
+</style>
 @endsection

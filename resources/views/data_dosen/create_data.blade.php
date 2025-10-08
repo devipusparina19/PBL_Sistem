@@ -18,6 +18,7 @@
     <form action="{{ route('data_dosen.store') }}" method="POST">
         @csrf
 
+        {{-- Bagian Identitas --}}
         <div class="mb-3">
             <label for="nama" class="form-label">Nama</label>
             <input type="text" class="form-control @error('nama') is-invalid @enderror"
@@ -36,6 +37,7 @@
             @enderror
         </div>
 
+        {{-- Bagian Kontak --}}
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             <input type="email" class="form-control @error('email') is-invalid @enderror"
@@ -46,16 +48,50 @@
         </div>
 
         <div class="mb-3">
+            <label for="no_telp" class="form-label">No. Telepon</label>
+            <input type="text" class="form-control @error('no_telp') is-invalid @enderror"
+                   id="no_telp" name="no_telp" value="{{ old('no_telp') }}" required>
+            @error('no_telp')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        {{-- Bagian Akademik --}}
+        <div class="mb-3">
+            <label for="kelas" class="form-label">Kelas</label>
+            <select class="form-select @error('kelas') is-invalid @enderror"
+                    id="kelas" name="kelas" required>
+                <option value="" disabled selected>Pilih Kelas</option>
+                <option value="TI 3A" {{ old('kelas') == 'TI 3A' ? 'selected' : '' }}>TI 3A</option>
+                <option value="TI 3B" {{ old('kelas') == 'TI 3B' ? 'selected' : '' }}>TI 3B</option>
+                <option value="TI 3C" {{ old('kelas') == 'TI 3C' ? 'selected' : '' }}>TI 3C</option>
+                <option value="TI 3D" {{ old('kelas') == 'TI 3D' ? 'selected' : '' }}>TI 3D</option>
+                <option value="TI 3E" {{ old('kelas') == 'TI 3E' ? 'selected' : '' }}>TI 3E</option>
+            </select>
+            @error('kelas')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
             <label for="mata_kuliah" class="form-label">Mata Kuliah</label>
-            <input type="text" class="form-control @error('mata_kuliah') is-invalid @enderror"
-                   id="mata_kuliah" name="mata_kuliah" value="{{ old('mata_kuliah') }}" required>
+            <select class="form-select @error('mata_kuliah') is-invalid @enderror"
+                    id="mata_kuliah" name="mata_kuliah" required>
+                <option value="" disabled selected>Pilih Mata Kuliah</option>
+                <option value="Integrasi Sistem" {{ old('mata_kuliah') == 'Integrasi Sistem' ? 'selected' : '' }}>Integrasi Sistem</option>
+                <option value="Pemrograman Web Lanjut" {{ old('mata_kuliah') == 'Pemrograman Web Lanjut' ? 'selected' : '' }}>Pemrograman Web Lanjut</option>
+                <option value="TPK" {{ old('mata_kuliah') == 'TPK' ? 'selected' : '' }}>TPK</option>
+                <option value="IT Project" {{ old('mata_kuliah') == 'IT Project' ? 'selected' : '' }}>IT Project</option>
+            </select>
             @error('mata_kuliah')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
 
-        <button type="submit" class="btn btn-primary">Simpan</button>
-        <a href="{{ route('data_dosen.index') }}" class="btn btn-secondary">Kembali</a>
+        <div class="d-flex justify-content-between">
+            <a href="{{ route('data_dosen.index') }}" class="btn btn-secondary">Kembali</a>
+            <button type="submit" class="btn btn-primary">Simpan</button>
+        </div>
     </form>
 </div>
 @endsection

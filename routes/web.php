@@ -9,6 +9,7 @@ use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KelompokController;
 use App\Http\Controllers\LogbookController;
+use App\Http\Controllers\MataKuliahController;
 use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Auth\GoogleController;
@@ -68,6 +69,7 @@ Route::middleware('auth')->group(function () {
     // ✅ CRUD
     Route::resource('mahasiswa', MahasiswaController::class);
     Route::resource('data_dosen', DosenController::class);
+    Route::resource('mata_kuliah', MataKuliahController::class);
     Route::resource('kelompok', KelompokController::class);
     Route::resource('logbook', LogbookController::class);
 

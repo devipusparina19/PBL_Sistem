@@ -1,120 +1,87 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Mahasiswa</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f9;
-            padding: 30px;
-        }
+@extends('layouts.app')
 
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-        }
+@section('content')
+<div class="container mt-4">
+    <h1 class="mb-4">Edit Mahasiswa</h1>
 
-        form {
-            max-width: 500px;
-            margin: auto;
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-        }
+    {{-- Tampilkan error validasi --}}
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: bold;
-            color: #444;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            transition: border 0.3s;
-        }
-
-        input:focus, select:focus {
-            border-color: #2563eb;
-            outline: none;
-        }
-
-        input[readonly] {
-            background: #f3f4f6;
-            cursor: not-allowed;
-        }
-
-        button {
-            background: #16a34a;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-right: 10px;
-        }
-
-        button:hover {
-            background: #15803d;
-        }
-
-        a {
-            text-decoration: none;
-            color: #555;
-            padding: 10px 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            background: #f9fafb;
-        }
-
-        a:hover {
-            background: #e5e7eb;
-        }
-    </style>
-</head>
-<body>
-    <h1>✏️ Edit Mahasiswa</h1>
-
-    <form action="{{ route('mahasiswa.update', $mahasiswa) }}" method="POST">
+    <form action="{{ route('mahasiswa.update', $mahasiswa->id) }}" method="POST">
         @csrf
         @method('PUT')
 
-        <label>NIM</label>
-        <input type="text" name="nim" value="{{ $mahasiswa->nim }}" readonly>
+        <div class="mb-3">
+            <label for="nim" class="form-label">NIM</label>
+            <input type="text" class="form-control @error('nim') is-invalid @enderror"
+                   id="nim" name="nim" value="{{ old('nim', $mahasiswa->nim) }}" required>
+            @error('nim')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
 
-        <label>Nama</label>
-        <input type="text" name="nama" value="{{ $mahasiswa->nama }}" required>
+        <div class="mb-3">
+            <label for="nama" class="form-label">Nama</label>
+            <input type="text" class="form-control @error('nama') is-invalid @enderror"
+                   id="nama" name="nama" value="{{ old('nama', $mahasiswa->nama) }}" required>
+            @error('nama')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
 
-        <label>Kelas</label>
-        <select name="kelas" required>
-            <option value="">-- Pilih Kelas --</option>
-            <option value="TI 3A" {{ old('kelas') == 'TI 3A' ? 'selected' : '' }}>TI 3A</option>
-            <option value="TI 3B" {{ old('kelas') == 'TI 3B' ? 'selected' : '' }}>TI 3B</option>
-            <option value="TI 3C" {{ old('kelas') == 'TI 3C' ? 'selected' : '' }}>TI 3C</option>
-            <option value="TI 3D" {{ old('kelas') == 'TI 3D' ? 'selected' : '' }}>TI 3D</option>
-            <option value="TI 3E" {{ old('kelas') == 'TI 3E' ? 'selected' : '' }}>TI 3E</option>
-        </select>
+        <div class="mb-3">
+            <label for="kelas" class="form-label">Kelas</label>
+            <select class="form-control @error('kelas') is-invalid @enderror" id="kelas" name="kelas" required>
+                <option value="">-- Pilih Kelas --</option>
+                @foreach(['TI 3A','TI 3B','TI 3C','TI 3D','TI 3E'] as $kelas)
+                    <option value="{{ $kelas }}" {{ old('kelas', $mahasiswa->kelas) == $kelas ? 'selected' : '' }}>
+                        {{ $kelas }}
+                    </option>
+                @endforeach
+            </select>
+            @error('kelas')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
 
-        <label>Angkatan</label>
-        <input type="text" name="angkatan" value="{{ $mahasiswa->angkatan }}" required>
+        <div class="mb-3">
+            <label for="angkatan" class="form-label">Angkatan</label>
+            <input type="text" class="form-control @error('angkatan') is-invalid @enderror"
+                   id="angkatan" name="angkatan" value="{{ old('angkatan', $mahasiswa->angkatan) }}" required>
+            @error('angkatan')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
 
-        <label>Email</label>
-        <input type="email" name="email" value="{{ $mahasiswa->email }}" required>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control @error('email') is-invalid @enderror"
+                   id="email" name="email" value="{{ old('email', $mahasiswa->email) }}" required>
+            @error('email')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
 
-        <label>Password (isi kalau mau ganti)</label>
-        <input type="password" name="password">
+        {{-- Password opsional, kosongkan jika tidak ingin diubah --}}
+        <div class="mb-3">
+            <label for="password" class="form-label">Password (kosongkan jika tidak diganti)</label>
+            <input type="password" class="form-control @error('password') is-invalid @enderror"
+                   id="password" name="password">
+            @error('password')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
 
-        <button type="submit">Update</button>
-        <a href="{{ route('mahasiswa.index') }}">Kembali</a>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{{ route('mahasiswa.index') }}" class="btn btn-secondary">Kembali</a>
     </form>
-</body>
-</html>
+</div>
+@endsection

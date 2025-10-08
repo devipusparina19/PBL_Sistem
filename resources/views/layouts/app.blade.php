@@ -41,7 +41,7 @@
         .sidebar {
             width: 300px; /* diperlebar dari 250px */
             background: #f3f4f6;
-            min-height: calc(100vh - 56px); /* tinggi penuh dikurangi navbar */
+            min-height: calc(100vh - 56px);
             padding-top: 25px;
             display: flex;
             flex-direction: column;
@@ -52,7 +52,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 14px 28px; /* diperlebar padding agar lebih lega */
+            padding: 14px 28px;
             color: #1e293b;
             text-decoration: none;
             font-weight: 500;
@@ -142,9 +142,16 @@
             <a href="{{ url('/home') }}" class="{{ request()->is('home') ? 'active' : '' }}">
                 <i class="bi bi-house-door-fill"></i> Home
             </a>
+
             <a href="{{ url('/dosen') }}" class="{{ request()->is('dosen') ? 'active' : '' }}">
                 <i class="bi bi-person-badge-fill"></i> Data Dosen
             </a>
+
+            <!-- ✅ Tambahan Menu Mata Kuliah -->
+            <a href="{{ url('/mata_kuliah') }}" class="{{ request()->is('mata_kuliah*') ? 'active' : '' }}">
+                <i class="bi bi-book-fill"></i> Data Mata Kuliah
+            </a>
+
             <a href="{{ url('/mahasiswa') }}" class="{{ request()->is('mahasiswa') ? 'active' : '' }}">
                 <i class="bi bi-mortarboard-fill"></i> Data Mahasiswa
             </a>
