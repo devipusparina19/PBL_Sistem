@@ -66,4 +66,13 @@ class DashboardController extends Controller
     {
         return view('ranking.index');
     }
+
+    // Menu Dashboard Kelompok
+    public function kelompok()
+{
+    return view('dashboard.kelompok');
 }
+
+}
+
+

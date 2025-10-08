@@ -24,6 +24,8 @@ class RegisterController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
             'role' => 'required|string',
+            'role_kelompok' => 'nullable|string',
+            'role_di_kelompok' => 'nullable|string',
         ]);
 
         // Validasi domain email Politala
@@ -40,12 +42,26 @@ class RegisterController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'role_kelompok' => $request->role_kelompok,
+            'role_di_kelompok' => $request->role_di_kelompok,
         ]);
 
         // Login otomatis setelah daftar
         auth()->login($user);
 
-        // Arahkan ke dashboard
-        return redirect('/dashboard');
+        // Arahkan ke dashboard sesuai role
+        if ($user->role === 'mahasiswa') {
+            return redirect('/dashboard/mahasiswa');
+        } elseif ($user->role === 'dosen') {
+            return redirect('/dashboard/dosen');
+        } elseif ($user->role === 'admin') {
+            return redirect('/dashboard/admin');
+        } elseif ($user->role === 'koordinator_pbl') {
+            return redirect('/dashboard/koordinator-pbl');
+        } elseif ($user->role === 'koordinator_prodi') {
+            return redirect('/dashboard/koordinator-prodi');
+        } else {
+            return redirect('/dashboard');
+        }
     }
 }
