@@ -10,25 +10,23 @@ use App\Models\User;
 class UserController extends Controller
 {
     /**
-     * ✅ Tampilkan form register
+     * Tampilkan form register
      */
     public function showRegister()
     {
-        return view('login.register'); 
-        // resources/views/login/register.blade.php
+        return view('login.register'); // resources/views/login/register.blade.php
     }
 
     /**
-     * ✅ Tampilkan form login
+     * Tampilkan form login
      */
     public function showLogin()
     {
-        return view('login.login'); 
-        // resources/views/login/login.blade.php
+        return view('login.login'); // resources/views/login/login.blade.php
     }
 
     /**
-     * ✅ Proses register user baru (wajib email @politala.ac.id)
+     * Proses register user baru
      */
     public function store(Request $request)
     {
@@ -48,19 +46,8 @@ class UserController extends Controller
             ],
             'password'  => 'required|string|min:8|confirmed',
             'role'      => 'required|string|in:mahasiswa,dosen,admin,koordinator_pbl,koordinator_prodi',
-        ], [
-            'name.required'     => 'Nama wajib diisi.',
-            'email.required'    => 'Email wajib diisi.',
-            'email.email'       => 'Format email tidak valid.',
-            'email.unique'      => 'Email sudah terdaftar.',
-            'password.required' => 'Password wajib diisi.',
-            'password.min'      => 'Password minimal 8 karakter.',
-            'password.confirmed'=> 'Konfirmasi password tidak sesuai.',
-            'role.required'     => 'Role wajib dipilih.',
-            'role.in'           => 'Role yang dipilih tidak valid.',
         ]);
 
-        // Simpan user ke database
         $user = User::create([
             'name'      => $request->name,
             'email'     => $request->email,
@@ -74,7 +61,7 @@ class UserController extends Controller
     }
 
     /**
-     * ✅ Proses login user
+     * Proses login user
      */
     public function login(Request $request)
     {
@@ -94,7 +81,7 @@ class UserController extends Controller
     }
 
     /**
-     * ✅ Proses logout
+     * Proses logout
      */
     public function logout(Request $request)
     {
@@ -103,11 +90,11 @@ class UserController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('user.showLogin');
+        return redirect()->route('login.form'); // Sesuai web.php
     }
 
     /**
-     * ✅ Redirect sesuai role user
+     * Redirect sesuai role user
      */
     private function redirectToDashboard(User $user)
     {
@@ -121,7 +108,7 @@ class UserController extends Controller
     }
 
     /**
-     * (Opsional) halaman home lama
+     * Halaman home opsional
      */
     public function home()
     {

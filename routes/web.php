@@ -35,6 +35,10 @@ Route::post('/register', [RegisterController::class, 'register'])->name('registe
 Route::get('/login', [UserController::class, 'showLogin'])->name('login.form');
 Route::post('/login', [UserController::class, 'login'])->name('login');
 
+// Register
+Route::get('/register', [UserController::class, 'showRegister'])->name('register.form');
+Route::post('/register', [RegisterController::class, 'register'])->name('register');
+
 // Login via Google
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
