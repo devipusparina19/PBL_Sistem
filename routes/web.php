@@ -17,6 +17,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AkunController;
+use App\Http\Controllers\NilaiController;
 
 
 
@@ -81,7 +82,13 @@ Route::middleware('auth')->group(function () {
 
     // ✅ Dosen Resource tambahan
     Route::resource('dosen', DosenController::class);
+    Route::middleware(['auth'])->group(function () {
+    // Halaman input nilai
+    Route::get('/nilai/input', [DosenController::class, 'inputNilai'])->name('nilai.input');
 
+    // Proses simpan nilai
+    Route::post('/nilai/store', [DosenController::class, 'storeNilai'])->name('nilai.store');
+    });
     // ✅ Dashboard Kelompok
     Route::get('/dashboard/kelompok', function () {
         return view('dashboard.kelompok');
@@ -99,6 +106,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/akun/edit/{id}', [AkunController::class, 'edit'])->name('akun.edit');
     Route::put('/akun/update/{id}', [AkunController::class, 'update'])->name('akun.update');
     Route::delete('/akun/delete/{id}', [AkunController::class, 'destroy'])->name('akun.destroy');
+
+
+    //Nilai Mahasiswa (Dosen)
+    Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai.index');
+    Route::post('/nilai', [NilaiController::class, 'store'])->name('nilai.store');
+    Route::get('/nilai/{id}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');
+    Route::put('/nilai/{id}', [NilaiController::class, 'update'])->name('nilai.update');
+    Route::delete('/nilai/{id}', [NilaiController::class, 'destroy'])->name('nilai.destroy');
 });
 });
 });

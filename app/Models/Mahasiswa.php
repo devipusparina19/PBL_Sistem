@@ -17,4 +17,9 @@ class Mahasiswa extends Model
         'email',
         'password',
     ];
+    
+    public function nilai()
+    {
+        return $this->hasMany(Nilai::class);
+    }
 }
