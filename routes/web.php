@@ -1,12 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
+// Controllers
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KelompokController;
 use App\Http\Controllers\LogbookController;
+use App\Http\Controllers\MataKuliahController;
+use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\ProfileController;
@@ -44,6 +48,7 @@ Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
+
 /*
 |--------------------------------------------------------------------------
 | PROTECTED ROUTES (BUTUH LOGIN)
@@ -52,6 +57,11 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 Route::middleware('auth')->group(function () {
 
     // Dashboard umum
+    Route::get('/home', fn() => view('home.home'))->name('home');
+    Route::get('/about', fn() => view('about'))->name('about');
+    Route::get('/contact/dashboard', fn() => view('contact'))->name('contact.dashboard');
+
+    // Dashboard utama
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Dashboard per role
@@ -65,12 +75,26 @@ Route::middleware('auth')->group(function () {
     // CRUD data
     Route::resource('mahasiswa', MahasiswaController::class);
     Route::resource('data_dosen', DosenController::class);
+    Route::resource('mata_kuliah', MataKuliahController::class);
     Route::resource('kelompok', KelompokController::class);
     Route::resource('logbook', LogbookController::class);
 
-    // Profile
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    // =====================
+    // Milestone Routes
+    // =====================
+    
+    // Member Routes
+    Route::get('/milestone/view', [MilestoneController::class, 'indexForMember'])->name('milestone.view');
+    Route::get('/milestone/input/{id}', [MilestoneController::class, 'create'])->name('milestone.create');
+    Route::post('/milestone/input/{id}', [MilestoneController::class, 'store'])->name('milestone.store');
+    Route::get('/milestone/edit/{id}', [MilestoneController::class, 'edit'])->name('milestone.edit');
+    Route::post('/milestone/edit/{id}', [MilestoneController::class, 'update'])->name('milestone.update');
+
+    // Dosen / Validasi Routes
+    Route::middleware('role:dosen')->group(function () {
+        Route::get('/milestone/validasi', [MilestoneController::class, 'indexForDosen'])->name('milestone.validasi');
+        Route::post('/milestone/validasi/{id}', [MilestoneController::class, 'updateStatus'])->name('milestone.updateStatus');
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -98,4 +122,8 @@ Route::middleware('auth')->group(function () {
         Route::put('/akun/update/{id}', [AkunController::class, 'update'])->name('akun.update');
         Route::delete('/akun/delete/{id}', [AkunController::class, 'destroy'])->name('akun.destroy');
     });
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 });
