@@ -15,6 +15,9 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AkunController;
+
 
 
 /*
@@ -26,11 +29,11 @@ use App\Http\Controllers\Auth\LogoutController;
 // Halaman utama langsung ke register
 Route::get('/', [UserController::class, 'showRegister'])->name('user.showRegister');
 
-// ✅ REGISTER (tidak butuh login)
+// ✅ REGISTER
 Route::get('/register', [UserController::class, 'showRegister'])->name('user.showRegister');
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 
-// ✅ LOGIN (tidak butuh login)
+// ✅ LOGIN
 Route::get('/login', [UserController::class, 'showLogin'])->name('login');
 Route::post('/login', [UserController::class, 'login'])->name('user.login');
 
@@ -79,9 +82,23 @@ Route::middleware('auth')->group(function () {
     // ✅ Dosen Resource tambahan
     Route::resource('dosen', DosenController::class);
 
-    //Dashboard Kelompok
+    // ✅ Dashboard Kelompok
     Route::get('/dashboard/kelompok', function () {
-    return view('dashboard.kelompok');
-});
+        return view('dashboard.kelompok');
+    })->name('kelompok.dashboard');
 
+    // ✅ Manajemen Akun (Admin)
+    Route::middleware(['auth', 'isAdmin'])->group(function () {
+    Route::get('/manajemen_akun', [AdminController::class, 'manajemenAkun'])->name('akun.index');
+
+    //CRUD Manajemen Akun
+    Route::middleware(['auth'])->group(function () {
+    Route::get('/akun', [AkunController::class, 'index'])->name('akun.index');
+    Route::get('/akun/create', [AkunController::class, 'create'])->name('akun.create');
+    Route::post('/akun', [AkunController::class, 'store'])->name('akun.store');
+    Route::get('/akun/edit/{id}', [AkunController::class, 'edit'])->name('akun.edit');
+    Route::put('/akun/update/{id}', [AkunController::class, 'update'])->name('akun.update');
+    Route::delete('/akun/delete/{id}', [AkunController::class, 'destroy'])->name('akun.destroy');
+});
+});
 });

@@ -28,7 +28,7 @@
                     <p class="text-secondary mb-4" style="font-size: 0.95rem;">
                         Kelola akun pengguna sistem.
                     </p>
-                    <a href="{{ url('/akun') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                    <a href="{{ url('/manajemen_akun') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
                         Kelola
                     </a>
                 </div>
