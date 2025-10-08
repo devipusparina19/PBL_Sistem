@@ -33,21 +33,20 @@ Route::get('/', [UserController::class, 'showRegister'])->name('user.showRegiste
 Route::get('/register', [UserController::class, 'showRegister'])->name('register.form');
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 
-// Login
+// Login (fix: tambahkan route `user.login` agar tidak error)
 Route::get('/login', [UserController::class, 'showLogin'])->name('login.form');
-Route::post('/login', [UserController::class, 'login'])->name('login');
+Route::post('/login', [UserController::class, 'login'])->name('user.login');
+
+// Logout
+Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 
 // Login via Google
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
 
-// Logout
-Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
-
 // Kontak publik
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -72,25 +71,27 @@ Route::middleware('auth')->group(function () {
     Route::view('/dashboard/koordinator_prodi', 'dashboard.koordinator_prodi')->name('koordinator_prodi.dashboard');
     Route::view('/dashboard/kelompok', 'dashboard.kelompok')->name('kelompok.dashboard');
 
-    // CRUD data
+    // CRUD data umum
     Route::resource('mahasiswa', MahasiswaController::class);
     Route::resource('data_dosen', DosenController::class);
     Route::resource('mata_kuliah', MataKuliahController::class);
     Route::resource('kelompok', KelompokController::class);
     Route::resource('logbook', LogbookController::class);
 
-    // =====================
-    // Milestone Routes
-    // =====================
-    
-    // Member Routes
+    /*
+    |--------------------------------------------------------------------------
+    | MILESTONE (Mahasiswa & Dosen)
+    |--------------------------------------------------------------------------
+    */
+
+    // Mahasiswa
     Route::get('/milestone/view', [MilestoneController::class, 'indexForMember'])->name('milestone.view');
     Route::get('/milestone/input/{id}', [MilestoneController::class, 'create'])->name('milestone.create');
     Route::post('/milestone/input/{id}', [MilestoneController::class, 'store'])->name('milestone.store');
     Route::get('/milestone/edit/{id}', [MilestoneController::class, 'edit'])->name('milestone.edit');
     Route::post('/milestone/edit/{id}', [MilestoneController::class, 'update'])->name('milestone.update');
 
-    // Dosen / Validasi Routes
+    // Dosen (Validasi)
     Route::middleware('role:dosen')->group(function () {
         Route::get('/milestone/validasi', [MilestoneController::class, 'indexForDosen'])->name('milestone.validasi');
         Route::post('/milestone/validasi/{id}', [MilestoneController::class, 'updateStatus'])->name('milestone.updateStatus');
@@ -98,14 +99,20 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | NILAI MAHASISWA (Dosen)
+    | NILAI MAHASISWA
     |--------------------------------------------------------------------------
     */
+    // Semua user (lihat nilai)
     Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai.index');
-    Route::post('/nilai', [NilaiController::class, 'store'])->name('nilai.store');
-    Route::get('/nilai/{id}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');
-    Route::put('/nilai/{id}', [NilaiController::class, 'update'])->name('nilai.update');
-    Route::delete('/nilai/{id}', [NilaiController::class, 'destroy'])->name('nilai.destroy');
+
+    // Khusus dosen (CRUD)
+    Route::middleware('role:dosen')->group(function () {
+        Route::get('/nilai/input', [NilaiController::class, 'create'])->name('nilai.create');
+        Route::post('/nilai', [NilaiController::class, 'store'])->name('nilai.store');
+        Route::get('/nilai/{id}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');
+        Route::put('/nilai/{id}', [NilaiController::class, 'update'])->name('nilai.update');
+        Route::delete('/nilai/{id}', [NilaiController::class, 'destroy'])->name('nilai.destroy');
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -123,7 +130,11 @@ Route::middleware('auth')->group(function () {
         Route::delete('/akun/delete/{id}', [AkunController::class, 'destroy'])->name('akun.destroy');
     });
 
-    // Profile
+    /*
+    |--------------------------------------------------------------------------
+    | PROFIL
+    |--------------------------------------------------------------------------
+    */
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 });
