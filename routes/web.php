@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
+// Controllers
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\MahasiswaController;
@@ -14,12 +16,9 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
-<<<<<<< HEAD
-=======
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AkunController;
 use App\Http\Controllers\NilaiController;
->>>>>>> 93b5bdd61729f40c6fd80479324a7eaa73b5bcfa
 
 /*
 |--------------------------------------------------------------------------
@@ -29,16 +28,6 @@ use App\Http\Controllers\NilaiController;
 
 // Halaman utama diarahkan ke register
 Route::get('/', [UserController::class, 'showRegister'])->name('user.showRegister');
-<<<<<<< HEAD
-Route::get('/register', [UserController::class, 'showRegister'])->name('user.showRegister');
-Route::post('/register', [RegisterController::class, 'register'])->name('register');
-
-// Login
-Route::get('/login', [UserController::class, 'showLogin'])->name('login');
-Route::post('/login', [UserController::class, 'login'])->name('user.login');
-
-// Google Login
-=======
 
 // Register
 Route::get('/register', [UserController::class, 'showRegister'])->name('register.form');
@@ -49,18 +38,13 @@ Route::get('/login', [UserController::class, 'showLogin'])->name('login.form');
 Route::post('/login', [UserController::class, 'login'])->name('login');
 
 // Login via Google
->>>>>>> 93b5bdd61729f40c6fd80479324a7eaa73b5bcfa
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
 
 // Logout
 Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 
-<<<<<<< HEAD
-// Contact publik
-=======
 // Kontak publik
->>>>>>> 93b5bdd61729f40c6fd80479324a7eaa73b5bcfa
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
@@ -73,24 +57,25 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 Route::middleware('auth')->group(function () {
 
     // Dashboard umum
-<<<<<<< HEAD
     Route::get('/home', fn() => view('home.home'))->name('home');
     Route::get('/about', fn() => view('about'))->name('about');
     Route::get('/contact/dashboard', fn() => view('contact'))->name('contact.dashboard');
 
     // Dashboard utama
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('pbl.dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Dashboard per role
-    Route::get('/dashboard/mahasiswa', fn() => view('dashboard.mahasiswa'))->name('mahasiswa.dashboard');
-    Route::get('/dashboard/dosen', fn() => view('dashboard.dosen'))->name('dosen.dashboard');
-    Route::get('/dashboard/admin', fn() => view('dashboard.admin'))->name('admin.dashboard');
-    Route::get('/dashboard/koordinator_pbl', fn() => view('dashboard.koordinator_pbl'))->name('koordinator_pbl.dashboard');
-    Route::get('/dashboard/koordinator_prodi', fn() => view('dashboard.koordinator_prodi'))->name('koordinator_prodi.dashboard');
+    Route::view('/dashboard/mahasiswa', 'dashboard.mahasiswa')->name('mahasiswa.dashboard');
+    Route::view('/dashboard/dosen', 'dashboard.dosen')->name('dosen.dashboard');
+    Route::view('/dashboard/admin', 'dashboard.admin')->name('admin.dashboard');
+    Route::view('/dashboard/koordinator_pbl', 'dashboard.koordinator_pbl')->name('koordinator_pbl.dashboard');
+    Route::view('/dashboard/koordinator_prodi', 'dashboard.koordinator_prodi')->name('koordinator_prodi.dashboard');
+    Route::view('/dashboard/kelompok', 'dashboard.kelompok')->name('kelompok.dashboard');
 
-    // CRUD Resource
+    // CRUD data
     Route::resource('mahasiswa', MahasiswaController::class);
-    Route::resource('dosen', DosenController::class);
+    Route::resource('data_dosen', DosenController::class);
+    Route::resource('mata_kuliah', MataKuliahController::class);
     Route::resource('kelompok', KelompokController::class);
     Route::resource('logbook', LogbookController::class);
 
@@ -111,33 +96,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/milestone/validasi/{id}', [MilestoneController::class, 'updateStatus'])->name('milestone.updateStatus');
     });
 
-=======
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-    // Dashboard per role
-    Route::view('/dashboard/mahasiswa', 'dashboard.mahasiswa')->name('mahasiswa.dashboard');
-    Route::view('/dashboard/dosen', 'dashboard.dosen')->name('dosen.dashboard');
-    Route::view('/dashboard/admin', 'dashboard.admin')->name('admin.dashboard');
-    Route::view('/dashboard/koordinator_pbl', 'dashboard.koordinator_pbl')->name('koordinator_pbl.dashboard');
-    Route::view('/dashboard/koordinator_prodi', 'dashboard.koordinator_prodi')->name('koordinator_prodi.dashboard');
-    Route::view('/dashboard/kelompok', 'dashboard.kelompok')->name('kelompok.dashboard');
-
-    // CRUD data
-    Route::resource('mahasiswa', MahasiswaController::class);
-    Route::resource('data_dosen', DosenController::class);
-    Route::resource('mata_kuliah', MataKuliahController::class);
-    Route::resource('kelompok', KelompokController::class);
-    Route::resource('logbook', LogbookController::class);
-
->>>>>>> 93b5bdd61729f40c6fd80479324a7eaa73b5bcfa
-    // Profile
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
-
-<<<<<<< HEAD
-    // Dashboard Kelompok
-    Route::get('/dashboard/kelompok', fn() => view('dashboard.kelompok'))->name('dashboard.kelompok');
-=======
     /*
     |--------------------------------------------------------------------------
     | NILAI MAHASISWA (Dosen)
@@ -164,5 +122,8 @@ Route::middleware('auth')->group(function () {
         Route::put('/akun/update/{id}', [AkunController::class, 'update'])->name('akun.update');
         Route::delete('/akun/delete/{id}', [AkunController::class, 'destroy'])->name('akun.destroy');
     });
->>>>>>> 93b5bdd61729f40c6fd80479324a7eaa73b5bcfa
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 });
