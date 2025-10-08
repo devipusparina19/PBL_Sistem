@@ -243,7 +243,7 @@
         <p class="error-message">{{ session('error') }}</p>
       @endif
 
-      <form action="{{ route('user.login') }}" method="POST">
+        <form action="{{ route('user.login') }}" method="POST">
         @csrf
         <div class="form-group">
           <label>Email</label>

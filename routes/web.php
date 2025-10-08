@@ -16,6 +16,12 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
 
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AkunController;
+use App\Http\Controllers\NilaiController;
+use App\Http\Controllers\LoginController;
+
+
 /*
 |--------------------------------------------------------------------------
 | Public Routes (Tanpa Login)
@@ -27,6 +33,23 @@ Route::get('/', [UserController::class, 'showRegister'])->name('user.showRegiste
 Route::get('/register', [UserController::class, 'showRegister'])->name('user.showRegister');
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 
+
+// Login (fix: tambahkan route `user.login` agar tidak error)
+Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
+Route::post('/login', [LoginController::class, 'login'])->name('user.login');
+Route::post('/logout', [LoginController::class, 'logout'])->name('user.logout');
+
+Route::get('/register', [LoginController::class, 'showRegister'])->name('register');
+Route::post('/register', [LoginController::class, 'register'])->name('user.register');
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard')->middleware('auth');
+// Logout
+Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
+
+// Login via Google
+
 // Login
 Route::get('/login', [UserController::class, 'showLogin'])->name('login.form');
 Route::post('/login', [UserController::class, 'login'])->name('login');
@@ -36,6 +59,10 @@ Route::get('/register', [UserController::class, 'showRegister'])->name('register
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 
 // Login via Google
+
+// Google Login
+>>>>>>> eabd4dc8c594a22dd1e111ece91dc9435bbfac9f
+>>>>>>> fbdda5a9a487b1ea08b5e87978069ca272e8e0ca
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
 
