@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
    Schema::create('kelompoks', function (Blueprint $table) {
-    $table->id('id_kelompok'); // primary key
+    $table->id('id_kelompok'); // primary key auto-increment
     $table->string('kode_mk');
     $table->string('nama_kelompok');
     $table->text('deskripsi')->nullable();

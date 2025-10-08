@@ -15,19 +15,19 @@
 
     <!-- Card Section -->
     <div class="row justify-content-center g-4">
-        <!-- Input Milestone -->
-        <div class="col-md-5">
-            <div class="card border-0 shadow-lg h-100 rounded-4 hover-card">
-                <div class="card-body text-center p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-flag-fill fs-1 text-primary"></i>
-                    </div>
-                    <h5 class="fw-bold text-dark mb-2">Input Milestone</h5>
-                    <p class="text-muted mb-4">Laporkan progres dan pencapaian proyek setiap minggu.</p>
-                    <a href="{{ url('/milestone/input') }}" class="btn btn-primary w-100 text-white">Isi Milestone</a>
-                </div>
-            </div>
-        </div>
+       <h5 class="fw-bold text-dark mb-2">Input Milestone</h5>
+<p class="text-muted mb-4">Laporkan progres dan pencapaian proyek setiap minggu.</p>
+
+@if(auth()->user()->role_di_kelompok === 'ketua')
+    <a href="{{ url('/milestone/input/' . auth()->user()->role_kelompok) }}" class="btn btn-primary w-100 text-white">
+        Isi Milestone
+    </a>
+@else
+    <a href="{{ url('/milestone/view/' . auth()->user()->role_kelompok) }}" class="btn btn-secondary w-100 text-white">
+        Lihat Milestone
+    </a>
+@endif
+
 
         <!-- Penilaian Teman Sejawat -->
         <div class="col-md-5">
