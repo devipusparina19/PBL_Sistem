@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DosenController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\MataKuliahController;
 use App\Http\Controllers\DashboardController;
@@ -26,6 +27,12 @@ use App\Http\Controllers\LoginController;
 | AUTH & LOGIN / REGISTER
 |--------------------------------------------------------------------------
 */
+// ================================
+// HOME / DASHBOARD
+// ================================
+Route::middleware(['auth'])->group(function () {
+    Route::get('/home', [DashboardController::class, 'index'])->name('home');
+});
 
 // Halaman utama langsung ke halaman login
 Route::get('/', [LoginController::class, 'showLogin'])->name('user.showLogin');
