@@ -6,75 +6,97 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-use App\Models\Mahasiswa;
 
 class LoginController extends Controller
 {
-    // Tampilkan form login
+    // ===== TAMPILKAN FORM LOGIN =====
     public function showLogin()
     {
-        return view('login.login'); // resources/views/login/login.blade.php
+        return view('login.login');
     }
 
-    // Proses login
+    // ===== PROSES LOGIN =====
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate(); // buat sesi baru setelah login
-            return redirect()->route('dashboard'); // arahkan ke dashboard
+            $request->session()->regenerate();
+            $user = Auth::user();
+
+            // Arahkan ke dashboard sesuai role
+            switch ($user->role) {
+                case 'mahasiswa':
+                    return redirect()->route('mahasiswa.dashboard');
+                case 'dosen':
+                    return redirect()->route('dosen.dashboard');
+                case 'admin':
+                    return redirect()->route('admin.dashboard');
+                case 'koordinator_pbl':
+                    return redirect()->route('koordinator_pbl.dashboard');
+                case 'koordinator_prodi':
+                    return redirect()->route('koordinator_prodi.dashboard');
+                default:
+                    Auth::logout();
+                    return redirect()->route('login')->withErrors([
+                        'email' => 'Role pengguna tidak dikenali.',
+                    ]);
+            }
         }
 
-        return back()->withErrors(['email' => 'Email atau password salah.']);
+        return back()->withErrors([
+            'email' => 'Email atau password salah.',
+        ]);
     }
 
-    // Proses logout
+    // ===== LOGOUT =====
     public function logout(Request $request)
     {
         Auth::logout();
-        $request->session()->invalidate();      
+        $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('user.showLogin');
+
+        return redirect()->route('login');
     }
 
-    // Tampilkan form register mahasiswa
+    // ===== TAMPILKAN FORM REGISTER =====
     public function showRegister()
     {
-        return view('login.register'); // buat resources/views/login/register.blade.php
+        return view('login.register');
     }
 
-    // Proses register mahasiswa
+    // ===== PROSES REGISTER TANPA NIM =====
     public function register(Request $request)
     {
-        // Validasi input
         $request->validate([
             'name' => 'required|string|max:255',
-            'nim' => 'required|string|unique:mahasiswas,nim',
             'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:6|confirmed',
+            'role' => 'required|string|in:mahasiswa,dosen,admin,koordinator_pbl,koordinator_prodi',
         ]);
 
-        // Buat user untuk login
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'mahasiswa',
+            'role' => $request->role,
         ]);
 
-        // Buat data mahasiswa di tabel mahasiswa
-        Mahasiswa::create([
-            'user_id' => $user->id,
-            'nim' => $request->nim,
-            'nama' => $request->name,
-            'angkatan' => date('Y'),
-            'email' => $request->email,
-        ]);
-
-        // Login otomatis
         Auth::login($user);
 
-        return redirect()->route('dashboard');
+        switch ($user->role) {
+            case 'mahasiswa':
+                return redirect()->route('mahasiswa.dashboard');
+            case 'dosen':
+                return redirect()->route('dosen.dashboard');
+            case 'admin':
+                return redirect()->route('admin.dashboard');
+            case 'koordinator_pbl':
+                return redirect()->route('koordinator_pbl.dashboard');
+            case 'koordinator_prodi':
+                return redirect()->route('koordinator_prodi.dashboard');
+            default:
+                return redirect()->route('login');
+        }
     }
 }

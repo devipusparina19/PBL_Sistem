@@ -146,69 +146,71 @@ footer {
     @endif
 
     <form action="{{ route('user.register') }}" method="POST">
-    @csrf
-    <!-- isi inputan -->
+  @csrf
+
+  <div class="form-group">
+    <label>Nama</label>
+    <input type="text" name="name" required>
+  </div>
+
+  <div class="form-group">
+    <label>Email</label>
+    <input type="email" name="email" required>
+  </div>
+
+  <div class="form-group">
+    <label>Password</label>
+    <input type="password" name="password" required>
+  </div>
+
+  <div class="form-group">
+    <label>Konfirmasi Password</label>
+    <input type="password" name="password_confirmation" required>
+  </div>
+
+  <div class="form-group">
+    <label>Role</label>
+    <select name="role" id="role" required>
+      <option value="">-- Pilih Role --</option>
+      <option value="mahasiswa">Mahasiswa</option>
+      <option value="dosen">Dosen</option>
+      <option value="admin">Admin</option>
+      <option value="koordinator_pbl">Koordinator PBL</option>
+      <option value="koordinator_prodi">Koordinator Prodi</option>
+    </select>
+  </div>
+
+  <!-- Field Mahasiswa -->
+  <div id="mahasiswa-fields">
+    <div class="form-group">
+      <label>Kelompok</label>
+      <select name="role_kelompok">
+        <option value="">-- Pilih Kelompok --</option>
+        <option value="1">Kelompok 1</option>
+        <option value="2">Kelompok 2</option>
+        <option value="3">Kelompok 3</option>
+        <option value="4">Kelompok 4</option>
+        <option value="5">Kelompok 5</option>
+        <option value="6">Kelompok 6</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Role di Kelompok</label>
+      <select name="role_di_kelompok">
+        <option value="">-- Pilih Role --</option>
+        <option value="ketua">Ketua</option>
+        <option value="anggota">Anggota</option>
+      </select>
+    </div>
+  </div>
+
+  <button type="submit">Daftar</button>
+
+  <p class="login-link">
+    Sudah punya akun? <a href="{{ route('login') }}">Login sekarang</a>
+  </p>
 </form>
-      @csrf
-      <div class="form-group">
-        <label>Nama</label>
-        <input type="text" name="name" required>
-      </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" name="email" required>
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" name="password" required>
-      </div>
-      <div class="form-group">
-        <label>Konfirmasi Password</label>
-        <input type="password" name="password_confirmation" required>
-      </div>
 
-      <div class="form-group">
-        <label>Role</label>
-        <select name="role" id="role" required>
-          <option value="">-- Pilih Role --</option>
-          <option value="mahasiswa">Mahasiswa</option>
-          <option value="dosen">Dosen</option>
-          <option value="admin">Admin</option>
-          <option value="koordinator_pbl">Koordinator PBL</option>
-          <option value="koordinator_prodi">Koordinator Prodi</option>
-        </select>
-      </div>
-
-      <!-- Field Mahasiswa -->
-      <div id="mahasiswa-fields">
-        <div class="form-group">
-          <label>Kelompok</label>
-          <select name="role_kelompok">
-            <option value="">-- Pilih Kelompok --</option>
-            <option value="1">Kelompok 1</option>
-            <option value="2">Kelompok 2</option>
-            <option value="3">Kelompok 3</option>
-            <option value="4">Kelompok 4</option>
-            <option value="5">Kelompok 5</option>
-            <option value="6">Kelompok 6</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Role di Kelompok</label>
-          <select name="role_di_kelompok">
-            <option value="">-- Pilih Role --</option>
-            <option value="ketua">Ketua</option>
-            <option value="anggota">Anggota</option>
-          </select>
-        </div>
-      </div>
-
-      <button type="submit">Daftar</button>
-      <p class="login-link">
-        Sudah punya akun? <a href="{{ route('login') }}">Login sekarang</a>
-</a>
-    </p>
-    </form>
   </section>
 </main>
 
