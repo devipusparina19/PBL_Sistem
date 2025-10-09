@@ -184,4 +184,5 @@ Route::post('/logbook', [LogbookController::class, 'store'])->name('logbook.stor
 Route::get('/logbook/{id}', [LogbookController::class, 'show'])->name('logbook.show')->middleware('auth');
 Route::get('/logbook/{id}/edit', [LogbookController::class, 'edit'])->name('logbook.edit')->middleware('auth');
 Route::put('/logbook/{id}', [LogbookController::class, 'update'])->name('logbook.update')->middleware('auth');
+
 Route::delete('/logbook/{id}', [LogbookController::class, 'destroy'])->name('logbook.destroy')->middleware('auth');
