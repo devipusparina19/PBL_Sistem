@@ -14,9 +14,12 @@
             <button type="submit" class="btn btn-secondary">Cari</button>
         </form>
 
-        <a href="{{ route('mata_kuliah.create') }}" class="btn btn-primary">
-            Tambah Mata Kuliah
-        </a>
+        {{-- Tombol Tambah hanya untuk admin --}}
+        @if(auth()->user()->role === 'admin')
+            <a href="{{ route('mata_kuliah.create') }}" class="btn btn-primary">
+                Tambah Mata Kuliah
+            </a>
+        @endif
     </div>
 
     {{-- Tabel data mata kuliah --}}
