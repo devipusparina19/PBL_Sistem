@@ -19,7 +19,7 @@
                     </div>
                     <h5 class="fw-bold text-dark">Monitoring Progres</h5>
                     <p class="text-muted">Pantau laporan dan statistik seluruh kelompok</p>
-                    <a href="{{ url('/monitoring') }}" class="btn w-100 text-white" style="background-color: #001f5b;">Pantau</a>
+                    <a href="{{ url('/monitoring') }}" class="btn btn-primary w-100 text-white">Pantau</a>
                 </div>
             </div>
         </div>
@@ -33,7 +33,7 @@
                     </div>
                     <h5 class="fw-bold text-dark">Progres</h5>
                     <p class="text-muted">Pantau progres per kelompok dan mahasiswa</p>
-                    <a href="{{ url('/milestone/view') }}" class="btn w-100 text-white" style="background-color: #001f5b;">Pantau</a>
+                    <a href="{{ url('/milestone/view') }}" class="btn btn-primary w-100 text-white">Pantau</a>
                 </div>
             </div>
         </div>

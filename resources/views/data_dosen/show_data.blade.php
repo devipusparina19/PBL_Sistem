@@ -36,7 +36,11 @@
 
     <div class="d-flex gap-2 mt-4">
         <a href="{{ route('data_dosen.index') }}" class="btn btn-secondary">Kembali</a>
-        <a href="{{ route('data_dosen.edit', $dosen) }}" class="btn btn-primary">Edit</a>
+
+        {{-- Tombol Edit hanya untuk admin --}}
+        @if(Auth::user()->role === 'admin')
+            <a href="{{ route('data_dosen.edit', $dosen) }}" class="btn btn-primary">Edit</a>
+        @endif
     </div>
 </div>
 @endsection

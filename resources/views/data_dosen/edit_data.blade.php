@@ -1,6 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+    // Redirect ke index jika bukan admin
+    if(Auth::user()->role !== 'admin'){
+        echo "<script>window.location='".route('data_dosen.index')."';</script>";
+        exit;
+    }
+@endphp
+
 <div class="container mt-5">
     <h1 class="mb-4">Edit Dosen</h1>
 

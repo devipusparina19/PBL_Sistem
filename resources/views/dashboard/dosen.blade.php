@@ -2,59 +2,18 @@
 
 @section('content')
 <div class="container py-5">
-<<<<<<< HEAD
-=======
-
     <!-- Header -->
->>>>>>> 93b5bdd61729f40c6fd80479324a7eaa73b5bcfa
     <div class="text-center mb-5">
         <h2 class="fw-semibold text-primary mb-2" style="font-size: 1.9rem;">
             Sistem Penilaian Kinerja Mahasiswa dan Kelompok PBL
         </h2>
         <p class="text-muted" style="font-size: 1rem;">
-            Selamat datang, <span class="fw-semibold text-dark">{{ Auth::user()->name }}</span> (Dosen)
+            Selamat datang, <span class="fw-semibold text-dark">{{ Auth::user()->name }}</span>
+            ({{ ucfirst(Auth::user()->role) }})
         </p>
         <hr class="mx-auto mt-3" style="width: 80px; height: 3px; background-color: #0d6efd; border: none;">
     </div>
 
-<<<<<<< HEAD
-    <div class="row g-4 justify-content-center">
-        <!-- Validasi Milestone -->
-        <div class="col-md-4">
-            <div class="card text-center shadow h-100">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">Validasi Milestone</h5>
-                    <p class="card-text flex-grow-1">Periksa dan setujui progres mahasiswa</p>
-                    <a href="{{ url('milestone/validasi') }}" class="btn btn-primary text-white mt-auto">Validasi</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Input Nilai -->
-        <div class="col-md-4">
-            <div class="card text-center shadow h-100">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">Input Nilai</h5>
-                    <p class="card-text flex-grow-1">Beri penilaian laporan, presentasi, kontribusi</p>
-                    <a href="{{ url('/nilai/input') }}" class="btn btn-primary text-white mt-auto">Input</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Monitoring Progres -->
-        <div class="col-md-4">
-            <div class="card text-center shadow h-100">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">Monitoring Progres</h5>
-                    <p class="card-text flex-grow-1">Pantau logbook mahasiswa/kelompok</p>
-                    <a href="{{ url('/monitoring') }}" class="btn btn-primary text-white mt-auto">Pantau</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
-=======
     <!-- Cards Section -->
     <div class="row g-4 justify-content-center">
         
@@ -105,9 +64,16 @@
                     <p class="text-secondary mb-4" style="font-size: 0.95rem;">
                         Pantau logbook mahasiswa dan progres kelompok.
                     </p>
-                    <a href="{{ url('/monitoring') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
-                        Pantau
-                    </a>
+
+                    @if(Auth::user()->role == 'admin')
+                        <a href="{{ url('/monitoring') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                            Lihat / Edit / Hapus
+                        </a>
+                    @else
+                        <a href="{{ url('/monitoring') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                            Pantau
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -115,7 +81,7 @@
     </div>
 </div>
 
-<!-- Style tambahan (identik dengan mahasiswa.blade.php) -->
+<!-- Style tambahan -->
 <style>
     body {
         background-color: #f5f7fa;
@@ -160,4 +126,3 @@
     }
 </style>
 @endsection
->>>>>>> 93b5bdd61729f40c6fd80479324a7eaa73b5bcfa

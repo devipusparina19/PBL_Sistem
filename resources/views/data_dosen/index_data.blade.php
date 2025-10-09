@@ -2,6 +2,7 @@
 
 @section('content')
 @php
+    // Hanya admin yang bisa melihat tombol aksi dan tambah
     $restrictedRoles = ['mahasiswa', 'dosen', 'koordinator_prodi', 'koordinator_pbl'];
     $isRestricted = in_array(auth()->user()->role, $restrictedRoles);
 @endphp
@@ -28,7 +29,7 @@
             </form>
         </div>
 
-        {{-- Tombol Tambah --}}
+        {{-- Tombol Tambah hanya admin --}}
         <div class="col-md-4 text-end">
             @unless($isRestricted)
                 <a href="{{ route('data_dosen.create') }}" class="btn btn-primary">Tambah Dosen</a>
@@ -66,7 +67,7 @@
                                 <td>{{ $item->kelas ?? '-' }}</td>
                                 <td>{{ $item->mata_kuliah ?? '-' }}</td>
 
-                                {{-- Kolom Aksi hanya jika bukan role terbatas --}}
+                                {{-- Kolom Aksi hanya admin --}}
                                 @unless($isRestricted)
                                     <td class="text-center">
                                         <a href="{{ route('data_dosen.show', $item->id) }}" class="btn btn-sm btn-info">Lihat</a>
