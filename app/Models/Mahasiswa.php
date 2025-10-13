@@ -18,8 +18,9 @@ class Mahasiswa extends Model
         'password',
     ];
     
-    public function nilai()
+     public function nilai()
     {
-        return $this->hasMany(Nilai::class);
+        return $this->hasOne(Nilai::class, 'mahasiswa_id');
+        // atau hasMany kalau bisa punya banyak nilai
     }
 }

@@ -10,57 +10,38 @@ class Nilai extends Model
     use HasFactory;
 
     /**
-     * Nama tabel (kalau berbeda dari default 'nilais')
-     * Kalau tabel kamu bernama 'nilai', tulis aja:
+     * Nama tabel di database
      */
     protected $table = 'nilai';
 
     /**
-     * Field yang bisa diisi (mass assignable)
+     * Kolom yang bisa diisi secara massal
      */
     protected $fillable = [
         'mahasiswa_id',
-        'dosen_id',
-        'laporan',
-        'presentasi',
-        'kontribusi',
-        'total_nilai',
-        'keterangan',
+        'pemrograman_web',
+        'integrasi_sistem',
+        'pengambilan_keputusan',
+        'it_proyek',
+        'kontribusi_kelompok',
+        'penilaian_sejawat',
+        'hasil_akhir',
     ];
 
     /**
-     * Relasi ke model Mahasiswa
-     * Setiap nilai dimiliki oleh satu mahasiswa
-     */
-    public function mahasiswa()
-    {
-        return $this->belongsTo(Mahasiswa::class);
-    }
-
-    /**
-     * Relasi ke model Dosen (penilai)
-     * Setiap nilai diberikan oleh satu dosen
-     */
-    public function dosen()
-    {
-        return $this->belongsTo(Dosen::class);
-    }
-
-    /**
-     * Accessor untuk menampilkan nilai akhir dalam bentuk huruf (opsional)
-     * Misalnya: A, B, C, D
+     * Accessor untuk nilai huruf otomatis berdasarkan hasil_akhir
      */
     public function getNilaiHurufAttribute()
     {
-        $total = $this->total_nilai;
+        $nilai = $this->hasil_akhir;
 
-        if ($total >= 85) {
+        if ($nilai >= 85) {
             return 'A';
-        } elseif ($total >= 75) {
+        } elseif ($nilai >= 75) {
             return 'B';
-        } elseif ($total >= 65) {
+        } elseif ($nilai >= 65) {
             return 'C';
-        } elseif ($total >= 50) {
+        } elseif ($nilai >= 50) {
             return 'D';
         } else {
             return 'E';
@@ -68,10 +49,14 @@ class Nilai extends Model
     }
 
     /**
-     * Accessor opsional lain (contoh format tanggal)
+     * Accessor tambahan untuk format tanggal input
      */
     public function getTanggalInputAttribute()
     {
         return $this->created_at ? $this->created_at->format('d M Y, H:i') : '-';
+    }
+    public function mahasiswa()
+    {
+        return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');
     }
 }

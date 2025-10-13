@@ -99,17 +99,19 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai.index');
-    Route::post('/nilai', [NilaiController::class, 'store'])->name('nilai.store');
-    Route::get('/nilai/{id}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');
-    Route::put('/nilai/{id}', [NilaiController::class, 'update'])->name('nilai.update');
-    Route::delete('/nilai/{id}', [NilaiController::class, 'destroy'])->name('nilai.destroy');
+Route::get('/nilai/input', [NilaiController::class, 'create'])->name('nilai.create');
+Route::post('/nilai', [NilaiController::class, 'store'])->name('nilai.store');
+Route::get('/nilai/{id}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');
+Route::put('/nilai/{id}', [NilaiController::class, 'update'])->name('nilai.update');
+Route::delete('/nilai/{id}', [NilaiController::class, 'destroy'])->name('nilai.destroy');
+
 
     /*
     |--------------------------------------------------------------------------
     | MANAJEMEN AKUN (Admin)
     |--------------------------------------------------------------------------
     */
-    Route::middleware(['isAdmin'])->group(function () {
+        Route::middleware(['isAdmin'])->group(function () {
         Route::get('/manajemen_akun', [AdminController::class, 'manajemenAkun'])->name('manajemen_akun');
 
         Route::get('/akun', [AkunController::class, 'index'])->name('akun.index');
