@@ -2,14 +2,15 @@
 
 @section('content')
 <div class="container py-5">
+
     <!-- Header -->
     <div class="text-center mb-5">
-        <h2 class="fw-semibold text-primary mb-2">Nilai Mahasiswa PBL </h2>
+        <h2 class="fw-semibold text-primary mb-2">Nilai Mahasiswa PBL</h2>
         <p class="text-muted fs-5">Berikut rekap penilaian Anda berdasarkan hasil proyek, kontribusi, dan penilaian sejawat</p>
         <hr class="mx-auto mt-3" style="width: 80px; height: 3px; background-color: #0d6efd; border: none;">
     </div>
 
-    <!-- Kartu Informasi Mahasiswa -->
+    <!-- Kartu Identitas -->
     <div class="card shadow border-0 rounded-4 mb-4">
         <div class="card-body px-5 py-4">
             <h5 class="fw-bold text-dark mb-3">Identitas Mahasiswa</h5>
@@ -26,13 +27,13 @@
         </div>
     </div>
 
-    <!-- Tabel Nilai Mahasiswa -->
-    <div class="card shadow border-0 rounded-4">
+    <!-- Tabel Detail Nilai -->
+    <div class="card shadow border-0 rounded-4 mb-4">
         <div class="card-body px-5 py-4">
             <h5 class="fw-bold text-dark mb-4">Detail Penilaian</h5>
             <div class="table-responsive">
-                <table class="table table-bordered align-middle">
-                    <thead class="table-light text-center">
+                <table class="table table-bordered align-middle text-center">
+                    <thead class="table-light">
                         <tr>
                             <th>No</th>
                             <th>Nama Mahasiswa</th>
@@ -43,8 +44,6 @@
                             <th>Kontribusi Kelompok</th>
                             <th>Penilaian Sejawat</th>
                             <th>Hasil Akhir</th>
-
-                            {{-- Kolom aksi hanya muncul untuk dosen --}}
                             @if(Auth::user()->role === 'dosen')
                                 <th>Aksi</th>
                             @endif
@@ -52,7 +51,6 @@
                     </thead>
                     <tbody>
                         @forelse ($nilai as $index => $n)
-                            {{-- Mahasiswa hanya melihat nilai mereka sendiri --}}
                             @if(Auth::user()->role === 'dosen' || Auth::user()->id === $n->mahasiswa->user_id)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
@@ -64,8 +62,6 @@
                                     <td>{{ $n->kontribusi_kelompok }}</td>
                                     <td>{{ $n->penilaian_sejawat }}</td>
                                     <td>{{ $n->hasil_akhir }}</td>
-
-                                    {{-- Tampilkan tombol aksi hanya untuk dosen --}}
                                     @if(Auth::user()->role === 'dosen')
                                         <td class="text-center">
                                             <a href="{{ route('nilai.edit', $n->id) }}" class="btn btn-warning btn-sm">Edit</a>
@@ -88,5 +84,6 @@
             </div>
         </div>
     </div>
+
 </div>
 @endsection
