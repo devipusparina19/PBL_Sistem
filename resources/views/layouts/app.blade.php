@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Sistem PBL Mahasiswa TI')</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
@@ -38,7 +39,7 @@
         }
 
         .sidebar {
-            width: 300px;
+            width: 280px;
             background: #f3f4f6;
             min-height: calc(100vh - 56px);
             padding-top: 25px;
@@ -51,7 +52,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 14px 28px;
+            padding: 12px 24px;
             color: #1e293b;
             text-decoration: none;
             font-weight: 500;
@@ -78,7 +79,7 @@
 
         .main-content {
             flex: 1;
-            padding: 50px;
+            padding: 40px;
         }
 
         footer {
@@ -89,6 +90,34 @@
             font-size: 0.9rem;
             margin-top: auto;
         }
+
+        /* ✅ Warna tabel global */
+        .table thead.bg-dark th {
+            background-color: #212529 !important;
+            color: #ffffff !important;
+        }
+
+        .table.table-striped tbody tr:nth-of-type(odd) {
+            background-color: #ffffff !important;
+        }
+
+        .table.table-striped tbody tr:nth-of-type(even) {
+            background-color: #f8f9fa !important;
+        }
+
+        .table.table-striped tbody tr:hover {
+            background-color: #e9ecef !important;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .card {
+            border: none !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .table th, .table td {
+            vertical-align: middle !important;
+        }
     </style>
 
     @stack('styles')
@@ -98,8 +127,7 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid px-4">
             <a class="navbar-brand fw-bold text-white" href="#">Sistem PBL Mahasiswa TI</a>
-            <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
@@ -123,48 +151,27 @@
     <div class="content-wrapper">
         <!-- Sidebar -->
         <div class="sidebar">
-            <a href="{{ url('/home') }}" class="{{ request()->is('home') ? 'active' : '' }}">
-                <i class="bi bi-house-door-fill"></i> Home
-            </a>
-
-            <a href="{{ url('dashboard/kelompok') }}" class="{{ request()->is('dashboard/kelompok') ? 'active' : '' }}">
-                <i class="bi bi-people-fill"></i> Dashboard Kelompok
-            </a>
-
-            {{-- ✅ FIX: Link Data Dosen sekarang ke /data_dosen --}}
-            <a href="{{ url('/data_dosen') }}" class="{{ request()->is('data_dosen*') ? 'active' : '' }}">
-                <i class="bi bi-person-badge-fill"></i> Data Dosen
-            </a>
-
-            <a href="{{ url('/mata_kuliah') }}" class="{{ request()->is('mata_kuliah*') ? 'active' : '' }}">
-                <i class="bi bi-book-fill"></i> Data Mata Kuliah
-            </a>
-
-            <a href="{{ url('/mahasiswa') }}" class="{{ request()->is('mahasiswa') ? 'active' : '' }}">
-                <i class="bi bi-mortarboard-fill"></i> Data Mahasiswa
-            </a>
-
-            <a href="{{ url('/kelompok') }}" class="{{ request()->is('kelompok') ? 'active' : '' }}">
-                <i class="bi bi-people-fill"></i> Kelompok PBL
-            </a>
-
-            <a href="{{ url('/profile') }}" class="{{ request()->is('profile') ? 'active' : '' }}">
-                <i class="bi bi-person-circle me-2 fs-5"></i> Profile
-            </a>
+            <a href="{{ url('/home') }}" class="{{ request()->is('home') ? 'active' : '' }}"><i class="bi bi-house-door-fill"></i> Home</a>
+            <a href="{{ url('dashboard/kelompok') }}" class="{{ request()->is('dashboard/kelompok') ? 'active' : '' }}"><i class="bi bi-people-fill"></i> Dashboard Kelompok</a>
+            <a href="{{ url('/monitoring') }}" class="{{ request()->is('monitoring') ? 'active' : '' }}"><i class="bi bi-clipboard-data"></i> Monitoring</a>
+            <a href="{{ url('/data_dosen') }}" class="{{ request()->is('data_dosen*') ? 'active' : '' }}"><i class="bi bi-person-badge-fill"></i> Data Dosen</a>
+            <a href="{{ url('/mata_kuliah') }}" class="{{ request()->is('mata_kuliah*') ? 'active' : '' }}"><i class="bi bi-book-fill"></i> Data Mata Kuliah</a>
+            <a href="{{ url('/mahasiswa') }}" class="{{ request()->is('mahasiswa') ? 'active' : '' }}"><i class="bi bi-mortarboard-fill"></i> Data Mahasiswa</a>
+            <a href="{{ url('/kelompok') }}" class="{{ request()->is('kelompok') ? 'active' : '' }}"><i class="bi bi-people-fill"></i> Kelompok PBL</a>
+            <a href="{{ url('/profile') }}" class="{{ request()->is('profile') ? 'active' : '' }}"><i class="bi bi-person-circle"></i> Profile</a>
         </div>
 
         <!-- Konten -->
         <div class="main-content">
-            {{-- Flash Message --}}
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             @elseif (session('error'))
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             @endif
 
@@ -172,7 +179,6 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <footer>
         🌐 Sistem Penilaian Kinerja Mahasiswa & Kelompok PBL TI © {{ date('Y') }}
     </footer>
