@@ -3,26 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Contact;
 
 class ContactController extends Controller
 {
+    /**
+     * Tampilkan halaman informasi kontak.
+     * Tidak ada form input, hanya menampilkan data kontak statis.
+     */
     public function index()
     {
-        return view('contacts.contact');
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nama'  => 'required',
-            'email' => 'required|email',
-            'pesan' => 'required',
-        ]);
-
-        Contact::create($request->all());
-
-        return redirect()->back()->with('success', 'Pesan berhasil dikirim!');
+        return view('contact'); // Pastikan file ada di resources/views/contact.blade.php
     }
 }
-

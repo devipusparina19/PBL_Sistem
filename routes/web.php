@@ -57,6 +57,11 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
+// ✅ About Page (TAMBAHAN)
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+
 /*
 |--------------------------------------------------------------------------
 | ROUTE YANG BUTUH LOGIN
