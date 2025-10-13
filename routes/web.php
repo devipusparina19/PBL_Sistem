@@ -19,6 +19,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AkunController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RangkingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -189,3 +190,8 @@ Route::get('/logbook/{id}/edit', [LogbookController::class, 'edit'])->name('logb
 Route::put('/logbook/{id}', [LogbookController::class, 'update'])->name('logbook.update')->middleware('auth');
 
 Route::delete('/logbook/{id}', [LogbookController::class, 'destroy'])->name('logbook.destroy')->middleware('auth');
+
+//Rangking Kelompok
+Route::get('/kelompok/rangking', [RangkingController::class, 'index'])
+    ->middleware(['auth'])
+    ->name('kelompok.rangking');

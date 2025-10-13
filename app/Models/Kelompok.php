@@ -1,24 +1,39 @@
 <?php
 
-namespace App\Models;
+namespace App\Http\Controllers;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use App\Models\Kelompok;
+use App\Models\Mahasiswa;
+use App\Models\Nilai;
 
-class Kelompok extends Model
+class RangkingController extends Controller
 {
-    use HasFactory;
+    /**
+     * Menampilkan halaman rangking kelompok berdasarkan nilai tertinggi
+     */
+    public function index()
+    {
+        // Ambil semua kelompok beserta rata-rata nilainya
+        $kelompoks = Kelompok::all()->map(function ($kelompok) {
+            // hitung rata-rata nilai dari tabel nilais berdasarkan id_kelompok
+            $rataNilai = Nilai::where('kelompok_id', $kelompok->id_kelompok)->avg('nilai_akhir');
 
-    protected $table = 'kelompoks';
-    protected $primaryKey = 'id_kelompok'; // primary key sesuai migration
-    public $incrementing = true;            // penting agar auto-increment
-    protected $keyType = 'int';
+            // ambil anggota dari tabel mahasiswas yang punya role_kelompok sama
+            $anggota = Mahasiswa::where('role_kelompok', $kelompok->id_kelompok)
+                                ->pluck('nama')
+                                ->implode(', ');
 
-    protected $fillable = [
-        'kode_mk',
-        'nama_kelompok',
-        'judul_proyek',
-        'nip',
-        'deskripsi',
-    ];
+            return [
+                'nama' => $kelompok->nama_kelompok ?? 'Kelompok Tanpa Nama',
+                'judul' => $kelompok->judul_proyek ?? '-',
+                'anggota' => $anggota ?: '-',
+                'nilai' => round($rataNilai, 2) ?? 0,
+            ];
+        })
+        ->sortByDesc('nilai')
+        ->values(); // urutkan dari nilai tertinggi
+
+        return view('kelompok.rangking', compact('kelompoks'));
+    }
 }

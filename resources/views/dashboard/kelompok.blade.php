@@ -11,7 +11,7 @@
     <!-- Card Section -->
     <div class="row justify-content-center g-4">
         <!-- Milestone -->
-        <div class="col-md-5">
+        <div class="col-md-4">
             <div class="card border-0 shadow-lg h-100 rounded-4 hover-card">
                 <div class="card-body text-center p-4">
                     <div class="mb-3 text-primary fs-1">
@@ -36,7 +36,7 @@
         </div>
 
         <!-- Penilaian Teman Sejawat -->
-        <div class="col-md-5">
+        <div class="col-md-4">
             <div class="card border-0 shadow-lg h-100 rounded-4 hover-card">
                 <div class="card-body text-center p-4">
                     <div class="mb-3 text-primary fs-1">
@@ -47,6 +47,23 @@
                     <a href="{{ url('/penilaian/sejawat') }}" 
                        class="btn btn-primary w-100 fw-semibold">
                         Beri Penilaian
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rangking Kelompok -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-lg h-100 rounded-4 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-primary fs-1">
+                        <i class="bi bi-bar-chart-fill"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Rangking Kelompok</h5>
+                    <p class="text-muted small mb-4">Lihat peringkat kelompok berdasarkan nilai dan progres PBL.</p>
+                    <a href="{{ url('/kelompok/rangking') }}" 
+                       class="btn btn-primary w-100 fw-semibold">
+                        Lihat Rangking
                     </a>
                 </div>
             </div>
