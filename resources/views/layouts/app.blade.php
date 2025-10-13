@@ -10,115 +10,152 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <style>
-        html, body {
-            height: 100%;
-            background: #ffffff;
-            color: #1e293b;
-            display: flex;
-            flex-direction: column;
-        }
+    html, body {
+        height: 100%;
+        background: #ffffff;
+        color: #1e293b;
+        display: flex;
+        flex-direction: column;
+    }
 
-        .navbar {
-            background: #001f54;
-        }
+    .navbar {
+        background: #001f54;
+    }
 
-        .navbar-brand {
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: white !important;
-        }
+    .navbar-brand {
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: white !important;
+    }
 
-        .nav-link {
-            color: white !important;
-            font-weight: 600;
-        }
+    .nav-link {
+        color: white !important;
+        font-weight: 600;
+    }
 
-        .nav-link:hover, .nav-link.active {
-            text-decoration: underline;
-            color: #60a5fa !important;
-        }
+    .nav-link:hover, .nav-link.active {
+        text-decoration: underline;
+        color: #60a5fa !important;
+    }
 
-        .sidebar {
-            width: 280px;
-            background: #f3f4f6;
-            min-height: calc(100vh - 56px);
-            padding-top: 25px;
-            display: flex;
-            flex-direction: column;
-            border-right: 1px solid #e2e8f0;
-        }
+    /* ==========================
+       SIDEBAR STYLING BARU
+    =========================== */
+    .sidebar {
+        width: 300px;
+        background: #0a1a40; /* lebih gelap, profesional */
+        min-height: calc(100vh - 56px);
+        padding-top: 0;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid #1a2c55;
+        box-shadow: 3px 0 6px rgba(0, 0, 0, 0.1);
+    }
 
-        .sidebar a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 24px;
-            color: #1e293b;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: all 0.2s ease-in-out;
-        }
+    .sidebar-header {
+        background: #001f54;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.1rem;
+        padding: 20px 25px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid #1a2c55;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-        .sidebar a:hover,
-        .sidebar a.active {
-            background: #001f54;
-            color: white;
-        }
+    .sidebar a {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 26px;
+        color: #e5e7eb;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: all 0.25s ease-in-out;
+    }
 
-        .sidebar a i {
-            width: 22px;
-            text-align: center;
-            font-size: 1.1rem;
-        }
+    .sidebar a i {
+        width: 22px;
+        text-align: center;
+        font-size: 1.2rem;
+        color: #93c5fd;
+        transition: color 0.2s ease-in-out;
+    }
 
-        .content-wrapper {
-            flex: 1;
-            display: flex;
-        }
+    .sidebar a:hover {
+        background: #1e3a8a;
+        color: #fff;
+        padding-left: 30px;
+    }
 
-        .main-content {
-            flex: 1;
-            padding: 40px;
-        }
+    .sidebar a:hover i {
+        color: #fff;
+    }
 
-        footer {
-            background: #001f54;
-            padding: 0.8rem;
-            text-align: center;
-            color: white;
-            font-size: 0.9rem;
-            margin-top: auto;
-        }
+    .sidebar a.active {
+        background: #1d4ed8;
+        color: #fff;
+        font-weight: 600;
+        border-left: 5px solid #60a5fa;
+    }
 
-        /* ✅ Warna tabel global */
-        .table thead.bg-dark th {
-            background-color: #212529 !important;
-            color: #ffffff !important;
-        }
+    .sidebar a.active i {
+        color: #fff;
+    }
 
-        .table.table-striped tbody tr:nth-of-type(odd) {
-            background-color: #ffffff !important;
-        }
+    .content-wrapper {
+        flex: 1;
+        display: flex;
+    }
 
-        .table.table-striped tbody tr:nth-of-type(even) {
-            background-color: #f8f9fa !important;
-        }
+    .main-content {
+        flex: 1;
+        padding: 40px;
+        background-color: #f9fafb;
+    }
 
-        .table.table-striped tbody tr:hover {
-            background-color: #e9ecef !important;
-            transition: background-color 0.2s ease-in-out;
-        }
+    footer {
+        background: #001f54;
+        padding: 0.8rem;
+        text-align: center;
+        color: white;
+        font-size: 0.9rem;
+        margin-top: auto;
+    }
 
-        .card {
-            border: none !important;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-        }
+    /* Tabel dan kartu */
+    .table thead.bg-dark th {
+        background-color: #212529 !important;
+        color: #ffffff !important;
+    }
 
-        .table th, .table td {
-            vertical-align: middle !important;
-        }
-    </style>
+    .table.table-striped tbody tr:nth-of-type(odd) {
+        background-color: #ffffff !important;
+    }
+
+    .table.table-striped tbody tr:nth-of-type(even) {
+        background-color: #f8f9fa !important;
+    }
+
+    .table.table-striped tbody tr:hover {
+        background-color: #e9ecef !important;
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .card {
+        border: none !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .table th, .table td {
+        vertical-align: middle !important;
+    }
+</style>
+
 
     @stack('styles')
 </head>
@@ -151,15 +188,20 @@
     <div class="content-wrapper">
         <!-- Sidebar -->
         <div class="sidebar">
-            <a href="{{ url('/home') }}" class="{{ request()->is('home') ? 'active' : '' }}"><i class="bi bi-house-door-fill"></i> Home</a>
-            <a href="{{ url('dashboard/kelompok') }}" class="{{ request()->is('dashboard/kelompok') ? 'active' : '' }}"><i class="bi bi-people-fill"></i> Dashboard Kelompok</a>
-            <a href="{{ url('/monitoring') }}" class="{{ request()->is('monitoring') ? 'active' : '' }}"><i class="bi bi-clipboard-data"></i> Monitoring</a>
-            <a href="{{ url('/data_dosen') }}" class="{{ request()->is('data_dosen*') ? 'active' : '' }}"><i class="bi bi-person-badge-fill"></i> Data Dosen</a>
-            <a href="{{ url('/mata_kuliah') }}" class="{{ request()->is('mata_kuliah*') ? 'active' : '' }}"><i class="bi bi-book-fill"></i> Data Mata Kuliah</a>
-            <a href="{{ url('/mahasiswa') }}" class="{{ request()->is('mahasiswa') ? 'active' : '' }}"><i class="bi bi-mortarboard-fill"></i> Data Mahasiswa</a>
-            <a href="{{ url('/kelompok') }}" class="{{ request()->is('kelompok') ? 'active' : '' }}"><i class="bi bi-people-fill"></i> Kelompok PBL</a>
-            <a href="{{ url('/profile') }}" class="{{ request()->is('profile') ? 'active' : '' }}"><i class="bi bi-person-circle"></i> Profile</a>
-        </div>
+    <div class="sidebar-header">
+        <i class="bi bi-mortarboard-fill me-2"></i> Menu Utama
+    </div>
+
+    <a href="{{ url('/home') }}" class="{{ request()->is('home') ? 'active' : '' }}"><i class="bi bi-house-door-fill"></i> Home</a>
+    <a href="{{ url('dashboard/kelompok') }}" class="{{ request()->is('dashboard/kelompok') ? 'active' : '' }}"><i class="bi bi-people-fill"></i> Dashboard Kelompok</a>
+    <a href="{{ url('/monitoring') }}" class="{{ request()->is('monitoring') ? 'active' : '' }}"><i class="bi bi-clipboard-data"></i> Monitoring</a>
+    <a href="{{ url('/data_dosen') }}" class="{{ request()->is('data_dosen*') ? 'active' : '' }}"><i class="bi bi-person-badge-fill"></i> Data Dosen</a>
+    <a href="{{ url('/mata_kuliah') }}" class="{{ request()->is('mata_kuliah*') ? 'active' : '' }}"><i class="bi bi-book-fill"></i> Data Mata Kuliah</a>
+    <a href="{{ url('/mahasiswa') }}" class="{{ request()->is('mahasiswa') ? 'active' : '' }}"><i class="bi bi-mortarboard"></i> Data Mahasiswa</a>
+    <a href="{{ url('/kelompok') }}" class="{{ request()->is('kelompok') ? 'active' : '' }}"><i class="bi bi-people"></i> Kelompok PBL</a>
+    <a href="{{ url('/profile') }}" class="{{ request()->is('profile') ? 'active' : '' }}"><i class="bi bi-person-circle"></i> Profile</a>
+</div>
+
 
         <!-- Konten -->
         <div class="main-content">
