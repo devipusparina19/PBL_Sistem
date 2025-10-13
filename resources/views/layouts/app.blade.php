@@ -194,7 +194,6 @@
 
     <a href="{{ url('/home') }}" class="{{ request()->is('home') ? 'active' : '' }}"><i class="bi bi-house-door-fill"></i> Home</a>
     <a href="{{ url('dashboard/kelompok') }}" class="{{ request()->is('dashboard/kelompok') ? 'active' : '' }}"><i class="bi bi-people-fill"></i> Dashboard Kelompok</a>
-    <a href="{{ url('/monitoring') }}" class="{{ request()->is('monitoring') ? 'active' : '' }}"><i class="bi bi-clipboard-data"></i> Monitoring</a>
     <a href="{{ url('/data_dosen') }}" class="{{ request()->is('data_dosen*') ? 'active' : '' }}"><i class="bi bi-person-badge-fill"></i> Data Dosen</a>
     <a href="{{ url('/mata_kuliah') }}" class="{{ request()->is('mata_kuliah*') ? 'active' : '' }}"><i class="bi bi-book-fill"></i> Data Mata Kuliah</a>
     <a href="{{ url('/mahasiswa') }}" class="{{ request()->is('mahasiswa') ? 'active' : '' }}"><i class="bi bi-mortarboard"></i> Data Mahasiswa</a>
