@@ -6,20 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->tinyInteger('role_kelompok')->nullable()->after('role');
-            $table->string('role_di_kelompok')->nullable()->after('role_kelompok');
+            if (!Schema::hasColumn('users', 'role_kelompok')) {
+                $table->tinyInteger('role_kelompok')->nullable()->after('role');
+            }
+            if (!Schema::hasColumn('users', 'role_di_kelompok')) {
+                $table->string('role_di_kelompok')->nullable()->after('role_kelompok');
+            }
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
