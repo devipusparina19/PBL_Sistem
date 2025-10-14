@@ -23,7 +23,7 @@ use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\RangkingController;
-use App\Http\Controllers\PenilaianController;
+use App\Http\Controllers\ProgresController; // ✅ Tambahan
 
 /*
 |--------------------------------------------------------------------------
@@ -58,7 +58,7 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
-// About Page
+// ✅ About Page (TAMBAHAN)
 Route::get('/about', function () {
     return view('about');
 })->name('about');
@@ -115,18 +115,11 @@ Route::middleware('auth')->group(function () {
     | NILAI MAHASISWA
     |--------------------------------------------------------------------------
     */
-    Route::middleware(['auth', 'role:dosen'])->group(function () {
-        Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai.index');
-        Route::get('/nilai/pilih-matkul', [NilaiController::class, 'pilihMatkul'])
-            ->middleware(['auth', 'role:dosen'])
-            ->name('nilai.pilihMatkul');
-        Route::get('/nilai/input/{matkul}', [NilaiController::class, 'create'])->name('nilai.create');
-        Route::post('/nilai/store/{matkul}', [NilaiController::class, 'store'])->name('nilai.store');
-        Route::get('/nilai/{id}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');
-        Route::put('/nilai/{id}', [NilaiController::class, 'update'])->name('nilai.update');
-        Route::delete('/nilai/{id}', [NilaiController::class, 'destroy'])->name('nilai.destroy');
-        Route::get('/nilai/input/{id}', [NilaiController::class, 'inputNilai'])->name('nilai.input');
-    });
+    Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai.index');
+    Route::post('/nilai', [NilaiController::class, 'store'])->name('nilai.store');
+    Route::get('/nilai/{id}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');
+    Route::put('/nilai/{id}', [NilaiController::class, 'update'])->name('nilai.update');
+    Route::delete('/nilai/{id}', [NilaiController::class, 'destroy'])->name('nilai.destroy');
 
     /*
     |--------------------------------------------------------------------------
@@ -150,6 +143,7 @@ Route::middleware('auth')->group(function () {
     */
     Route::middleware(['isAdmin'])->group(function () {
         Route::get('/manajemen_akun', [AdminController::class, 'manajemenAkun'])->name('manajemen_akun');
+
         Route::get('/akun', [AkunController::class, 'index'])->name('akun.index');
         Route::get('/akun/create', [AkunController::class, 'create'])->name('akun.create');
         Route::post('/akun', [AkunController::class, 'store'])->name('akun.store');
@@ -165,6 +159,21 @@ Route::middleware('auth')->group(function () {
     */
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROGRES KELOMPOK (KOORDINATOR & ADMIN)
+    |--------------------------------------------------------------------------
+    */
+    // ✅ Tambahan baru untuk fitur Progres
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/progres', [ProgresController::class, 'index'])->name('progres.index');
+        Route::get('/progres/create', [ProgresController::class, 'create'])->name('progres.create');
+        Route::post('/progres', [ProgresController::class, 'store'])->name('progres.store');
+        Route::get('/progres/{id}/edit', [ProgresController::class, 'edit'])->name('progres.edit');
+        Route::put('/progres/{id}', [ProgresController::class, 'update'])->name('progres.update');
+        Route::delete('/progres/{id}', [ProgresController::class, 'destroy'])->name('progres.destroy');
+    });
 });
 
 /*
@@ -172,6 +181,7 @@ Route::middleware('auth')->group(function () {
 | ROUTE TAMBAHAN (AUTENTIKASI DASAR)
 |--------------------------------------------------------------------------
 */
+
 Route::resource('mata_kuliah', MataKuliahController::class)->middleware('auth');
 Route::resource('user', UserController::class)->middleware('auth');
 Route::resource('dosen', DosenController::class)->middleware('auth');
@@ -179,13 +189,3 @@ Route::resource('mahasiswa', MahasiswaController::class)->middleware('auth');
 Route::resource('kelompok', KelompokController::class)->middleware('auth');
 Route::resource('logbook', LogbookController::class)->middleware('auth');
 
-/*
-|--------------------------------------------------------------------------
-| PENILAIAN DOSEN
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['auth', 'role:dosen'])->group(function () {
-    Route::get('/dosen/matkul', [PenilaianController::class, 'daftarMatkul'])->name('dosen.matkul');
-    Route::get('/dosen/matkul/{id}/nilai', [PenilaianController::class, 'formNilai'])->name('dosen.input.nilai');
-    Route::post('/dosen/matkul/{id}/nilai', [PenilaianController::class, 'store'])->name('dosen.nilai.store');
-});

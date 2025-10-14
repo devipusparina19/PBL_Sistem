@@ -10,8 +10,8 @@ class Kelompok extends Model
     use HasFactory;
 
     protected $table = 'kelompoks';
-    protected $primaryKey = 'id_kelompok'; // primary key sesuai migration
-    public $incrementing = true;            // penting agar auto-increment
+    protected $primaryKey = 'id_kelompok';
+    public $incrementing = true;
     protected $keyType = 'int';
 
     protected $fillable = [
@@ -21,4 +21,14 @@ class Kelompok extends Model
         'nip',
         'deskripsi',
     ];
+
+    public function mahasiswa()
+    {
+        return $this->hasMany(Mahasiswa::class, 'kelompok_id');
+    }
+
+    public function milestone()
+    {
+        return $this->hasMany(Milestone::class, 'kelompok_id');
+    }
 }

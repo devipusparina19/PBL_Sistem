@@ -1,55 +1,66 @@
 @extends('layouts.app')
 
-@section('title', 'Monitoring Kelompok PBL')
-
 @section('content')
 <div class="container mt-4">
-    <h3 class="text-center mb-4 fw-bold text-primary">Monitoring Progres Kelompok PBL</h3>
+    <h1 class="mb-4">Monitoring Keseluruhan</h1>
 
-    <div class="card p-4 shadow-sm border-0">
-        <div class="table-responsive">
-            <table class="table table-striped align-middle text-center mb-0">
-                <thead class="bg-dark text-white">
-                    <tr>
-                        <th>No</th>
-                        <th>Nama Kelompok</th>
-                        <th>Mahasiswa</th>
-                        <th>Progres</th>
-                        <th>Status</th>
-                        <th>Terakhir Diperbarui</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($kelompok as $index => $k)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td class="fw-semibold">{{ $k->nama_kelompok }}</td>
-                        <td class="text-start">
-                            <ul class="mb-0">
-                                @foreach($k->mahasiswa as $m)
-                                    <li>{{ $m->nama }}</li>
-                                @endforeach
-                            </ul>
-                        </td>
-                        <td>
-                            @if($k->milestone && count($k->milestone) > 0)
-                                {{ round(($k->milestone->where('status', 'selesai')->count() / $k->milestone->count()) * 100, 1) }}%
-                            @else
-                                <span class="text-muted">Belum ada progres</span>
-                            @endif
-                        </td>
-                        <td>
-                            @if($k->milestone && $k->milestone->where('status', 'selesai')->count() == $k->milestone->count())
-                                <span class="badge bg-success px-3 py-2">Selesai</span>
-                            @else
-                                <span class="badge bg-warning text-dark px-3 py-2">Berjalan</span>
-                            @endif
-                        </td>
-                        <td>{{ $k->updated_at->format('d M Y') }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+    {{-- Pesan sukses jika ada --}}
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    {{-- Form Pencarian --}}
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <form action="{{ route('monitoring.index') }}" method="GET" class="d-flex">
+                <input type="text" name="search" class="form-control me-2"
+                       placeholder="Cari nama mahasiswa / kelompok..."
+                       value="{{ request('search') }}">
+                <button type="submit" class="btn btn-secondary">Cari</button>
+                @if(request('search'))
+                    <a href="{{ route('monitoring.index') }}" class="btn btn-outline-secondary ms-2">Reset</a>
+                @endif
+            </form>
+        </div>
+    </div>
+
+    {{-- Tabel Monitoring --}}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Mahasiswa</th>
+                            <th>Kelompok</th>
+                            <th>Status Progres</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($mahasiswa as $index => $mhs)
+                            <tr>
+                                <td class="text-center">{{ $index + 1 }}</td>
+                                <td>{{ $mhs->nama }}</td>
+                                <td>{{ $mhs->kelompok->nama ?? '-' }}</td>
+                                <td class="text-center">
+                                    @if($mhs->status_progres == 'Selesai')
+                                        <span class="badge bg-success">Selesai</span>
+                                    @elseif($mhs->status_progres == 'Proses')
+                                        <span class="badge bg-warning text-dark">Proses</span>
+                                    @else
+                                        <span class="badge bg-secondary">Belum Ada Data</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">Tidak ada data mahasiswa</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

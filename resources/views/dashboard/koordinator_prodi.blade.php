@@ -19,7 +19,11 @@
                     </div>
                     <h5 class="fw-bold text-dark">Monitoring Keseluruhan</h5>
                     <p class="text-muted">Pantau progres mahasiswa dan kelompok secara real-time</p>
-                    <a href="{{ url('/monitoring/all') }}" class="btn btn-primary w-100 text-white">Pantau</a>
+                    
+                    <!-- ✅ Tombol Pantau diarahkan ke route monitoring.index -->
+                    <a href="{{ route('monitoring.index') }}" class="btn btn-primary w-100 text-white">
+                        Pantau
+                    </a>
                 </div>
             </div>
         </div>
