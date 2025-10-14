@@ -3,16 +3,25 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Kelompok; // misal model kelompok kamu sudah ada
-use App\Models\Mahasiswa; // jika butuh data mahasiswa
+use App\Models\Mahasiswa;
+use App\Models\Kelompok; // pastikan model ini ada
 
 class MonitoringController extends Controller
 {
     public function index()
     {
-        // ambil semua data progres dari tabel kelompok / logbook / milestone (sesuaikan)
-        $kelompok = Kelompok::with(['mahasiswa', 'milestone'])->get();
+        // Ambil semua data mahasiswa beserta kelompok dan milestone
+        $mahasiswa = Mahasiswa::with(['kelompok', 'kelompok.milestone'])->get();
 
-        return view('koordinator.monitoring', compact('kelompok'));
+        return view('koordinator.monitoring', compact('mahasiswa'));
+    }
+
+    public function show($id)
+    {
+        // Tampilkan detail progres kelompok tertentu
+        $kelompok = Kelompok::with(['mahasiswa', 'milestone'])
+            ->findOrFail($id);
+
+        return view('koordinator.monitoring_detail', compact('kelompok'));
     }
 }

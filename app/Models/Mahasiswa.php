@@ -16,11 +16,18 @@ class Mahasiswa extends Model
         'angkatan',
         'email',
         'password',
+        'kelompok_id', // tambahkan ini kalau kolomnya ada di tabel
     ];
-    
-     public function nilai()
+
+    // 🔹 Relasi ke model Nilai
+    public function nilai()
     {
         return $this->hasOne(Nilai::class, 'mahasiswa_id');
-        // atau hasMany kalau bisa punya banyak nilai
+    }
+
+    // 🔹 Relasi ke model Kelompok
+    public function kelompok()
+    {
+        return $this->belongsTo(Kelompok::class, 'kelompok_id', 'id_kelompok');
     }
 }
