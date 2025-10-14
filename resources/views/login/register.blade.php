@@ -181,6 +181,17 @@ footer {
   </div>
 
   <!-- Field Mahasiswa -->
+   <div class="form-group mt-3" id="kelasGroup" style="display: none;">
+    <label for="kelas">Kelas</label>
+    <select name="kelas" id="kelas" class="form-control">
+        <option value="">Pilih Kelas</option>
+        <option value="TI-1A">TI-1A</option>
+        <option value="TI-1B">TI-1B</option>
+        <option value="TI-1C">TI-1C</option>
+        <!-- Tambahkan kelas lain di sini -->
+    </select>
+</div>
+
   <div id="mahasiswa-fields">
     <div class="form-group">
       <label>Kelompok</label>
@@ -231,7 +242,30 @@ roleSelect.addEventListener('change', function() {
         mahasiswaFields.querySelectorAll('select').forEach(f => f.required = false);
     }
 });
-</script>
 
+// ✅ Tambahan khusus untuk menampilkan dropdown kelas
+const kelasGroup = document.getElementById('kelasGroup'); // pastikan id="kelasGroup" di div kelas kamu
+const kelasSelect = document.getElementById('kelas'); // pastikan id="kelas" di select kelas kamu
+
+roleSelect.addEventListener('change', function() {
+    if (this.value === 'mahasiswa') {
+        kelasGroup.style.display = 'block';
+        kelasSelect.required = true;
+    } else {
+        kelasGroup.style.display = 'none';
+        kelasSelect.required = false;
+        kelasSelect.value = ''; // reset kalau bukan mahasiswa
+    }
+});
+
+// Jalankan saat pertama kali halaman dimuat
+document.addEventListener('DOMContentLoaded', function() {
+    if (roleSelect.value === 'mahasiswa') {
+        kelasGroup.style.display = 'block';
+    } else {
+        kelasGroup.style.display = 'none';
+    }
+});
+</script>
 </body>
 </html>
