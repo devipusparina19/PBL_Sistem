@@ -46,8 +46,9 @@
                     <p class="text-secondary mb-4" style="font-size: 0.95rem;">
                         Beri penilaian laporan, presentasi, dan kontribusi.
                     </p>
-                    <a href="{{ url('/nilai/input') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
-                        Input
+                    <a href="{{ route('nilai.pilihMatkul') }}" class="btn btn-primary">
+                    Input Nilai
+                    </a>
                     </a>
                 </div>
             </div>

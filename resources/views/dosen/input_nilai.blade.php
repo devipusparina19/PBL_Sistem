@@ -5,7 +5,7 @@
 
     <!-- Header -->
     <div class="text-center mb-5">
-        <h2 class="fw-semibold text-primary mb-2">Input Nilai Mahasiswa</h2>
+        <h2 class="fw-semibold text-primary mb-2">Input Nilai Mahasiswa - {{ $matkul->nama }}</h2>
         <p class="text-muted fs-5">Form penilaian laporan, presentasi, dan kontribusi mahasiswa dalam proyek PBL</p>
         <div class="header-line mx-auto"></div>
     </div>
@@ -13,7 +13,7 @@
     <!-- Form Input Nilai -->
     <div class="card shadow border-0 rounded-4">
         <div class="card-body px-5 py-4">
-            <form action="{{ route('nilai.store') }}" method="POST">
+            <form action="{{ route('dosen.nilai.store', $matkul->id) }}" method="POST">
                 @csrf
 
                 <!-- Data Mahasiswa -->
