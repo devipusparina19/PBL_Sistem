@@ -10,9 +10,11 @@ return new class extends Migration
     {
         Schema::create('nilai', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
+
+            // pastikan referensi ke tabel yang sesuai
+            $table->foreignId('mahasiswa_id')->constrained('mahasiswas')->onDelete('cascade');
             $table->foreignId('mata_kuliah_id')->constrained('mata_kuliah')->onDelete('cascade');
-            $table->foreignId('dosen_id')->nullable()->constrained('dosen')->onDelete('set null');
+            $table->foreignId('dosen_id')->nullable()->constrained('dosens')->onDelete('set null');
 
             $table->integer('laporan');
             $table->integer('presentasi');
