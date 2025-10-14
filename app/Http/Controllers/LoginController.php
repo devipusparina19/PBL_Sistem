@@ -20,28 +20,23 @@ class LoginController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
+        // Validasi domain email Politala
+        if (
+            !str_ends_with($request->email, '@politala.ac.id') &&
+            !str_ends_with($request->email, '@mhs.politala.ac.id')
+        ) {
+            return back()->withErrors([
+                'email' => 'Hanya email Politala yang diperbolehkan login.',
+            ]);
+        }
+
+        // Proses autentikasi manual
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             $user = Auth::user();
 
-            // Arahkan ke dashboard sesuai role
-            switch ($user->role) {
-                case 'mahasiswa':
-                    return redirect()->route('mahasiswa.dashboard');
-                case 'dosen':
-                    return redirect()->route('dosen.dashboard');
-                case 'admin':
-                    return redirect()->route('admin.dashboard');
-                case 'koordinator_pbl':
-                    return redirect()->route('koordinator_pbl.dashboard');
-                case 'koordinator_prodi':
-                    return redirect()->route('koordinator_prodi.dashboard');
-                default:
-                    Auth::logout();
-                    return redirect()->route('login')->withErrors([
-                        'email' => 'Role pengguna tidak dikenali.',
-                    ]);
-            }
+            // Arahkan sesuai role
+            return $this->redirectByRole($user);
         }
 
         return back()->withErrors([
@@ -65,7 +60,7 @@ class LoginController extends Controller
         return view('login.register');
     }
 
-    // ===== PROSES REGISTER TANPA NIM =====
+    // ===== PROSES REGISTER =====
     public function register(Request $request)
     {
         $request->validate([
@@ -75,6 +70,17 @@ class LoginController extends Controller
             'role' => 'required|string|in:mahasiswa,dosen,admin,koordinator_pbl,koordinator_prodi',
         ]);
 
+        // Validasi domain Politala
+        if (
+            !str_ends_with($request->email, '@politala.ac.id') &&
+            !str_ends_with($request->email, '@mhs.politala.ac.id')
+        ) {
+            return back()->withErrors([
+                'email' => 'Gunakan email Politala yang valid.',
+            ]);
+        }
+
+        // Buat akun baru
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -83,7 +89,12 @@ class LoginController extends Controller
         ]);
 
         Auth::login($user);
+        return $this->redirectByRole($user);
+    }
 
+    // ===== ARAHKAN BERDASARKAN ROLE =====
+    private function redirectByRole($user)
+    {
         switch ($user->role) {
             case 'mahasiswa':
                 return redirect()->route('mahasiswa.dashboard');
@@ -96,7 +107,10 @@ class LoginController extends Controller
             case 'koordinator_prodi':
                 return redirect()->route('koordinator_prodi.dashboard');
             default:
-                return redirect()->route('login');
+                Auth::logout();
+                return redirect()->route('login')->withErrors([
+                    'email' => 'Role pengguna tidak dikenali.',
+                ]);
         }
     }
 }

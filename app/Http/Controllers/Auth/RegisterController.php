@@ -16,52 +16,63 @@ class RegisterController extends Controller
     }
 
     // Proses pendaftaran user baru
-    public function register(Request $request)
-    {
-        // Validasi input
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-            'role' => 'required|string',
-            'role_kelompok' => 'nullable|string',
-            'role_di_kelompok' => 'nullable|string',
-        ]);
+   public function register(Request $request)
+{
+    // Validasi input
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:6|confirmed',
+        'role' => 'nullable|string', // ubah ke nullable karena nanti otomatis
+        'role_kelompok' => 'nullable|string',
+        'role_di_kelompok' => 'nullable|string',
+    ]);
 
-        // Validasi domain email Politala
-        if (
-            !str_ends_with($request->email, '@politala.ac.id') &&
-            !str_ends_with($request->email, '@mhs.politala.ac.id')
-        ) {
-            return back()->withErrors(['email' => 'Hanya email Politala yang diperbolehkan mendaftar'])->withInput();
-        }
+    // Validasi domain email Politala
+    if (
+        !str_ends_with($request->email, '@politala.ac.id') &&
+        !str_ends_with($request->email, '@mhs.politala.ac.id')
+    ) {
+        return back()->withErrors(['email' => 'Hanya email Politala yang diperbolehkan mendaftar'])->withInput();
+    }
 
-        // Simpan ke database
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-            'role_kelompok' => $request->role_kelompok,
-            'role_di_kelompok' => $request->role_di_kelompok,
-        ]);
+    // Tentukan role otomatis berdasarkan domain
+    $role = $request->role; // default dari input (untuk admin/dosen jika ada)
 
-        // Login otomatis setelah daftar
-        auth()->login($user);
+    if (str_ends_with($request->email, '@mhs.politala.ac.id')) {
+        $role = 'mahasiswa';
+    } elseif (str_ends_with($request->email, '@politala.ac.id')) {
+        // Jika tidak diisi manual, set default dosen
+        $role = $role ?? 'dosen';
+    }
 
-        // Arahkan ke dashboard sesuai role
-        if ($user->role === 'mahasiswa') {
-            return redirect('/dashboard/mahasiswa');
-        } elseif ($user->role === 'dosen') {
-            return redirect('/dashboard/dosen');
-        } elseif ($user->role === 'admin') {
-            return redirect('/dashboard/admin');
-        } elseif ($user->role === 'koordinator_pbl') {
-            return redirect('/dashboard/koordinator-pbl');
-        } elseif ($user->role === 'koordinator_prodi') {
-            return redirect('/dashboard/koordinator-prodi');
-        } else {
-            return redirect('/dashboard');
-        }
+    // Simpan user ke database
+    $user = \App\Models\User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'role' => $role,
+        'role_kelompok' => $request->role_kelompok,
+        'role_di_kelompok' => $request->role_di_kelompok,
+    ]);
+
+    // Login langsung setelah register
+    Auth::login($user);
+
+    // Redirect sesuai role
+    switch ($role) {
+        case 'admin':
+            return redirect()->route('admin.dashboard');
+        case 'koordinator_pbl':
+            return redirect()->route('koordinator_pbl.dashboard');
+        case 'koordinator_prodi':
+            return redirect()->route('koordinator_prodi.dashboard');
+        case 'dosen':
+            return redirect()->route('dosen.dashboard');
+        case 'mahasiswa':
+            return redirect()->route('mahasiswa.dashboard');
+        default:
+            return redirect()->route('home');
     }
 }
+    }
