@@ -22,13 +22,13 @@ class Kelompok extends Model
         'deskripsi',
     ];
 
-    public function mahasiswa()
+    public function mahasiswas()
     {
-        return $this->hasMany(Mahasiswa::class, 'kelompok_id');
+        return $this->hasMany(Mahasiswa::class, 'kelompok_id', 'id_kelompok');
     }
 
-    public function milestone()
+    public function milestones()
     {
-        return $this->hasMany(Milestone::class, 'kelompok_id');
+        return $this->hasMany(Milestone::class, 'kelompok_id', 'id_kelompok');
     }
 }

@@ -29,4 +29,16 @@ class Milestone extends Model
             }
         });
     }
+
+    // Relasi ke Kelompok
+    public function kelompok()
+    {
+        return $this->belongsTo(Kelompok::class, 'kelompok_id', 'id_kelompok');
+    }
+
+    // Relasi ke User
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

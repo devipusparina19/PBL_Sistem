@@ -13,25 +13,40 @@ class RangkingController extends Controller
      */
     public function index()
     {
-        // Ambil data nilai rata-rata per kelompok (contoh logika)
-        // Pastikan tabel nilais memiliki kolom: kelompok_id, nilai_total atau nilai_akhir
-        $kelompoks = Kelompok::with('mahasiswas') // ambil relasi anggota kelompok
-            ->get()
-            ->map(function ($kelompok) {
-                // Hitung rata-rata nilai dari tabel nilais
-                $rataNilai = Nilai::where('kelompok_id', $kelompok->id)->avg('nilai_akhir');
+        try {
+            // Ambil data nilai rata-rata per kelompok
+            $kelompoks = Kelompok::with('mahasiswas')
+                ->get()
+                ->map(function ($kelompok) {
+                    // Hitung rata-rata nilai dari tabel nilai
+                    $rataNilai = Nilai::where('kelompok_id', $kelompok->id_kelompok)->avg('hasil_akhir');
 
-                return [
-                    'nama' => $kelompok->nama_kelompok ?? 'Kelompok Tanpa Nama',
-                    'judul' => $kelompok->judul_proyek ?? '-',
-                    'anggota' => $kelompok->mahasiswas->pluck('nama')->implode(', '),
-                    'nilai' => round($rataNilai, 2) ?? 0,
-                ];
-            })
-            ->sortByDesc('nilai')
-            ->values();
+                    // Ambil nama anggota kelompok
+                    $anggotaArray = [];
+                    if ($kelompok->relationLoaded('mahasiswas') && $kelompok->mahasiswas) {
+                        $anggotaArray = $kelompok->mahasiswas->pluck('nama')->toArray();
+                    }
+                    $anggotaStr = !empty($anggotaArray) ? implode(', ', $anggotaArray) : 'Belum ada anggota';
 
-        // Kirim ke view
-        return view('kelompok.rangking', compact('kelompoks'));
+                    return [
+                        'nama' => $kelompok->nama_kelompok ?? 'Kelompok Tanpa Nama',
+                        'judul' => $kelompok->judul_proyek ?? '-',
+                        'anggota' => $anggotaStr,
+                        'nilai' => $rataNilai ? round($rataNilai, 2) : 0,
+                    ];
+                })
+                ->sortByDesc('nilai')
+                ->values();
+
+            // Kirim ke view
+            return view('kelompok.rangking', compact('kelompoks'));
+            
+        } catch (\Exception $e) {
+            // Jika terjadi error, kirim data kosong dengan pesan error
+            \Log::error('Error di RangkingController: ' . $e->getMessage());
+            $kelompoks = collect([]);
+            return view('kelompok.rangking', compact('kelompoks'))
+                ->with('error', 'Terjadi kesalahan saat memuat data ranking.');
+        }
     }
 }
