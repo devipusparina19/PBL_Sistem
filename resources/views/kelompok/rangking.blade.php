@@ -8,6 +8,15 @@
         <p class="text-muted">Berikut adalah peringkat kelompok berdasarkan penilaian akhir dan progres proyek.</p>
     </div>
 
+    <!-- Alert Error -->
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
     <!-- Card Wrapper -->
     <div class="card border-0 shadow-lg rounded-4">
         <div class="card-body p-4">
@@ -25,25 +34,12 @@
                         </tr>
                     </thead>
                     <tbody class="text-center">
-                        @php
-                            // contoh data dummy (bisa diganti dengan data dari controller)
-                            $kelompoks = [
-                                ['nama' => 'Kelompok 1', 'judul' => 'Aplikasi Manajemen PBL', 'anggota' => 'Devi, Rina, Putri', 'nilai' => 95],
-                                ['nama' => 'Kelompok 2', 'judul' => 'Sistem Informasi Desa', 'anggota' => 'Dian, Yusuf, Budi', 'nilai' => 89],
-                                ['nama' => 'Kelompok 3', 'judul' => 'E-Library Politala', 'anggota' => 'Ardi, Fani, Reza', 'nilai' => 83],
-                                ['nama' => 'Kelompok 4', 'judul' => 'Website Wisata Daerah', 'anggota' => 'Wulan, Yani, Tono', 'nilai' => 78],
-                                ['nama' => 'Kelompok 5', 'judul' => 'Smart Trash Bin', 'anggota' => 'Andi, Rafi, Lina', 'nilai' => 72],
-                            ];
-
-                            $no = 1;
-                        @endphp
-
-                        @foreach($kelompoks as $kelompok)
+                        @forelse($kelompoks as $index => $kelompok)
                             <tr>
-                                <td><strong>{{ $no++ }}</strong></td>
+                                <td><strong>{{ $index + 1 }}</strong></td>
                                 <td class="fw-semibold">{{ $kelompok['nama'] }}</td>
                                 <td>{{ $kelompok['judul'] }}</td>
-                                <td>{{ $kelompok['anggota'] }}</td>
+                                <td>{{ $kelompok['anggota'] ?: 'Belum ada anggota' }}</td>
                                 <td class="fw-bold text-primary">{{ $kelompok['nilai'] }}</td>
                                 <td>
                                     @if($kelompok['nilai'] >= 90)
@@ -57,7 +53,14 @@
                                     @endif
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                                    <p class="mt-2">Belum ada data kelompok atau nilai</p>
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

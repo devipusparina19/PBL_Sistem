@@ -84,6 +84,14 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
+    | RANGKING KELOMPOK BERDASARKAN NILAI
+    | ⚠️ HARUS SEBELUM RESOURCE KELOMPOK agar tidak conflict
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/kelompok/rangking', [RangkingController::class, 'index'])->name('kelompok.rangking');
+
+    /*
+    |--------------------------------------------------------------------------
     | CRUD DATA
     |--------------------------------------------------------------------------
     */
@@ -128,13 +136,6 @@ Route::middleware('auth')->group(function () {
     */
     Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
     Route::get('/monitoring/{id}', [MonitoringController::class, 'show'])->name('monitoring.show');
-
-    /*
-    |--------------------------------------------------------------------------
-    | RANGKING KELOMPOK BERDASARKAN NILAI
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/kelompok/rangking', [RangkingController::class, 'index'])->name('kelompok.rangking');
 
     /*
     |--------------------------------------------------------------------------

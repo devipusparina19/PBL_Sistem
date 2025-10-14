@@ -11,7 +11,7 @@ class MonitoringController extends Controller
     public function index()
     {
         // Ambil semua data mahasiswa beserta kelompok dan milestone
-        $mahasiswa = Mahasiswa::with(['kelompok', 'kelompok.milestone'])->get();
+        $mahasiswa = Mahasiswa::with(['kelompok', 'kelompok.milestones'])->get();
 
         return view('koordinator.monitoring', compact('mahasiswa'));
     }
@@ -19,7 +19,7 @@ class MonitoringController extends Controller
     public function show($id)
     {
         // Tampilkan detail progres kelompok tertentu
-        $kelompok = Kelompok::with(['mahasiswa', 'milestone'])
+        $kelompok = Kelompok::with(['mahasiswas', 'milestones'])
             ->findOrFail($id);
 
         return view('koordinator.monitoring_detail', compact('kelompok'));
