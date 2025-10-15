@@ -10,8 +10,9 @@ use Illuminate\Http\Request;
 class DosenController extends Controller
 {
     /* ========================================================
-     |  BAGIAN 1 — MANAJEMEN DATA DOSEN (SUDAH ADA)
+     |  BAGIAN 1 — MANAJEMEN DATA DOSEN
      ======================================================== */
+
     public function index(Request $request)
     {
         $search = $request->input('search');
@@ -19,7 +20,8 @@ class DosenController extends Controller
         $dosens = Dosen::when($search, function ($query, $search) {
             return $query->where('nama', 'like', "%{$search}%")
                 ->orWhere('nip', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%");
+                ->orWhere('email', 'like', "%{$search}%")
+                ->orWhere('mata_kuliah', 'like', "%{$search}%");
         })->paginate(10);
 
         return view('data_dosen.index_data', compact('dosens'));
@@ -34,14 +36,22 @@ class DosenController extends Controller
     {
         $request->validate([
             'nama' => 'required|string|max:255',
-            'nip' => 'required|string|max:50|unique:dosens,nip',
-            'email' => 'required|email|unique:dosens,email',
+            'nip' => 'required|string|max:50|unique:data_dosen,nip',
+            'email' => 'required|email|unique:data_dosen,email',
             'no_telp' => 'nullable|string|max:20',
             'kelas' => 'nullable|string|max:50',
             'mata_kuliah' => 'nullable|string|max:100',
         ]);
 
-        Dosen::create($request->all());
+        Dosen::create([
+            'nama' => $request->nama,
+            'nip' => $request->nip,
+            'email' => $request->email,
+            'no_telp' => $request->no_telp,
+            'kelas' => $request->kelas,
+            'mata_kuliah' => $request->mata_kuliah,
+        ]);
+
         return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil ditambahkan!');
     }
 
@@ -58,48 +68,47 @@ class DosenController extends Controller
     }
 
     public function update(Request $request, $id)
-{
-    $request->validate([
-        'nama' => 'required|string|max:255',
-        'nip' => 'required|string|max:50',
-        'email' => 'required|email|max:255',
-        'no_telp' => 'nullable|string|max:20',
-        'kelas' => 'nullable|string|max:50',
-        'mata_kuliah' => 'nullable|string|max:100',
-    ]);
+    {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'nip' => 'required|string|max:50',
+            'email' => 'required|email|max:255',
+            'no_telp' => 'nullable|string|max:20',
+            'kelas' => 'nullable|string|max:50',
+            'mata_kuliah' => 'nullable|string|max:100',
+        ]);
 
-<<<<<<< HEAD
-    $dosen = Dosen::findOrFail($id);
+        $dosen = Dosen::findOrFail($id);
 
-    $dosen->update([
-        'nama' => $request->nama,
-        'nip' => $request->nip,
-        'email' => $request->email,
-        'no_telp' => $request->no_telp,
-        'kelas' => $request->kelas,
-        'mata_kuliah' => $request->mata_kuliah,
-    ]);
-=======
-        $dosen->update($request->all());
->>>>>>> 9d6d957ff0fd1a37f2ccf1f68dd30cfd5ef16a69
+        $dosen->update([
+            'nama' => $request->nama,
+            'nip' => $request->nip,
+            'email' => $request->email,
+            'no_telp' => $request->no_telp,
+            'kelas' => $request->kelas,
+            'mata_kuliah' => $request->mata_kuliah,
+        ]);
 
-    return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil diperbarui!');
-}
+        return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil diperbarui!');
+    }
 
     public function destroy($id)
     {
         $dosen = Dosen::findOrFail($id);
         $dosen->delete();
+
         return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil dihapus!');
     }
 
     /* ========================================================
      |  BAGIAN 2 — FITUR TAMBAHAN: INPUT NILAI MAHASISWA
      ======================================================== */
+
     public function inputNilai()
     {
         $mahasiswa = Mahasiswa::orderBy('nama', 'asc')->get();
         $nilai = Nilai::with('mahasiswa')->latest()->get();
+
         return view('dosen.input_nilai', compact('mahasiswa', 'nilai'));
     }
 
