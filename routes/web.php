@@ -20,6 +20,7 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AkunController;
 use App\Http\Controllers\NilaiController;
+use App\Http\Controllers\NilaiKelompokController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\RangkingController;
@@ -130,6 +131,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/nilai/{id}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');
     Route::put('/nilai/{id}', [NilaiController::class, 'update'])->name('nilai.update');
     Route::delete('/nilai/{id}', [NilaiController::class, 'destroy'])->name('nilai.destroy');
+
+    /*
+    |--------------------------------------------------------------------------
+    | NILAI KELOMPOK - DOSEN
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/nilai-kelompok', [NilaiKelompokController::class, 'index'])->name('nilai-kelompok.index');
+    Route::get('/nilai-kelompok/create', [NilaiKelompokController::class, 'create'])->name('nilai-kelompok.create');
+    Route::post('/nilai-kelompok', [NilaiKelompokController::class, 'store'])->name('nilai-kelompok.store');
+    Route::get('/nilai-kelompok/{id}/edit', [NilaiKelompokController::class, 'edit'])->name('nilai-kelompok.edit');
+    Route::put('/nilai-kelompok/{id}', [NilaiKelompokController::class, 'update'])->name('nilai-kelompok.update');
+    Route::delete('/nilai-kelompok/{id}', [NilaiKelompokController::class, 'destroy'])->name('nilai-kelompok.destroy');
 
     /*
     |--------------------------------------------------------------------------

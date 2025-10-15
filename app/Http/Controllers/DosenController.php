@@ -68,6 +68,7 @@ class DosenController extends Controller
         'mata_kuliah' => 'nullable|string|max:100',
     ]);
 
+<<<<<<< HEAD
     $dosen = Dosen::findOrFail($id);
 
     $dosen->update([
@@ -78,6 +79,9 @@ class DosenController extends Controller
         'kelas' => $request->kelas,
         'mata_kuliah' => $request->mata_kuliah,
     ]);
+=======
+        $dosen->update($request->all());
+>>>>>>> 9d6d957ff0fd1a37f2ccf1f68dd30cfd5ef16a69
 
     return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil diperbarui!');
 }

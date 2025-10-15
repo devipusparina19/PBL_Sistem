@@ -20,6 +20,14 @@ class Kelompok extends Model
         'judul_proyek',
         'nip',
         'deskripsi',
+        // Nilai kelompok
+        'pemrograman_web',
+        'integrasi_sistem',
+        'pengambilan_keputusan',
+        'it_proyek',
+        'kontribusi_kelompok',
+        'penilaian_dosen',
+        'hasil_akhir',
     ];
 
     public function mahasiswas()
