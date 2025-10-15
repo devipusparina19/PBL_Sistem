@@ -48,13 +48,13 @@
         <div class="mb-3">
             <label for="no_telepon" class="form-label">No. Telepon</label>
             <input type="text" id="no_telepon" name="no_telepon" class="form-control" 
-                   value="{{ old('no_telepon', $dosen->no_telepon) }}" required>
+                   value="{{ old('no_telepon', $dosen->no_telepon) }}">
         </div>
 
         <div class="mb-3">
-            <label for="kelas" class="form-label">Kelas</label>
-            <select id="kelas" name="kelas" class="form-select" required>
-                <option value="">-- Pilih Kelas --</option>
+            <label for="kelas" class="form-label">Kelas Bimbingan (Opsional)</label>
+            <select id="kelas" name="kelas" class="form-select">
+                <option value="">-- Tidak Ada --</option>
                 @foreach (['TI 3A', 'TI 3B', 'TI 3C', 'TI 3D', 'TI 3E'] as $kelas)
                     <option value="{{ $kelas }}" {{ old('kelas', $dosen->kelas) == $kelas ? 'selected' : '' }}>
                         {{ $kelas }}
