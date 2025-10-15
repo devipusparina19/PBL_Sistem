@@ -66,9 +66,8 @@ class DosenController extends Controller
             'nip' => 'required|string|max:20|unique:dosens,nip,' . $dosen->id,
             'email' => 'required|email|unique:dosens,email,' . $dosen->id,
             'no_telepon' => 'nullable|string|max:15',
-            'mata_kuliah' => 'nullable|array',
-            'mata_kuliah.*' => 'exists:mata_kuliah,id'
-        ]);
+            'mata_kuliah' => 'nullable|string|max:100', 
+    ]);
 
         $dosen->update($request->except('mata_kuliah'));
 
