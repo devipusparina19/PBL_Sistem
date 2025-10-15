@@ -15,4 +15,12 @@ class Dosen extends Model
         'email',
         'mata_kuliah',
     ];
+
+    /**
+     * Relasi ke Nilai (Dosen bisa memberi banyak nilai)
+     */
+    public function nilais()
+    {
+        return $this->hasMany(Nilai::class, 'dosen_id');
+    }
 }

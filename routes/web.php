@@ -84,11 +84,12 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | RANGKING KELOMPOK BERDASARKAN NILAI
+    | RANGKING MAHASISWA & KELOMPOK
     | ⚠️ HARUS SEBELUM RESOURCE KELOMPOK agar tidak conflict
     |--------------------------------------------------------------------------
     */
-    Route::get('/kelompok/rangking', [RangkingController::class, 'index'])->name('kelompok.rangking');
+    Route::get('/mahasiswa/rangking', [RangkingController::class, 'mahasiswa'])->name('mahasiswa.rangking');
+    Route::get('/kelompok/rangking', [RangkingController::class, 'kelompok'])->name('kelompok.rangking');
 
     /*
     |--------------------------------------------------------------------------
