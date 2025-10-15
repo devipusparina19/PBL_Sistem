@@ -10,11 +10,6 @@
     </div>
 
     <div class="mb-3">
-        <label class="form-label">NIP</label>
-        <input type="text" class="form-control" value="{{ $kelompok->nip }}" readonly>
-    </div>
-
-    <div class="mb-3">
         <label class="form-label">Kode MK</label>
         <input type="text" class="form-control" value="{{ $kelompok->kode_mk }}" readonly>
     </div>
@@ -24,9 +19,11 @@
         <input type="text" class="form-control" value="{{ $kelompok->nama_kelompok }}" readonly>
     </div>
 
+    {{-- ✅ Tambahan: tampilkan nama kelas --}}
     <div class="mb-3">
-        <label class="form-label">Deskripsi</label>
-        <textarea class="form-control" rows="3" readonly>{{ $kelompok->deskripsi }}</textarea>
+        <label class="form-label">Kelas</label>
+        <input type="text" class="form-control" 
+               value="{{ $kelompok->kelas ? $kelompok->kelas->nama_kelas : '-' }}" readonly>
     </div>
 
     <div class="mb-3">

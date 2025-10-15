@@ -9,34 +9,22 @@ class Kelompok extends Model
 {
     use HasFactory;
 
-    protected $table = 'kelompoks';
+    // Nama tabel sesuai database
+    protected $table = 'kelompok';
+
+    // Primary key
     protected $primaryKey = 'id_kelompok';
     public $incrementing = true;
     protected $keyType = 'int';
 
+    // Kolom yang boleh diisi
     protected $fillable = [
         'kode_mk',
         'nama_kelompok',
         'judul_proyek',
-        'nip',
-        'deskripsi',
-        // Nilai kelompok
-        'pemrograman_web',
-        'integrasi_sistem',
-        'pengambilan_keputusan',
-        'it_proyek',
-        'kontribusi_kelompok',
-        'penilaian_dosen',
-        'hasil_akhir',
+        'kelas',
     ];
 
-    public function mahasiswas()
-    {
-        return $this->hasMany(Mahasiswa::class, 'kelompok_id', 'id_kelompok');
-    }
-
-    public function milestones()
-    {
-        return $this->hasMany(Milestone::class, 'kelompok_id', 'id_kelompok');
-    }
+    // Jika tabel memiliki kolom created_at dan updated_at
+    public $timestamps = true;
 }

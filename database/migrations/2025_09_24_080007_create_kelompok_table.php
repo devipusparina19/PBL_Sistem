@@ -11,17 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-   Schema::create('kelompoks', function (Blueprint $table) {
-    $table->id('id_kelompok'); // primary key auto-increment
-    $table->string('kode_mk');
-    $table->string('nama_kelompok');
-    $table->text('deskripsi')->nullable();
-    $table->string('judul_proyek');
-    $table->string('nip');
-    $table->timestamps();
-});
-
-
+        Schema::create('kelompok', function (Blueprint $table) {
+            $table->id('id_kelompok'); // Primary key auto-increment
+            $table->string('kode_mk'); // contoh: A01K
+            $table->string('nama_kelompok'); // contoh: 2
+            $table->string('judul_proyek'); // contoh: Sistem Penilaian Kinerja Mahasiswa dan Kelompok PBL
+            $table->string('kelas'); // contoh: 3E
+            $table->timestamps();
+        });
     }
 
     /**
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kelompoks');
+        Schema::dropIfExists('kelompok');
     }
 };

@@ -28,8 +28,7 @@
                     <th>Kode MK</th>
                     <th>Nama Kelompok</th>
                     <th>Judul Proyek</th>
-                    <th>NIP</th>
-                    <th>Deskripsi</th>
+                    <th>Kelas</th> {{-- ✅ Tambahan kolom kelas --}}
                     @unless($isRestricted)
                         <th>Aksi</th>
                     @endunless
@@ -42,9 +41,8 @@
                         <td>{{ $item->kode_mk }}</td>
                         <td>{{ $item->nama_kelompok }}</td>
                         <td>{{ $item->judul_proyek }}</td>
-                        <td>{{ $item->nip }}</td>
-                        <td style="white-space: pre-line; word-break: keep-all;">{{ $item->deskripsi ?? '-' }}</td>
-
+                        <td>{{ $item->kelas ?? '-' }}</td> {{-- ✅ tampilkan kelas --}}
+                        
                         @unless($isRestricted)
                             <td>
                                 <div class="d-flex gap-1">
@@ -61,7 +59,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="{{ $isRestricted ? 6 : 7 }}" class="text-center">Belum ada data kelompok</td>
+                        <td colspan="{{ $isRestricted ? 5 : 6 }}" class="text-center">Belum ada data kelompok</td>
                     </tr>
                 @endforelse
             </tbody>

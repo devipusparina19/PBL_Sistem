@@ -44,20 +44,12 @@
             @enderror
         </div>
 
+        {{-- ✅ Ganti NIP dan Deskripsi jadi Kelas --}}
         <div class="mb-3">
-            <label for="nip" class="form-label">NIP</label>
-            <input type="text" class="form-control @error('nip') is-invalid @enderror" 
-                   id="nip" name="nip" value="{{ old('nip') }}" required>
-            @error('nip')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="mb-3">
-            <label for="deskripsi" class="form-label">Deskripsi</label>
-            <textarea class="form-control @error('deskripsi') is-invalid @enderror" 
-                      id="deskripsi" name="deskripsi">{{ old('deskripsi') }}</textarea>
-            @error('deskripsi')
+            <label for="kelas" class="form-label">Kelas</label>
+            <input type="text" class="form-control @error('kelas') is-invalid @enderror" 
+                   id="kelas" name="kelas" value="{{ old('kelas') }}" placeholder="Contoh: TI-3A" required>
+            @error('kelas')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
