@@ -10,6 +10,23 @@
         <hr class="mx-auto mt-3" style="width: 80px; height: 3px; background-color: #0d6efd; border: none;">
     </div>
 
+    <!-- Alert Success -->
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>{{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    <!-- Button Tambah Nilai (Khusus Dosen) -->
+    @if(Auth::user()->role === 'dosen')
+        <div class="mb-4">
+            <a href="{{ route('nilai.create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>Tambah Nilai Mahasiswa
+            </a>
+        </div>
+    @endif
+
     <!-- Kartu Identitas -->
     <div class="card shadow border-0 rounded-4 mb-4">
         <div class="card-body px-5 py-4">

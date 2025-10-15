@@ -125,6 +125,7 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai.index');
+    Route::get('/nilai/create', [NilaiController::class, 'create'])->name('nilai.create');
     Route::post('/nilai', [NilaiController::class, 'store'])->name('nilai.store');
     Route::get('/nilai/{id}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');
     Route::put('/nilai/{id}', [NilaiController::class, 'update'])->name('nilai.update');

@@ -21,6 +21,54 @@ class NilaiController extends Controller
     }
 
     /**
+     * Menampilkan form tambah nilai baru
+     */
+    public function create()
+    {
+        $mahasiswa = Mahasiswa::orderBy('nama', 'asc')->get();
+        return view('nilai.create', compact('mahasiswa'));
+    }
+
+    /**
+     * Menyimpan nilai baru ke database
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'mahasiswa_id' => 'required|exists:mahasiswas,id',
+            'pemrograman_web' => 'required|numeric|min:0|max:100',
+            'integrasi_sistem' => 'required|numeric|min:0|max:100',
+            'pengambilan_keputusan' => 'required|numeric|min:0|max:100',
+            'it_proyek' => 'required|numeric|min:0|max:100',
+            'kontribusi_kelompok' => 'required|numeric|min:0|max:100',
+            'penilaian_sejawat' => 'required|numeric|min:0|max:100',
+        ]);
+
+        // Hitung hasil akhir (rata-rata dari 6 komponen)
+        $hasil_akhir = (
+            $request->pemrograman_web +
+            $request->integrasi_sistem +
+            $request->pengambilan_keputusan +
+            $request->it_proyek +
+            $request->kontribusi_kelompok +
+            $request->penilaian_sejawat
+        ) / 6;
+
+        Nilai::create([
+            'mahasiswa_id' => $request->mahasiswa_id,
+            'pemrograman_web' => $request->pemrograman_web,
+            'integrasi_sistem' => $request->integrasi_sistem,
+            'pengambilan_keputusan' => $request->pengambilan_keputusan,
+            'it_proyek' => $request->it_proyek,
+            'kontribusi_kelompok' => $request->kontribusi_kelompok,
+            'penilaian_sejawat' => $request->penilaian_sejawat,
+            'hasil_akhir' => round($hasil_akhir, 2),
+        ]);
+
+        return redirect()->route('nilai.index')->with('success', 'Nilai berhasil ditambahkan!');
+    }
+
+    /**
      * Menampilkan form edit nilai
      */
     public function edit($id)
@@ -92,14 +140,20 @@ class NilaiController extends Controller
     return view('dosen.pilihMatkul', compact('mataKuliah')); // compact sesuai variabel
 }
 
-public function create($matkul_id)
+/**
+ * Form input nilai untuk mata kuliah tertentu (old method - deprecated)
+ */
+public function createForMatkul($matkul_id)
 {
     $matkul = MataKuliah::findOrFail($matkul_id);
     $mahasiswa = Mahasiswa::all();
     return view('dosen.input-nilai', compact('matkul', 'mahasiswa'));
 }
 
-public function store(Request $request, $matkul_id)
+/**
+ * Store nilai untuk mata kuliah tertentu (old method - deprecated)
+ */
+public function storeForMatkul(Request $request, $matkul_id)
 {
     $request->validate([
         'mahasiswa_id' => 'required',
@@ -121,7 +175,7 @@ public function store(Request $request, $matkul_id)
         ]
     );
 
-    return redirect()->route('nilai.create', $matkul_id)
+    return redirect()->route('nilai.createForMatkul', $matkul_id)
         ->with('success', 'Nilai berhasil disimpan!');
 }
 public function inputNilai($id)

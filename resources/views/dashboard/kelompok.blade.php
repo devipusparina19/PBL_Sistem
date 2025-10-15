@@ -52,19 +52,33 @@
             </div>
         </div>
 
-        <!-- Ranking Kelompok -->
+        <!-- Ranking Kelompok / Input Nilai (Adaptive untuk Dosen) -->
         <div class="col-md-4">
             <div class="card border-0 shadow-lg h-100 rounded-4 hover-card">
                 <div class="card-body text-center p-4">
                     <div class="mb-3 text-primary fs-1">
-                        <i class="bi bi-trophy-fill"></i>
+                        @if(Auth::check() && Auth::user()->role == 'dosen')
+                            <i class="bi bi-pencil-square"></i>
+                        @else
+                            <i class="bi bi-trophy-fill"></i>
+                        @endif
                     </div>
-                    <h5 class="fw-bold text-dark">Ranking Kelompok</h5>
-                    <p class="text-muted small mb-4">Lihat peringkat kelompok berdasarkan nilai rata-rata kelompok PBL.</p>
-                    <a href="{{ route('kelompok.rangking') }}" 
-                       class="btn btn-primary w-100 fw-semibold">
-                        Lihat Ranking Kelompok
-                    </a>
+                    
+                    @if(Auth::check() && Auth::user()->role == 'dosen')
+                        <h5 class="fw-bold text-dark">Input Nilai Kelompok</h5>
+                        <p class="text-muted small mb-4">Berikan penilaian untuk mahasiswa dalam kelompok.</p>
+                        <a href="{{ route('nilai.index') }}" 
+                           class="btn btn-primary w-100 fw-semibold">
+                            Input Nilai
+                        </a>
+                    @else
+                        <h5 class="fw-bold text-dark">Ranking Kelompok</h5>
+                        <p class="text-muted small mb-4">Lihat peringkat kelompok berdasarkan nilai rata-rata kelompok PBL.</p>
+                        <a href="{{ route('kelompok.rangking') }}" 
+                           class="btn btn-primary w-100 fw-semibold">
+                            Lihat Ranking Kelompok
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>
