@@ -154,6 +154,11 @@ footer {
   </div>
 
   <div class="form-group">
+    <label>Nim/Nip</label>
+    <input type="text" name="nim/nip" required>
+  </div>
+
+  <div class="form-group">
     <label>Email</label>
     <input type="email" name="email" required>
   </div>
@@ -185,10 +190,11 @@ footer {
     <label for="kelas">Kelas</label>
     <select name="kelas" id="kelas" class="form-control">
         <option value="">Pilih Kelas</option>
-        <option value="TI-1A">TI-1A</option>
-        <option value="TI-1B">TI-1B</option>
-        <option value="TI-1C">TI-1C</option>
-        <!-- Tambahkan kelas lain di sini -->
+        <option value="TI-3A">3A</option>
+        <option value="TI-3B">3B</option>
+        <option value="TI-3C">3C</option>
+        <option value="TI-3D">3D</option>
+        <option value="TI-3E">3E</option>
     </select>
 </div>
 
