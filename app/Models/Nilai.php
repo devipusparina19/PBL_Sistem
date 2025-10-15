@@ -24,6 +24,8 @@ class Nilai extends Model
         'laporan',
         'presentasi',
         'kontribusi',
+        'uts',
+        'uas',
         'hasil_proyek',
         'catatan',
     ];

@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('nilai', function (Blueprint $table) {
-            $table->decimal('hasil_proyek', 5, 2)->nullable()->after('kontribusi')->comment('Komponen Hasil Proyek untuk Pengambilan Keputusan (30%)');
+            $table->decimal('uts', 5, 2)->nullable()->after('kontribusi')->comment('UTS untuk Pengambilan Keputusan (10%)');
+            $table->decimal('uas', 5, 2)->nullable()->after('uts')->comment('UAS untuk Pengambilan Keputusan (10%)');
+            $table->decimal('hasil_proyek', 5, 2)->nullable()->after('uas')->comment('Komponen Hasil Proyek untuk Pengambilan Keputusan (30%)');
         });
     }
 
@@ -22,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('nilai', function (Blueprint $table) {
-            $table->dropColumn('hasil_proyek');
+            $table->dropColumn(['uts', 'uas', 'hasil_proyek']);
         });
     }
 };

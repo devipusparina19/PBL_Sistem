@@ -17,6 +17,7 @@ class Kelompok extends Model
     protected $fillable = [
         'kode_mk',
         'nama_kelompok',
+        'kelas',
         'judul_proyek',
         'nip',
         'deskripsi',

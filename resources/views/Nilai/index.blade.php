@@ -93,6 +93,7 @@
                                             <br>
                                             <small class="text-muted">
                                                 <i class="bi bi-info-circle"></i> 
+                                                UTS: {{ $n->uts ?? 0 }} | UAS: {{ $n->uas ?? 0 }} | 
                                                 Keaktifan: {{ $n->presentasi }} | Kerja: {{ $n->kontribusi }} | 
                                                 Penyajian: {{ $n->laporan }} | Proyek: {{ $n->hasil_proyek }}
                                             </small>
@@ -104,7 +105,9 @@
                                             
                                             // Jika Pengambilan Keputusan, hitung nilai akhir
                                             if($n->mataKuliah && stripos($n->mataKuliah->nama_mk, 'pengambilan keputusan') !== false) {
-                                                $nilaiAkhir = ($n->presentasi * 0.2) + ($n->kontribusi * 0.3) + 
+                                                $uts = $n->uts ?? 0;
+                                                $uas = $n->uas ?? 0;
+                                                $nilaiAkhir = ($uts * 0.1) + ($uas * 0.1) + ($n->presentasi * 0.1) + ($n->kontribusi * 0.2) + 
                                                              ($n->laporan * 0.2) + ($n->hasil_proyek * 0.3);
                                             }
                                         @endphp

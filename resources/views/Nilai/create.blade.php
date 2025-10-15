@@ -72,8 +72,10 @@
                 <div id="form-nilai-pengambilan-keputusan" style="display: none;">
                     <div class="alert alert-info">
                         <strong>Komponen Penilaian Pengambilan Keputusan:</strong><br>
-                        • Aktivitas Partisipatif (20%)<br>
-                        • Nilai Kerja (30%)<br>
+                        • UTS (10%)<br>
+                        • UAS (10%)<br>
+                        • Aktivitas Partisipatif / Keaktifan (10%)<br>
+                        • Nilai Kerja (20%)<br>
                         • Penyajian dan Dokumentasi (20%)<br>
                         • Hasil Proyek (30%)<br>
                         <small class="text-muted">Nilai akhir akan dihitung otomatis berdasarkan bobot masing-masing komponen.</small>
@@ -81,7 +83,31 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="aktivitas_partisipatif" class="form-label">Aktivitas Partisipatif (Keaktifan) - 20%</label>
+                            <label for="uts" class="form-label">UTS - 10%</label>
+                            <input type="number" name="uts" id="uts" 
+                                   class="form-control @error('uts') is-invalid @enderror" 
+                                   value="{{ old('uts') }}" 
+                                   min="0" max="100" step="0.01"
+                                   placeholder="0-100">
+                            @error('uts')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="uas" class="form-label">UAS - 10%</label>
+                            <input type="number" name="uas" id="uas" 
+                                   class="form-control @error('uas') is-invalid @enderror" 
+                                   value="{{ old('uas') }}" 
+                                   min="0" max="100" step="0.01"
+                                   placeholder="0-100">
+                            @error('uas')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="aktivitas_partisipatif" class="form-label">Aktivitas Partisipatif (Keaktifan) - 10%</label>
                             <input type="number" name="aktivitas_partisipatif" id="aktivitas_partisipatif" 
                                    class="form-control @error('aktivitas_partisipatif') is-invalid @enderror" 
                                    value="{{ old('aktivitas_partisipatif') }}" 
@@ -93,7 +119,7 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="nilai_kerja" class="form-label">Nilai Kerja - 30%</label>
+                            <label for="nilai_kerja" class="form-label">Nilai Kerja - 20%</label>
                             <input type="number" name="nilai_kerja" id="nilai_kerja" 
                                    class="form-control @error('nilai_kerja') is-invalid @enderror" 
                                    value="{{ old('nilai_kerja') }}" 
@@ -195,6 +221,8 @@ function toggleNilaiForm() {
         
         // Set required untuk komponen pengambilan keputusan
         document.getElementById('nilai').removeAttribute('required');
+        document.getElementById('uts').setAttribute('required', 'required');
+        document.getElementById('uas').setAttribute('required', 'required');
         document.getElementById('aktivitas_partisipatif').setAttribute('required', 'required');
         document.getElementById('nilai_kerja').setAttribute('required', 'required');
         document.getElementById('penyajian_dokumentasi').setAttribute('required', 'required');
@@ -209,6 +237,8 @@ function toggleNilaiForm() {
         
         // Set required untuk nilai standar
         document.getElementById('nilai').setAttribute('required', 'required');
+        document.getElementById('uts').removeAttribute('required');
+        document.getElementById('uas').removeAttribute('required');
         document.getElementById('aktivitas_partisipatif').removeAttribute('required');
         document.getElementById('nilai_kerja').removeAttribute('required');
         document.getElementById('penyajian_dokumentasi').removeAttribute('required');
@@ -222,13 +252,15 @@ function toggleNilaiForm() {
 
 // Hitung nilai akhir untuk Pengambilan Keputusan
 function calculateNilaiAkhir() {
+    const uts = parseFloat(document.getElementById('uts').value) || 0;
+    const uas = parseFloat(document.getElementById('uas').value) || 0;
     const keaktifan = parseFloat(document.getElementById('aktivitas_partisipatif').value) || 0;
     const nilaiKerja = parseFloat(document.getElementById('nilai_kerja').value) || 0;
     const penyajian = parseFloat(document.getElementById('penyajian_dokumentasi').value) || 0;
     const hasilProyek = parseFloat(document.getElementById('hasil_proyek').value) || 0;
     
-    // Formula: (Keaktifan × 0.2) + (Nilai Kerja × 0.3) + (Penyajian × 0.2) + (Hasil Proyek × 0.3)
-    const nilaiAkhir = (keaktifan * 0.2) + (nilaiKerja * 0.3) + (penyajian * 0.2) + (hasilProyek * 0.3);
+    // Formula: (UTS × 0.1) + (UAS × 0.1) + (Keaktifan × 0.1) + (Nilai Kerja × 0.2) + (Penyajian × 0.2) + (Hasil Proyek × 0.3)
+    const nilaiAkhir = (uts * 0.1) + (uas * 0.1) + (keaktifan * 0.1) + (nilaiKerja * 0.2) + (penyajian * 0.2) + (hasilProyek * 0.3);
     
     document.getElementById('preview-nilai-akhir').textContent = nilaiAkhir.toFixed(2);
 }
@@ -239,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleNilaiForm();
     
     // Add event listeners untuk komponen pengambilan keputusan
-    ['aktivitas_partisipatif', 'nilai_kerja', 'penyajian_dokumentasi', 'hasil_proyek'].forEach(id => {
+    ['uts', 'uas', 'aktivitas_partisipatif', 'nilai_kerja', 'penyajian_dokumentasi', 'hasil_proyek'].forEach(id => {
         const input = document.getElementById(id);
         if (input) {
             input.addEventListener('input', calculateNilaiAkhir);

@@ -37,6 +37,22 @@
         </div>
 
         <div class="mb-3">
+            <label for="kelas" class="form-label">Kelas</label>
+            <select class="form-select @error('kelas') is-invalid @enderror" 
+                    id="kelas" name="kelas" required>
+                <option value="">-- Pilih Kelas --</option>
+                <option value="3A" {{ old('kelas', $kelompok->kelas) == '3A' ? 'selected' : '' }}>3A</option>
+                <option value="3B" {{ old('kelas', $kelompok->kelas) == '3B' ? 'selected' : '' }}>3B</option>
+                <option value="3C" {{ old('kelas', $kelompok->kelas) == '3C' ? 'selected' : '' }}>3C</option>
+                <option value="3D" {{ old('kelas', $kelompok->kelas) == '3D' ? 'selected' : '' }}>3D</option>
+                <option value="3E" {{ old('kelas', $kelompok->kelas) == '3E' ? 'selected' : '' }}>3E</option>
+            </select>
+            @error('kelas')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
             <label for="deskripsi" class="form-label">Deskripsi</label>
             <textarea id="deskripsi" name="deskripsi" class="form-control" rows="3">{{ old('deskripsi', $kelompok->deskripsi) }}</textarea>
         </div>

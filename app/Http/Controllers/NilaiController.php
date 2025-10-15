@@ -69,6 +69,8 @@ class NilaiController extends Controller
             $request->validate([
                 'mahasiswa_id' => 'required|exists:mahasiswas,id',
                 'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
+                'uts' => 'required|numeric|min:0|max:100',
+                'uas' => 'required|numeric|min:0|max:100',
                 'aktivitas_partisipatif' => 'required|numeric|min:0|max:100',
                 'nilai_kerja' => 'required|numeric|min:0|max:100',
                 'penyajian_dokumentasi' => 'required|numeric|min:0|max:100',
@@ -102,14 +104,18 @@ class NilaiController extends Controller
 
         // Simpan nilai berdasarkan jenis mata kuliah
         if ($isPengambilanKeputusan) {
-            // Untuk Pengambilan Keputusan: simpan 4 komponen
-            // presentasi = Aktivitas Partisipatif (20%)
-            // kontribusi = Nilai Kerja (30%)
+            // Untuk Pengambilan Keputusan: simpan 6 komponen
+            // uts = UTS (10%)
+            // uas = UAS (10%)
+            // presentasi = Aktivitas Partisipatif (10%)
+            // kontribusi = Nilai Kerja (20%)
             // laporan = Penyajian dan Dokumentasi (20%)
             // hasil_proyek = Hasil Proyek (30%)
             
-            $nilaiAkhir = ($request->aktivitas_partisipatif * 0.2) + 
-                         ($request->nilai_kerja * 0.3) + 
+            $nilaiAkhir = ($request->uts * 0.1) + 
+                         ($request->uas * 0.1) + 
+                         ($request->aktivitas_partisipatif * 0.1) + 
+                         ($request->nilai_kerja * 0.2) + 
                          ($request->penyajian_dokumentasi * 0.2) + 
                          ($request->hasil_proyek * 0.3);
             
@@ -117,6 +123,8 @@ class NilaiController extends Controller
                 'mahasiswa_id' => $request->mahasiswa_id,
                 'mata_kuliah_id' => $request->mata_kuliah_id,
                 'dosen_id' => $dosenId,
+                'uts' => $request->uts,
+                'uas' => $request->uas,
                 'presentasi' => $request->aktivitas_partisipatif,
                 'kontribusi' => $request->nilai_kerja,
                 'laporan' => $request->penyajian_dokumentasi,
