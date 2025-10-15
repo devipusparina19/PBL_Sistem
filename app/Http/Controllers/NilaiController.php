@@ -60,11 +60,27 @@ class NilaiController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'mahasiswa_id' => 'required|exists:mahasiswas,id',
-            'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
-            'nilai' => 'required|numeric|min:0|max:100',
-        ]);
+        // Cek mata kuliah yang dipilih
+        $mataKuliah = MataKuliah::find($request->mata_kuliah_id);
+        $isPengambilanKeputusan = $mataKuliah && stripos($mataKuliah->nama_mk, 'pengambilan keputusan') !== false;
+
+        // Validasi berdasarkan jenis mata kuliah
+        if ($isPengambilanKeputusan) {
+            $request->validate([
+                'mahasiswa_id' => 'required|exists:mahasiswas,id',
+                'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
+                'aktivitas_partisipatif' => 'required|numeric|min:0|max:100',
+                'nilai_kerja' => 'required|numeric|min:0|max:100',
+                'penyajian_dokumentasi' => 'required|numeric|min:0|max:100',
+                'hasil_proyek' => 'required|numeric|min:0|max:100',
+            ]);
+        } else {
+            $request->validate([
+                'mahasiswa_id' => 'required|exists:mahasiswas,id',
+                'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
+                'nilai' => 'required|numeric|min:0|max:100',
+            ]);
+        }
 
         // Cek apakah mahasiswa sudah punya nilai untuk mata kuliah ini
         $existing = Nilai::where('mahasiswa_id', $request->mahasiswa_id)
@@ -77,14 +93,41 @@ class NilaiController extends Controller
                 ->withErrors(['mata_kuliah_id' => 'Mahasiswa ini sudah memiliki nilai untuk mata kuliah yang dipilih. Silakan edit nilai yang sudah ada.']);
         }
 
-        Nilai::create([
-            'mahasiswa_id' => $request->mahasiswa_id,
-            'mata_kuliah_id' => $request->mata_kuliah_id,
-            'dosen_id' => auth()->id(), // Dosen yang login
-            'laporan' => $request->nilai, // Gunakan kolom laporan untuk menyimpan nilai
-            'presentasi' => 0,
-            'kontribusi' => 0,
-        ]);
+        // Simpan nilai berdasarkan jenis mata kuliah
+        if ($isPengambilanKeputusan) {
+            // Untuk Pengambilan Keputusan: simpan 4 komponen
+            // presentasi = Aktivitas Partisipatif (20%)
+            // kontribusi = Nilai Kerja (30%)
+            // laporan = Penyajian dan Dokumentasi (20%)
+            // hasil_proyek = Hasil Proyek (30%)
+            
+            $nilaiAkhir = ($request->aktivitas_partisipatif * 0.2) + 
+                         ($request->nilai_kerja * 0.3) + 
+                         ($request->penyajian_dokumentasi * 0.2) + 
+                         ($request->hasil_proyek * 0.3);
+            
+            Nilai::create([
+                'mahasiswa_id' => $request->mahasiswa_id,
+                'mata_kuliah_id' => $request->mata_kuliah_id,
+                'dosen_id' => auth()->id(),
+                'presentasi' => $request->aktivitas_partisipatif,
+                'kontribusi' => $request->nilai_kerja,
+                'laporan' => $request->penyajian_dokumentasi,
+                'hasil_proyek' => $request->hasil_proyek,
+                'catatan' => 'Nilai Akhir: ' . round($nilaiAkhir, 2),
+            ]);
+        } else {
+            // Untuk mata kuliah standar
+            Nilai::create([
+                'mahasiswa_id' => $request->mahasiswa_id,
+                'mata_kuliah_id' => $request->mata_kuliah_id,
+                'dosen_id' => auth()->id(),
+                'laporan' => $request->nilai,
+                'presentasi' => 0,
+                'kontribusi' => 0,
+                'hasil_proyek' => 0,
+            ]);
+        }
 
         return redirect()->route('nilai.index')->with('success', 'Nilai berhasil ditambahkan!');
     }

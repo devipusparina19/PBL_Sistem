@@ -87,15 +87,34 @@
                             @forelse ($nilai as $index => $n)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $n->mataKuliah->nama_mk ?? '-' }}</td>
                                     <td>
+                                        {{ $n->mataKuliah->nama_mk ?? '-' }}
+                                        @if($n->mataKuliah && stripos($n->mataKuliah->nama_mk, 'pengambilan keputusan') !== false)
+                                            <br>
+                                            <small class="text-muted">
+                                                <i class="bi bi-info-circle"></i> 
+                                                Keaktifan: {{ $n->presentasi }} | Kerja: {{ $n->kontribusi }} | 
+                                                Penyajian: {{ $n->laporan }} | Proyek: {{ $n->hasil_proyek }}
+                                            </small>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @php
+                                            $nilaiAkhir = $n->laporan; // default untuk mata kuliah standar
+                                            
+                                            // Jika Pengambilan Keputusan, hitung nilai akhir
+                                            if($n->mataKuliah && stripos($n->mataKuliah->nama_mk, 'pengambilan keputusan') !== false) {
+                                                $nilaiAkhir = ($n->presentasi * 0.2) + ($n->kontribusi * 0.3) + 
+                                                             ($n->laporan * 0.2) + ($n->hasil_proyek * 0.3);
+                                            }
+                                        @endphp
                                         <span class="badge 
-                                            @if($n->laporan >= 85) bg-success
-                                            @elseif($n->laporan >= 75) bg-primary
-                                            @elseif($n->laporan >= 65) bg-warning
+                                            @if($nilaiAkhir >= 85) bg-success
+                                            @elseif($nilaiAkhir >= 75) bg-primary
+                                            @elseif($nilaiAkhir >= 65) bg-warning
                                             @else bg-danger
                                             @endif">
-                                            {{ $n->laporan }}
+                                            {{ number_format($nilaiAkhir, 2) }}
                                         </span>
                                     </td>
                                     <td>{{ $n->dosen->nama ?? '-' }}</td>
