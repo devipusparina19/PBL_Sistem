@@ -52,18 +52,18 @@
             </div>
         </div>
 
-        <!-- Rangking Kelompok -->
+        <!-- Ranking Kelompok -->
         <div class="col-md-4">
             <div class="card border-0 shadow-lg h-100 rounded-4 hover-card">
                 <div class="card-body text-center p-4">
                     <div class="mb-3 text-primary fs-1">
-                        <i class="bi bi-bar-chart-fill"></i>
+                        <i class="bi bi-trophy-fill"></i>
                     </div>
-                    <h5 class="fw-bold text-dark">Rangking Kelompok</h5>
-                    <p class="text-muted small mb-4">Lihat peringkat kelompok berdasarkan nilai dan progres PBL.</p>
-                    <a href="{{ url('/kelompok/rangking') }}" 
+                    <h5 class="fw-bold text-dark">Ranking Kelompok</h5>
+                    <p class="text-muted small mb-4">Lihat peringkat kelompok berdasarkan nilai rata-rata kelompok PBL.</p>
+                    <a href="{{ route('kelompok.rangking') }}" 
                        class="btn btn-primary w-100 fw-semibold">
-                        Lihat Rangking
+                        Lihat Ranking Kelompok
                     </a>
                 </div>
             </div>

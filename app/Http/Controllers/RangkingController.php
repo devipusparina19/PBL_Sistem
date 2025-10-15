@@ -9,9 +9,45 @@ use App\Models\Nilai;
 class RangkingController extends Controller
 {
     /**
+     * Menampilkan halaman rangking mahasiswa (individu)
+     */
+    public function mahasiswa()
+    {
+        try {
+            // Ambil semua mahasiswa dengan nilai mereka
+            $mahasiswas = \App\Models\Mahasiswa::with(['nilai', 'kelompok'])
+                ->get()
+                ->map(function ($mahasiswa) {
+                    // Ambil nilai mahasiswa
+                    $nilai = $mahasiswa->nilai;
+                    $nilaiAkhir = $nilai ? $nilai->hasil_akhir : 0;
+
+                    return [
+                        'nama' => $mahasiswa->nama ?? '-',
+                        'nim' => $mahasiswa->nim ?? '-',
+                        'kelas' => $mahasiswa->kelas ?? '-',
+                        'kelompok' => $mahasiswa->kelompok->nama_kelompok ?? 'Belum ada kelompok',
+                        'nilai' => $nilaiAkhir ? round($nilaiAkhir, 2) : 0,
+                    ];
+                })
+                ->sortByDesc('nilai')
+                ->values();
+
+            // Kirim ke view
+            return view('mahasiswa.rangking', compact('mahasiswas'));
+            
+        } catch (\Exception $e) {
+            \Log::error('Error di RangkingController@mahasiswa: ' . $e->getMessage());
+            $mahasiswas = collect([]);
+            return view('mahasiswa.rangking', compact('mahasiswas'))
+                ->with('error', 'Terjadi kesalahan saat memuat data ranking mahasiswa.');
+        }
+    }
+
+    /**
      * Menampilkan halaman rangking kelompok
      */
-    public function index()
+    public function kelompok()
     {
         try {
             // Ambil data nilai rata-rata per kelompok

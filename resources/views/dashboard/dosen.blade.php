@@ -28,7 +28,7 @@
                     <p class="text-secondary mb-4" style="font-size: 0.95rem;">
                         Periksa dan setujui progres mahasiswa.
                     </p>
-                    <a href="{{ url('/validasi-milestone') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                    <a href="{{ route('milestone.validasi') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
                         Validasi
                     </a>
                 </div>
@@ -46,9 +46,8 @@
                     <p class="text-secondary mb-4" style="font-size: 0.95rem;">
                         Beri penilaian laporan, presentasi, dan kontribusi.
                     </p>
-                    <a href="{{ route('nilai.pilihMatkul') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
-                    Input Nilai
-                    </a>
+                    <a href="{{ route('nilai.index') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                        Input Nilai
                     </a>
                 </div>
             </div>

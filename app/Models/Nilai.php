@@ -55,8 +55,27 @@ class Nilai extends Model
     {
         return $this->created_at ? $this->created_at->format('d M Y, H:i') : '-';
     }
+    /**
+     * Relasi ke Mahasiswa
+     */
     public function mahasiswa()
     {
         return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');
+    }
+
+    /**
+     * Relasi ke Mata Kuliah
+     */
+    public function mataKuliah()
+    {
+        return $this->belongsTo(MataKuliah::class, 'mata_kuliah_id');
+    }
+
+    /**
+     * Relasi ke Dosen
+     */
+    public function dosen()
+    {
+        return $this->belongsTo(Dosen::class, 'dosen_id');
     }
 }
