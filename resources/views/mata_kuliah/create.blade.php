@@ -40,10 +40,20 @@
 
         {{-- NIP Dosen Pengampu --}}
         <div class="mb-3">
-            <label for="nip" class="form-label">NIP Dosen Pengampu</label>
-            <input type="text" class="form-control @error('nip') is-invalid @enderror"
-                   id="nip" name="nip" value="{{ old('nip') }}" required>
-            @error('nip')
+            <label for="nip_dosen" class="form-label">NIP Dosen Pengampu</label>
+            <input type="text" class="form-control @error('nip_dosen') is-invalid @enderror"
+                   id="nip_dosen" name="nip_dosen" value="{{ old('nip_dosen') }}" required>
+            @error('nip_dosen')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        {{-- Kelas --}}
+        <div class="mb-3">
+            <label for="kelas" class="form-label">Kelas</label>
+            <input type="text" class="form-control @error('kelas') is-invalid @enderror"
+                   id="kelas" name="kelas" value="{{ old('kelas') }}" required>
+            @error('kelas')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>

@@ -12,7 +12,10 @@ class MataKuliahController extends Controller
         $search = $request->input('search');
         $mataKuliah = MataKuliah::when($search, function ($query, $search) {
             return $query->where('kode_mk', 'like', "%{$search}%")
-                         ->orWhere('nama_mk', 'like', "%{$search}%");
+                         ->orWhere('nama_mk', 'like', "%{$search}%")
+                         ->orWhere('nip_dosen', 'like', "%{$search}%")
+                         ->orWhere('kelas', 'like', "%{$search}%")
+                         ->orWhere('semester', 'like', "%{$search}%");
         })->paginate(10);
 
         return view('mata_kuliah.index', compact('mataKuliah'));
@@ -28,13 +31,17 @@ class MataKuliahController extends Controller
         $request->validate([
             'kode_mk' => 'required|unique:mata_kuliah,kode_mk',
             'nama_mk' => 'required|string|max:255',
+            'nip_dosen' => 'required|string|max:30',
+            'kelas' => 'required|string|max:50',
+            'semester' => 'required|string|max:10',
         ]);
 
-        MataKuliah::create($request->all());
+        MataKuliah::create($request->only(['kode_mk', 'nama_mk', 'nip_dosen', 'kelas', 'semester']));
+
         return redirect()->route('mata_kuliah.index')->with('success', 'Mata kuliah berhasil ditambahkan.');
     }
-    public function show(MataKuliah $mataKuliah)
 
+    public function show(MataKuliah $mataKuliah)
     {
         return view('mata_kuliah.show', compact('mataKuliah'));
     }
@@ -49,9 +56,13 @@ class MataKuliahController extends Controller
         $request->validate([
             'kode_mk' => 'required|string|max:50|unique:mata_kuliah,kode_mk,' . $mataKuliah->id,
             'nama_mk' => 'required|string|max:255',
+            'nip_dosen' => 'required|string|max:30',
+            'kelas' => 'required|string|max:50',
+            'semester' => 'required|string|max:10',
         ]);
 
-        $mataKuliah->update($request->all());
+        $mataKuliah->update($request->only(['kode_mk', 'nama_mk', 'nip_dosen', 'kelas', 'semester']));
+
         return redirect()->route('mata_kuliah.index')->with('success', 'Data mata kuliah berhasil diperbarui.');
     }
 

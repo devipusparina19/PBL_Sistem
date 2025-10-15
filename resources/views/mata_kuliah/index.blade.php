@@ -31,6 +31,7 @@
                     <th>Kode MK</th>
                     <th>Nama Mata Kuliah</th>
                     <th>NIP Dosen</th>
+                    <th>Kelas</th>
                     <th>Semester</th>
                     @if(auth()->user()->role === 'admin')
                         <th width="25%">Aksi</th>
@@ -43,7 +44,8 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $mk->kode_mk }}</td>
                         <td>{{ $mk->nama_mk }}</td>
-                        <td>{{ $mk->nip ?? '-' }}</td>
+                        <td>{{ $mk->nip_dosen ?? '-' }}</td>
+                        <td>{{ $mk->kelas ?? '-' }}</td>
                         <td>{{ $mk->semester ?? '-' }}</td>
                         @if(auth()->user()->role === 'admin')
                             <td>
@@ -72,7 +74,9 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="{{ auth()->user()->role === 'admin' ? 6 : 5 }}" class="text-center">Belum ada data mata kuliah</td>
+                        <td colspan="{{ auth()->user()->role === 'admin' ? 7 : 6 }}" class="text-center">
+                            Belum ada data mata kuliah
+                        </td>
                     </tr>
                 @endforelse
             </tbody>

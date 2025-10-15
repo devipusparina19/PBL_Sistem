@@ -19,6 +19,7 @@
         @csrf
         @method('PUT')
 
+        {{-- Kode Mata Kuliah --}}
         <div class="mb-3">
             <label for="kode_mk" class="form-label">Kode MK</label>
             <input type="text"
@@ -32,6 +33,7 @@
             @enderror
         </div>
 
+        {{-- Nama Mata Kuliah --}}
         <div class="mb-3">
             <label for="nama_mk" class="form-label">Nama Mata Kuliah</label>
             <input type="text"
@@ -45,22 +47,37 @@
             @enderror
         </div>
 
-        {{-- Field NIP Dosen --}}
+        {{-- NIP Dosen Pengampu --}}
         <div class="mb-3">
-            <label for="nip" class="form-label">NIP Dosen</label>
+            <label for="nip_dosen" class="form-label">NIP Dosen Pengampu</label>
             <input type="text"
-                   id="nip"
-                   name="nip"
-                   class="form-control @error('nip') is-invalid @enderror"
-                   value="{{ old('nip', $mataKuliah->nip) }}"
+                   id="nip_dosen"
+                   name="nip_dosen"
+                   class="form-control @error('nip_dosen') is-invalid @enderror"
+                   value="{{ old('nip_dosen', $mataKuliah->nip_dosen) }}"
                    placeholder="Masukkan NIP dosen pengampu"
                    required>
-            @error('nip')
+            @error('nip_dosen')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
 
-        {{-- Dropdown Semester --}}
+        {{-- Kelas --}}
+        <div class="mb-3">
+            <label for="kelas" class="form-label">Kelas</label>
+            <input type="text"
+                   id="kelas"
+                   name="kelas"
+                   class="form-control @error('kelas') is-invalid @enderror"
+                   value="{{ old('kelas', $mataKuliah->kelas) }}"
+                   placeholder="Masukkan kelas (misal: A, B, C)"
+                   required>
+            @error('kelas')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        {{-- Semester --}}
         <div class="mb-3">
             <label for="semester" class="form-label">Semester</label>
             <select id="semester"
@@ -68,7 +85,7 @@
                     class="form-control @error('semester') is-invalid @enderror"
                     required>
                 <option value="">-- Pilih Semester --</option>
-                @for ($i = 1; $i <= 6; $i++)
+                @for ($i = 1; $i <= 8; $i++)
                     <option value="{{ $i }}" {{ old('semester', $mataKuliah->semester) == $i ? 'selected' : '' }}>
                         Semester {{ $i }}
                     </option>
