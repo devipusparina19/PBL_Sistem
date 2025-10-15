@@ -9,13 +9,8 @@ class MonitoringController extends Controller
 {
     public function index(Request $request)
     {
-<<<<<<< HEAD
-        // Ambil semua data mahasiswa beserta kelompok dan milestone
-        $mahasiswa = Mahasiswa::with(['kelompok', 'kelompok.milestones'])->get();
-=======
         // Ambil semua data kelompok beserta mahasiswa & milestone
         $query = Kelompok::with(['mahasiswa', 'milestone']);
->>>>>>> 8fdb431 (coba progres)
 
         // Jika ada pencarian (nama mahasiswa / kelompok)
         if ($request->has('search') && $request->search != '') {

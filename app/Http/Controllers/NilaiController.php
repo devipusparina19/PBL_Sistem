@@ -6,18 +6,43 @@ use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
 use App\Models\Nilai;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NilaiController extends Controller
 {
     /**
      * Menampilkan daftar nilai (khusus dosen atau admin)
      */
-    public function index()
+    public function index(Request $request)
     {
-        $mahasiswa = Mahasiswa::orderBy('nama', 'asc')->get();
-        $nilai = Nilai::with('mahasiswa')->orderBy('created_at', 'desc')->get();
+        $mahasiswas = Mahasiswa::orderBy('nama', 'asc')->get();
+        
+        // Ambil mahasiswa_id dari request (filter)
+        $selectedMahasiswaId = $request->get('mahasiswa_id');
+        $selectedMahasiswa = null;
+        $nilai = collect();
 
-        return view('nilai.index', compact('mahasiswa', 'nilai'));
+        if ($selectedMahasiswaId) {
+            // Jika ada mahasiswa yang dipilih, ambil datanya
+            $selectedMahasiswa = Mahasiswa::find($selectedMahasiswaId);
+            
+            // Ambil nilai mahasiswa yang dipilih
+            $nilai = Nilai::with(['mahasiswa', 'mataKuliah', 'dosen'])
+                        ->where('mahasiswa_id', $selectedMahasiswaId)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+        } elseif (Auth::user()->role === 'mahasiswa') {
+            // Jika mahasiswa login, tampilkan nilainya langsung
+            $selectedMahasiswa = Auth::user()->mahasiswa;
+            if ($selectedMahasiswa) {
+                $nilai = Nilai::with(['mahasiswa', 'mataKuliah', 'dosen'])
+                            ->where('mahasiswa_id', $selectedMahasiswa->id)
+                            ->orderBy('created_at', 'desc')
+                            ->get();
+            }
+        }
+
+        return view('nilai.index', compact('mahasiswas', 'selectedMahasiswa', 'nilai'));
     }
 
     /**
@@ -26,7 +51,8 @@ class NilaiController extends Controller
     public function create()
     {
         $mahasiswa = Mahasiswa::orderBy('nama', 'asc')->get();
-        return view('nilai.create', compact('mahasiswa'));
+        $mataKuliah = MataKuliah::orderBy('nama_mk', 'asc')->get();
+        return view('nilai.create', compact('mahasiswa', 'mataKuliah'));
     }
 
     /**
@@ -36,33 +62,28 @@ class NilaiController extends Controller
     {
         $request->validate([
             'mahasiswa_id' => 'required|exists:mahasiswas,id',
-            'pemrograman_web' => 'required|numeric|min:0|max:100',
-            'integrasi_sistem' => 'required|numeric|min:0|max:100',
-            'pengambilan_keputusan' => 'required|numeric|min:0|max:100',
-            'it_proyek' => 'required|numeric|min:0|max:100',
-            'kontribusi_kelompok' => 'required|numeric|min:0|max:100',
-            'penilaian_sejawat' => 'required|numeric|min:0|max:100',
+            'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
+            'nilai' => 'required|numeric|min:0|max:100',
         ]);
 
-        // Hitung hasil akhir (rata-rata dari 6 komponen)
-        $hasil_akhir = (
-            $request->pemrograman_web +
-            $request->integrasi_sistem +
-            $request->pengambilan_keputusan +
-            $request->it_proyek +
-            $request->kontribusi_kelompok +
-            $request->penilaian_sejawat
-        ) / 6;
+        // Cek apakah mahasiswa sudah punya nilai untuk mata kuliah ini
+        $existing = Nilai::where('mahasiswa_id', $request->mahasiswa_id)
+                        ->where('mata_kuliah_id', $request->mata_kuliah_id)
+                        ->first();
+
+        if ($existing) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['mata_kuliah_id' => 'Mahasiswa ini sudah memiliki nilai untuk mata kuliah yang dipilih. Silakan edit nilai yang sudah ada.']);
+        }
 
         Nilai::create([
             'mahasiswa_id' => $request->mahasiswa_id,
-            'pemrograman_web' => $request->pemrograman_web,
-            'integrasi_sistem' => $request->integrasi_sistem,
-            'pengambilan_keputusan' => $request->pengambilan_keputusan,
-            'it_proyek' => $request->it_proyek,
-            'kontribusi_kelompok' => $request->kontribusi_kelompok,
-            'penilaian_sejawat' => $request->penilaian_sejawat,
-            'hasil_akhir' => round($hasil_akhir, 2),
+            'mata_kuliah_id' => $request->mata_kuliah_id,
+            'dosen_id' => auth()->id(), // Dosen yang login
+            'laporan' => $request->nilai, // Gunakan kolom laporan untuk menyimpan nilai
+            'presentasi' => 0,
+            'kontribusi' => 0,
         ]);
 
         return redirect()->route('nilai.index')->with('success', 'Nilai berhasil ditambahkan!');
@@ -75,8 +96,9 @@ class NilaiController extends Controller
     {
         $nilai = Nilai::findOrFail($id);
         $mahasiswa = Mahasiswa::orderBy('nama', 'asc')->get();
+        $mataKuliah = MataKuliah::orderBy('nama_mk', 'asc')->get();
 
-        return view('nilai.edit', compact('nilai', 'mahasiswa'));
+        return view('nilai.edit', compact('nilai', 'mahasiswa', 'mataKuliah'));
     }
 
     /**
@@ -88,33 +110,29 @@ class NilaiController extends Controller
 
         $request->validate([
             'mahasiswa_id' => 'required|exists:mahasiswas,id',
-            'pemrograman_web' => 'required|numeric|min:0|max:100',
-            'integrasi_sistem' => 'required|numeric|min:0|max:100',
-            'pengambilan_keputusan' => 'required|numeric|min:0|max:100',
-            'it_proyek' => 'required|numeric|min:0|max:100',
-            'kontribusi_kelompok' => 'required|numeric|min:0|max:100',
-            'penilaian_sejawat' => 'required|numeric|min:0|max:100',
+            'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
+            'nilai' => 'required|numeric|min:0|max:100',
         ]);
 
-        // Hitung ulang hasil akhir
-        $hasil_akhir = (
-            $request->pemrograman_web +
-            $request->integrasi_sistem +
-            $request->pengambilan_keputusan +
-            $request->it_proyek +
-            $request->kontribusi_kelompok +
-            $request->penilaian_sejawat
-        ) / 6;
+        // Cek apakah mahasiswa sudah punya nilai untuk mata kuliah ini (kecuali record yang sedang diedit)
+        $existing = Nilai::where('mahasiswa_id', $request->mahasiswa_id)
+                        ->where('mata_kuliah_id', $request->mata_kuliah_id)
+                        ->where('id', '!=', $id)
+                        ->first();
+
+        if ($existing) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['mata_kuliah_id' => 'Mahasiswa ini sudah memiliki nilai untuk mata kuliah yang dipilih.']);
+        }
 
         $nilai->update([
             'mahasiswa_id' => $request->mahasiswa_id,
-            'pemrograman_web' => $request->pemrograman_web,
-            'integrasi_sistem' => $request->integrasi_sistem,
-            'pengambilan_keputusan' => $request->pengambilan_keputusan,
-            'it_proyek' => $request->it_proyek,
-            'kontribusi_kelompok' => $request->kontribusi_kelompok,
-            'penilaian_sejawat' => $request->penilaian_sejawat,
-            'hasil_akhir' => $hasil_akhir,
+            'mata_kuliah_id' => $request->mata_kuliah_id,
+            'dosen_id' => auth()->id(),
+            'laporan' => $request->nilai,
+            'presentasi' => 0,
+            'kontribusi' => 0,
         ]);
 
         return redirect()->route('nilai.index')->with('success', 'Nilai berhasil diperbarui!');

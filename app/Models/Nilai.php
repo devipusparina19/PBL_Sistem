@@ -19,13 +19,12 @@ class Nilai extends Model
      */
     protected $fillable = [
         'mahasiswa_id',
-        'pemrograman_web',
-        'integrasi_sistem',
-        'pengambilan_keputusan',
-        'it_proyek',
-        'kontribusi_kelompok',
-        'penilaian_sejawat',
-        'hasil_akhir',
+        'mata_kuliah_id',
+        'dosen_id',
+        'laporan',
+        'presentasi',
+        'kontribusi',
+        'catatan',
     ];
 
     /**

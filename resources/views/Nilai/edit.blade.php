@@ -35,80 +35,36 @@
 
                 <hr class="my-4">
 
-                <h5 class="fw-bold text-dark mb-4">Komponen Penilaian</h5>
+                <h5 class="fw-bold text-dark mb-4">Pilih Mata Kuliah & Input Nilai</h5>
 
-                <div class="row">
-                    <!-- Pemrograman Web -->
-                    <div class="col-md-6 mb-3">
-                        <label for="pemrograman_web" class="form-label">Pemrograman Web <span class="text-danger">*</span></label>
-                        <input type="number" name="pemrograman_web" id="pemrograman_web" 
-                               class="form-control @error('pemrograman_web') is-invalid @enderror" 
-                               value="{{ old('pemrograman_web', $nilai->pemrograman_web) }}" 
-                               min="0" max="100" step="0.01" required>
-                        @error('pemrograman_web')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                <!-- Pilih Mata Kuliah -->
+                <div class="mb-4">
+                    <label for="mata_kuliah_id" class="form-label fw-semibold">Mata Kuliah <span class="text-danger">*</span></label>
+                    <select name="mata_kuliah_id" id="mata_kuliah_id" class="form-select @error('mata_kuliah_id') is-invalid @enderror" required>
+                        <option value="">-- Pilih Mata Kuliah --</option>
+                        @foreach($mataKuliah as $mk)
+                            <option value="{{ $mk->id }}" {{ old('mata_kuliah_id', $nilai->mata_kuliah_id) == $mk->id ? 'selected' : '' }}>
+                                {{ $mk->nama_mk }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('mata_kuliah_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                    <small class="text-muted">Pilih salah satu mata kuliah yang Anda ampu</small>
+                </div>
 
-                    <!-- Integrasi Sistem -->
-                    <div class="col-md-6 mb-3">
-                        <label for="integrasi_sistem" class="form-label">Integrasi Sistem <span class="text-danger">*</span></label>
-                        <input type="number" name="integrasi_sistem" id="integrasi_sistem" 
-                               class="form-control @error('integrasi_sistem') is-invalid @enderror" 
-                               value="{{ old('integrasi_sistem', $nilai->integrasi_sistem) }}" 
-                               min="0" max="100" step="0.01" required>
-                        @error('integrasi_sistem')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Pengambilan Keputusan -->
-                    <div class="col-md-6 mb-3">
-                        <label for="pengambilan_keputusan" class="form-label">Pengambilan Keputusan <span class="text-danger">*</span></label>
-                        <input type="number" name="pengambilan_keputusan" id="pengambilan_keputusan" 
-                               class="form-control @error('pengambilan_keputusan') is-invalid @enderror" 
-                               value="{{ old('pengambilan_keputusan', $nilai->pengambilan_keputusan) }}" 
-                               min="0" max="100" step="0.01" required>
-                        @error('pengambilan_keputusan')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- IT Proyek -->
-                    <div class="col-md-6 mb-3">
-                        <label for="it_proyek" class="form-label">IT Proyek <span class="text-danger">*</span></label>
-                        <input type="number" name="it_proyek" id="it_proyek" 
-                               class="form-control @error('it_proyek') is-invalid @enderror" 
-                               value="{{ old('it_proyek', $nilai->it_proyek) }}" 
-                               min="0" max="100" step="0.01" required>
-                        @error('it_proyek')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Kontribusi Kelompok -->
-                    <div class="col-md-6 mb-3">
-                        <label for="kontribusi_kelompok" class="form-label">Kontribusi Kelompok <span class="text-danger">*</span></label>
-                        <input type="number" name="kontribusi_kelompok" id="kontribusi_kelompok" 
-                               class="form-control @error('kontribusi_kelompok') is-invalid @enderror" 
-                               value="{{ old('kontribusi_kelompok', $nilai->kontribusi_kelompok) }}" 
-                               min="0" max="100" step="0.01" required>
-                        @error('kontribusi_kelompok')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Penilaian Sejawat -->
-                    <div class="col-md-6 mb-3">
-                        <label for="penilaian_sejawat" class="form-label">Penilaian Sejawat <span class="text-danger">*</span></label>
-                        <input type="number" name="penilaian_sejawat" id="penilaian_sejawat" 
-                               class="form-control @error('penilaian_sejawat') is-invalid @enderror" 
-                               value="{{ old('penilaian_sejawat', $nilai->penilaian_sejawat) }}" 
-                               min="0" max="100" step="0.01" required>
-                        @error('penilaian_sejawat')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                <!-- Input Nilai -->
+                <div class="mb-4">
+                    <label for="nilai" class="form-label fw-semibold">Nilai (0-100) <span class="text-danger">*</span></label>
+                    <input type="number" name="nilai" id="nilai" 
+                           class="form-control @error('nilai') is-invalid @enderror" 
+                           value="{{ old('nilai', $nilai->laporan) }}" 
+                           min="0" max="100" step="0.01" required
+                           placeholder="Masukkan nilai (contoh: 85.5)">
+                    @error('nilai')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <hr class="my-4">
@@ -116,12 +72,7 @@
                 <!-- Info -->
                 <div class="alert alert-info" role="alert">
                     <i class="bi bi-info-circle-fill me-2"></i>
-                    <strong>Catatan:</strong> Hasil akhir akan dihitung ulang otomatis sebagai rata-rata dari 6 komponen penilaian.
-                </div>
-
-                <!-- Current Hasil Akhir -->
-                <div class="alert alert-secondary" role="alert">
-                    <strong>Hasil Akhir Saat Ini:</strong> {{ number_format($nilai->hasil_akhir, 2) }}
+                    <strong>Catatan:</strong> Pilih mata kuliah yang Anda ampu, kemudian perbarui nilai mahasiswa untuk mata kuliah tersebut (skala 0-100).
                 </div>
 
                 <!-- Buttons -->

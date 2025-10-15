@@ -18,67 +18,87 @@
         </div>
     @endif
 
-    <!-- Button Tambah Nilai (Khusus Dosen) -->
+    <!-- Filter & Button (Khusus Dosen) -->
     @if(Auth::user()->role === 'dosen')
-        <div class="mb-4">
-            <a href="{{ route('nilai.create') }}" class="btn btn-primary">
-                <i class="bi bi-plus-circle me-2"></i>Tambah Nilai Mahasiswa
-            </a>
-        </div>
-    @endif
-
-    <!-- Kartu Identitas -->
-    <div class="card shadow border-0 rounded-4 mb-4">
-        <div class="card-body px-5 py-4">
-            <h5 class="fw-bold text-dark mb-3">Identitas Mahasiswa</h5>
-            <div class="row">
-                <div class="col-md-6 mb-2">
-                    <p class="mb-1"><strong>Nama:</strong> {{ Auth::user()->nama }}</p>
-                    <p class="mb-1"><strong>NIM:</strong> {{ Auth::user()->nim }}</p>
-                </div>
-                <div class="col-md-6 mb-2">
-                    <p class="mb-1"><strong>Kelas:</strong> {{ Auth::user()->kelas ?? '-' }}</p>
-                    <p class="mb-1"><strong>Prodi:</strong> Teknologi Informasi</p>
+        <div class="card shadow border-0 rounded-4 mb-4">
+            <div class="card-body px-5 py-4">
+                <div class="row align-items-end">
+                    <div class="col-md-8">
+                        <label for="mahasiswa_id" class="form-label fw-semibold">Pilih Mahasiswa untuk Melihat Detail Nilai</label>
+                        <form method="GET" action="{{ route('nilai.index') }}" id="filterForm">
+                            <select name="mahasiswa_id" id="mahasiswa_id" class="form-select" onchange="this.form.submit()">
+                                <option value="">-- Pilih Mahasiswa --</option>
+                                @foreach($mahasiswas as $mhs)
+                                    <option value="{{ $mhs->id }}" {{ request('mahasiswa_id') == $mhs->id ? 'selected' : '' }}>
+                                        {{ $mhs->nama }} ({{ $mhs->nim }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </form>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a href="{{ route('nilai.create') }}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-2"></i>Tambah Nilai Mahasiswa
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 
-    <!-- Tabel Detail Nilai -->
-    <div class="card shadow border-0 rounded-4 mb-4">
-        <div class="card-body px-5 py-4">
-            <h5 class="fw-bold text-dark mb-4">Detail Penilaian</h5>
-            <div class="table-responsive">
-                <table class="table table-bordered align-middle text-center">
-                    <thead class="table-light">
-                        <tr>
-                            <th>No</th>
-                            <th>Nama Mahasiswa</th>
-                            <th>Pemrograman Web</th>
-                            <th>Integrasi Sistem</th>
-                            <th>Pengambilan Keputusan</th>
-                            <th>IT Proyek</th>
-                            <th>Kontribusi Kelompok</th>
-                            <th>Penilaian Sejawat</th>
-                            <th>Hasil Akhir</th>
-                            @if(Auth::user()->role === 'dosen')
-                                <th>Aksi</th>
-                            @endif
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($nilai as $index => $n)
-                            @if(Auth::user()->role === 'dosen' || Auth::user()->id === $n->mahasiswa->user_id)
+    <!-- Kartu Identitas Mahasiswa (Muncul setelah pilih mahasiswa) -->
+    @if($selectedMahasiswa)
+        <div class="card shadow border-0 rounded-4 mb-4">
+            <div class="card-body px-5 py-4">
+                <h5 class="fw-bold text-dark mb-3">Identitas Mahasiswa</h5>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <p class="mb-1"><strong>Nama:</strong> {{ $selectedMahasiswa->nama }}</p>
+                        <p class="mb-1"><strong>NIM:</strong> {{ $selectedMahasiswa->nim }}</p>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <p class="mb-1"><strong>Kelas:</strong> {{ $selectedMahasiswa->kelas ?? '-' }}</p>
+                        <p class="mb-1"><strong>Prodi:</strong> Teknologi Informasi</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- Tabel Detail Nilai (Hanya muncul jika ada mahasiswa dipilih) -->
+    @if($selectedMahasiswa)
+        <div class="card shadow border-0 rounded-4 mb-4">
+            <div class="card-body px-5 py-4">
+                <h5 class="fw-bold text-dark mb-4">Detail Penilaian</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle text-center">
+                        <thead class="table-light">
+                            <tr>
+                                <th>No</th>
+                                <th>Mata Kuliah</th>
+                                <th>Nilai</th>
+                                <th>Dosen</th>
+                                @if(Auth::user()->role === 'dosen')
+                                    <th>Aksi</th>
+                                @endif
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($nilai as $index => $n)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $n->mahasiswa->nama ?? '-' }}</td>
-                                    <td>{{ $n->pemrograman_web }}</td>
-                                    <td>{{ $n->integrasi_sistem }}</td>
-                                    <td>{{ $n->pengambilan_keputusan }}</td>
-                                    <td>{{ $n->it_proyek }}</td>
-                                    <td>{{ $n->kontribusi_kelompok }}</td>
-                                    <td>{{ $n->penilaian_sejawat }}</td>
-                                    <td>{{ $n->hasil_akhir }}</td>
+                                    <td>{{ $n->mataKuliah->nama_mk ?? '-' }}</td>
+                                    <td>
+                                        <span class="badge 
+                                            @if($n->laporan >= 85) bg-success
+                                            @elseif($n->laporan >= 75) bg-primary
+                                            @elseif($n->laporan >= 65) bg-warning
+                                            @else bg-danger
+                                            @endif">
+                                            {{ $n->laporan }}
+                                        </span>
+                                    </td>
+                                    <td>{{ $n->dosen->nama ?? '-' }}</td>
                                     @if(Auth::user()->role === 'dosen')
                                         <td class="text-center">
                                             <a href="{{ route('nilai.edit', $n->id) }}" class="btn btn-warning btn-sm">Edit</a>
@@ -90,17 +110,22 @@
                                         </td>
                                     @endif
                                 </tr>
-                            @endif
-                        @empty
-                            <tr>
-                                <td colspan="{{ Auth::user()->role === 'dosen' ? 10 : 9 }}" class="text-center">Belum ada data nilai.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                            @empty
+                                <tr>
+                                    <td colspan="{{ Auth::user()->role === 'dosen' ? 5 : 4 }}" class="text-center">Belum ada data nilai untuk mahasiswa ini.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
+    @elseif(Auth::user()->role === 'dosen')
+        <div class="alert alert-info text-center" role="alert">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            Silakan pilih mahasiswa dari dropdown di atas untuk melihat detail penilaian.
+        </div>
+    @endif
 
 </div>
 @endsection
