@@ -66,8 +66,10 @@ Route::get('/about', function () {
 
 /*
 |--------------------------------------------------------------------------
+
 | ROUTE YANG BUTUH LOGIN
 |--------------------------------------------------------------------------
+
 */
 Route::middleware('auth')->group(function () {
 
@@ -184,6 +186,7 @@ Route::middleware('auth')->group(function () {
     // ✅ Tambahan baru untuk fitur Progres
     Route::middleware(['auth'])->group(function () {
         Route::get('/progres', [ProgresController::class, 'index'])->name('progres.index');
+        Route::get('/progres/{id}', [ProgresController::class, 'show'])->name('progres.show'); // ✅ Tambahan: detail progres
         Route::get('/progres/create', [ProgresController::class, 'create'])->name('progres.create');
         Route::post('/progres', [ProgresController::class, 'store'])->name('progres.store');
         Route::get('/progres/{id}/edit', [ProgresController::class, 'edit'])->name('progres.edit');
@@ -197,11 +200,9 @@ Route::middleware('auth')->group(function () {
 | ROUTE TAMBAHAN (AUTENTIKASI DASAR)
 |--------------------------------------------------------------------------
 */
-
 Route::resource('mata_kuliah', MataKuliahController::class)->middleware('auth');
 Route::resource('user', UserController::class)->middleware('auth');
 Route::resource('dosen', DosenController::class)->middleware('auth');
 Route::resource('mahasiswa', MahasiswaController::class)->middleware('auth');
 Route::resource('kelompok', KelompokController::class)->middleware('auth');
 Route::resource('logbook', LogbookController::class)->middleware('auth');
-
