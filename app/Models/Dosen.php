@@ -13,6 +13,8 @@ class Dosen extends Model
         'nama',
         'nip',
         'email',
+        'no_telepon',
+        'kelas',
         'mata_kuliah',
     ];
 
