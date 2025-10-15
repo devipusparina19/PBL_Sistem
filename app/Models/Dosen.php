@@ -10,13 +10,13 @@ class Dosen extends Model
     use HasFactory;
 
     protected $fillable = [
-    'nama',
-    'nip',
-    'email',
-    'no_telp',
-    'kelas',
-    'mata_kuliah',
-];
+        'nama',
+        'nip',
+        'email',
+        'no_telp',
+        'kelas',
+        'mata_kuliah',
+    ];
 
     /**
      * Relasi ke Nilai (Dosen bisa memberi banyak nilai)

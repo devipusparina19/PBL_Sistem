@@ -56,20 +56,20 @@
         </div>
 
         <div class="mb-3">
-            <label for="no_telp" class="form-label">No. Telepon</label>
-            <input type="text" class="form-control @error('no_telp') is-invalid @enderror"
-                   id="no_telp" name="no_telp" value="{{ old('no_telp') }}" required>
-            @error('no_telp')
+            <label for="no_telepon" class="form-label">No. Telepon</label>
+            <input type="text" class="form-control @error('no_telepon') is-invalid @enderror"
+                   id="no_telepon" name="no_telepon" value="{{ old('no_telepon') }}">
+            @error('no_telepon')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
 
         {{-- Bagian Akademik --}}
         <div class="mb-3">
-            <label for="kelas" class="form-label">Kelas</label>
+            <label for="kelas" class="form-label">Kelas Bimbingan (Opsional)</label>
             <select class="form-select @error('kelas') is-invalid @enderror"
-                    id="kelas" name="kelas" required>
-                <option value="" disabled selected>Pilih Kelas</option>
+                    id="kelas" name="kelas">
+                <option value="">-- Tidak Ada --</option>
                 <option value="TI 3A" {{ old('kelas') == 'TI 3A' ? 'selected' : '' }}>TI 3A</option>
                 <option value="TI 3B" {{ old('kelas') == 'TI 3B' ? 'selected' : '' }}>TI 3B</option>
                 <option value="TI 3C" {{ old('kelas') == 'TI 3C' ? 'selected' : '' }}>TI 3C</option>

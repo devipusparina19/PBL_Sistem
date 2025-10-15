@@ -68,29 +68,29 @@ class DosenController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $request->validate([
-            'nama' => 'required|string|max:255',
-            'nip' => 'required|string|max:50',
-            'email' => 'required|email|max:255',
-            'no_telp' => 'nullable|string|max:20',
-            'kelas' => 'nullable|string|max:50',
-            'mata_kuliah' => 'nullable|string|max:100',
-        ]);
+{
+    $request->validate([
+        'nama' => 'required|string|max:255',
+        'nip' => 'required|string|max:50',
+        'email' => 'required|email|max:255',
+        'no_telp' => 'nullable|string|max:20',
+        'kelas' => 'nullable|string|max:50',
+        'mata_kuliah' => 'nullable|string|max:100',
+    ]);
 
-        $dosen = Dosen::findOrFail($id);
+    $dosen = Dosen::findOrFail($id);
 
-        $dosen->update([
-            'nama' => $request->nama,
-            'nip' => $request->nip,
-            'email' => $request->email,
-            'no_telp' => $request->no_telp,
-            'kelas' => $request->kelas,
-            'mata_kuliah' => $request->mata_kuliah,
-        ]);
+    $dosen->update([
+        'nama' => $request->nama,
+        'nip' => $request->nip,
+        'email' => $request->email,
+        'no_telp' => $request->no_telp,
+        'kelas' => $request->kelas,
+        'mata_kuliah' => $request->mata_kuliah,
+    ]);
 
-        return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil diperbarui!');
-    }
+    return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil diperbarui!');
+}
 
     public function destroy($id)
     {
