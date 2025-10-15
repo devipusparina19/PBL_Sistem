@@ -35,24 +35,25 @@ class DosenController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|max:255',
-            'nip' => 'required|string|max:50|unique:data_dosen,nip',
-            'email' => 'required|email|unique:data_dosen,email',
-            'no_telp' => 'nullable|string|max:20',
-            'kelas' => 'nullable|string|max:50',
-            'mata_kuliah' => 'nullable|string|max:100',
+            'nama'         => 'required|string|max:255',
+            'nip'          => 'required|string|max:50|unique:dosens,nip',
+            'email'        => 'required|email|unique:dosens,email',
+            'no_telp'      => 'nullable|string|max:20',
+            'kelas'        => 'nullable|string|max:50',
+            'mata_kuliah'  => 'nullable|string|max:100',
         ]);
 
         Dosen::create([
-            'nama' => $request->nama,
-            'nip' => $request->nip,
-            'email' => $request->email,
-            'no_telp' => $request->no_telp,
-            'kelas' => $request->kelas,
-            'mata_kuliah' => $request->mata_kuliah,
+            'nama'         => $request->nama,
+            'nip'          => $request->nip,
+            'email'        => $request->email,
+            'no_telp'      => $request->no_telp,
+            'kelas'        => $request->kelas,
+            'mata_kuliah'  => $request->mata_kuliah,
         ]);
 
-        return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil ditambahkan!');
+        return redirect()->route('data_dosen.index')
+                         ->with('success', 'Data dosen berhasil ditambahkan!');
     }
 
     public function show($id)
@@ -68,37 +69,40 @@ class DosenController extends Controller
     }
 
     public function update(Request $request, $id)
-{
-    $request->validate([
-        'nama' => 'required|string|max:255',
-        'nip' => 'required|string|max:50',
-        'email' => 'required|email|max:255',
-        'no_telp' => 'nullable|string|max:20',
-        'kelas' => 'nullable|string|max:50',
-        'mata_kuliah' => 'nullable|string|max:100',
-    ]);
+    {
+        $request->validate([
+            'nama'         => 'required|string|max:255',
+            'nip'          => 'required|string|max:50',
+            'email'        => 'required|email|max:255',
+            'no_telp'      => 'nullable|string|max:20',
+            'kelas'        => 'nullable|string|max:50',
+            'mata_kuliah'  => 'nullable|string|max:100',
+        ]);
 
-    $dosen = Dosen::findOrFail($id);
+        $dosen = Dosen::findOrFail($id);
 
-    $dosen->update([
-        'nama' => $request->nama,
-        'nip' => $request->nip,
-        'email' => $request->email,
-        'no_telp' => $request->no_telp,
-        'kelas' => $request->kelas,
-        'mata_kuliah' => $request->mata_kuliah,
-    ]);
+        $dosen->update([
+            'nama'         => $request->nama,
+            'nip'          => $request->nip,
+            'email'        => $request->email,
+            'no_telp'      => $request->no_telp,
+            'kelas'        => $request->kelas,
+            'mata_kuliah'  => $request->mata_kuliah,
+        ]);
 
-    return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil diperbarui!');
-}
+        return redirect()->route('data_dosen.index')
+                         ->with('success', 'Data dosen berhasil diperbarui!');
+    }
 
     public function destroy($id)
     {
         $dosen = Dosen::findOrFail($id);
         $dosen->delete();
 
-        return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil dihapus!');
+        return redirect()->route('data_dosen.index')
+                         ->with('success', 'Data dosen berhasil dihapus!');
     }
+
 
     /* ========================================================
      |  BAGIAN 2 — FITUR TAMBAHAN: INPUT NILAI MAHASISWA
@@ -115,18 +119,18 @@ class DosenController extends Controller
     public function storeNilai(Request $request)
     {
         $request->validate([
-            'mahasiswa_id' => 'required|exists:mahasiswas,id',
-            'laporan' => 'required|numeric|min:0|max:100',
-            'presentasi' => 'required|numeric|min:0|max:100',
-            'kontribusi' => 'required|numeric|min:0|max:100',
+            'mahasiswa_id'      => 'required|exists:mahasiswas,id',
+            'laporan'           => 'required|numeric|min:0|max:100',
+            'presentasi'        => 'required|numeric|min:0|max:100',
+            'kontribusi'        => 'required|numeric|min:0|max:100',
             'tanggal_penilaian' => 'required|date',
         ]);
 
         Nilai::create([
-            'mahasiswa_id' => $request->mahasiswa_id,
-            'laporan' => $request->laporan,
-            'presentasi' => $request->presentasi,
-            'kontribusi' => $request->kontribusi,
+            'mahasiswa_id'      => $request->mahasiswa_id,
+            'laporan'           => $request->laporan,
+            'presentasi'        => $request->presentasi,
+            'kontribusi'        => $request->kontribusi,
             'tanggal_penilaian' => $request->tanggal_penilaian,
         ]);
 

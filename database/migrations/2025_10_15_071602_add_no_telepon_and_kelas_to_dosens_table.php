@@ -7,23 +7,28 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Jalankan migrasi.
      */
     public function up(): void
     {
         Schema::table('dosens', function (Blueprint $table) {
-            $table->string('no_telepon', 15)->nullable()->after('email');
-            $table->string('kelas', 50)->nullable()->after('no_telepon');
+            if (!Schema::hasColumn('dosens', 'no_telp')) {
+                $table->string('no_telp', 20)->nullable()->after('email');
+            }
+
+            if (!Schema::hasColumn('dosens', 'kelas')) {
+                $table->string('kelas', 50)->nullable()->after('no_telp');
+            }
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Rollback migrasi.
      */
     public function down(): void
     {
         Schema::table('dosens', function (Blueprint $table) {
-            $table->dropColumn(['no_telepon', 'kelas']);
+            $table->dropColumn(['no_telp', 'kelas']);
         });
     }
 };

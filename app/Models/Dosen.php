@@ -9,6 +9,8 @@ class Dosen extends Model
 {
     use HasFactory;
 
+    protected $table = 'dosens'; // pastikan ini sama dengan nama tabel di database
+
     protected $fillable = [
         'nama',
         'nip',
@@ -18,9 +20,6 @@ class Dosen extends Model
         'mata_kuliah',
     ];
 
-    /**
-     * Relasi ke Nilai (Dosen bisa memberi banyak nilai)
-     */
     public function nilais()
     {
         return $this->hasMany(Nilai::class, 'dosen_id');

@@ -3,8 +3,8 @@
 @section('content')
 @php
     // Jika user bukan admin, redirect ke halaman index dosen
-    if(Auth::user()->role !== 'admin'){
-        echo "<script>window.location='".route('data_dosen.index')."';</script>";
+    if (Auth::user()->role !== 'admin') {
+        echo "<script>window.location='" . route('data_dosen.index') . "';</script>";
         exit;
     }
 @endphp
@@ -29,8 +29,13 @@
         {{-- Bagian Identitas --}}
         <div class="mb-3">
             <label for="nama" class="form-label">Nama</label>
-            <input type="text" class="form-control @error('nama') is-invalid @enderror"
-                   id="nama" name="nama" value="{{ old('nama') }}" required>
+            <input 
+                type="text" 
+                class="form-control @error('nama') is-invalid @enderror"
+                id="nama" 
+                name="nama" 
+                value="{{ old('nama') }}" 
+                required>
             @error('nama')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -38,8 +43,13 @@
 
         <div class="mb-3">
             <label for="nip" class="form-label">NIP</label>
-            <input type="text" class="form-control @error('nip') is-invalid @enderror"
-                   id="nip" name="nip" value="{{ old('nip') }}" required>
+            <input 
+                type="text" 
+                class="form-control @error('nip') is-invalid @enderror"
+                id="nip" 
+                name="nip" 
+                value="{{ old('nip') }}" 
+                required>
             @error('nip')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
@@ -48,28 +58,39 @@
         {{-- Bagian Kontak --}}
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control @error('email') is-invalid @enderror"
-                   id="email" name="email" value="{{ old('email') }}" required>
+            <input 
+                type="email" 
+                class="form-control @error('email') is-invalid @enderror"
+                id="email" 
+                name="email" 
+                value="{{ old('email') }}" 
+                required>
             @error('email')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
 
         <div class="mb-3">
-            <label for="no_telepon" class="form-label">No. Telepon</label>
-            <input type="text" class="form-control @error('no_telepon') is-invalid @enderror"
-                   id="no_telepon" name="no_telepon" value="{{ old('no_telepon') }}">
-            @error('no_telepon')
+            <label for="no_telp" class="form-label">No. Telepon</label>
+            <input 
+                type="text" 
+                class="form-control @error('no_telp') is-invalid @enderror"
+                id="no_telp" 
+                name="no_telp" 
+                value="{{ old('no_telp') }}">
+            @error('no_telp')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
 
         {{-- Bagian Akademik --}}
         <div class="mb-3">
-            <label for="kelas" class="form-label">Kelas Bimbingan (Opsional)</label>
-            <select class="form-select @error('kelas') is-invalid @enderror"
-                    id="kelas" name="kelas">
-                <option value="">-- Tidak Ada --</option>
+            <label for="kelas" class="form-label">Kelas</label>
+            <select 
+                class="form-select @error('kelas') is-invalid @enderror"
+                id="kelas" 
+                name="kelas">
+                <option value="" disabled selected>Pilih Kelas</option>
                 <option value="TI 3A" {{ old('kelas') == 'TI 3A' ? 'selected' : '' }}>TI 3A</option>
                 <option value="TI 3B" {{ old('kelas') == 'TI 3B' ? 'selected' : '' }}>TI 3B</option>
                 <option value="TI 3C" {{ old('kelas') == 'TI 3C' ? 'selected' : '' }}>TI 3C</option>
@@ -83,8 +104,10 @@
 
         <div class="mb-3">
             <label for="mata_kuliah" class="form-label">Mata Kuliah</label>
-            <select class="form-select @error('mata_kuliah') is-invalid @enderror"
-                    id="mata_kuliah" name="mata_kuliah" required>
+            <select 
+                class="form-select @error('mata_kuliah') is-invalid @enderror"
+                id="mata_kuliah" 
+                name="mata_kuliah">
                 <option value="" disabled selected>Pilih Mata Kuliah</option>
                 <option value="Integrasi Sistem" {{ old('mata_kuliah') == 'Integrasi Sistem' ? 'selected' : '' }}>Integrasi Sistem</option>
                 <option value="Pemrograman Web Lanjut" {{ old('mata_kuliah') == 'Pemrograman Web Lanjut' ? 'selected' : '' }}>Pemrograman Web Lanjut</option>
@@ -96,6 +119,7 @@
             @enderror
         </div>
 
+        {{-- Tombol Aksi --}}
         <div class="d-flex gap-2 mt-4">
             <a href="{{ route('data_dosen.index') }}" class="btn btn-secondary">Kembali</a>
             <button type="submit" class="btn btn-primary">Simpan</button>
