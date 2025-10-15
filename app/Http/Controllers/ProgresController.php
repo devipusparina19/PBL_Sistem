@@ -3,54 +3,36 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Progres;
+use App\Models\Kelompok;
+use App\Models\Mahasiswa;
+use App\Models\Milestone;
 
 class ProgresController extends Controller
 {
-    public function index()
+    // Halaman utama progres seluruh kelompok
+    public function index(Request $request)
     {
-        $progres = Progres::all();
-        return view('progres.index', compact('progres'));
+        $query = Kelompok::with(['mahasiswa', 'milestone']);
+
+        // Fitur pencarian (berdasarkan nama kelompok atau mahasiswa)
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+
+            $query->where('nama', 'like', "%$search%")
+                ->orWhereHas('mahasiswa', function ($q) use ($search) {
+                    $q->where('nama', 'like', "%$search%");
+                });
+        }
+
+        $kelompok = $query->get();
+
+        return view('koordinator.progres', compact('kelompok'));
     }
 
+    // Detail progres untuk satu kelompok
     public function show($id)
     {
-        $item = Progres::findOrFail($id);
-        return view('progres.show', compact('item'));
-    }
-
-    public function create()
-    {
-        return view('progres.create');
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'judul' => 'required',
-            'deskripsi' => 'required',
-        ]);
-
-        Progres::create($request->all());
-        return redirect('/progres')->with('success', 'Data progres berhasil ditambah');
-    }
-
-    public function edit($id)
-    {
-        $item = Progres::findOrFail($id);
-        return view('progres.edit', compact('item'));
-    }
-
-    public function update(Request $request, $id)
-    {
-        $item = Progres::findOrFail($id);
-        $item->update($request->all());
-        return redirect('/progres')->with('success', 'Data progres berhasil diperbarui');
-    }
-
-    public function destroy($id)
-    {
-        Progres::destroy($id);
-        return redirect('/progres')->with('success', 'Data progres berhasil dihapus');
+        $kelompok = Kelompok::with(['mahasiswa', 'milestone'])->findOrFail($id);
+        return view('koordinator.progres_detail', compact('kelompok'));
     }
 }

@@ -2,20 +2,20 @@
 
 @section('content')
 @php
-    // Sama seperti di Data Dosen
+    // Role yang tidak boleh menambah atau mengedit data
     $restrictedRoles = ['mahasiswa', 'dosen', 'koordinator_prodi', 'koordinator_pbl'];
     $isRestricted = in_array(auth()->user()->role, $restrictedRoles);
 @endphp
 
 <div class="container mt-4">
-    <h1 class="mb-4">Data Progres Kelompok</h1>
+    <h1 class="mb-4">Data Progres Kelompok PBL</h1>
 
     {{-- Pesan sukses --}}
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    {{-- Form Pencarian dan Tombol Tambah --}}
+    {{-- Form pencarian --}}
     <div class="row mb-3">
         <div class="col-md-8">
             <form action="{{ route('progres.index') }}" method="GET" class="d-flex">
@@ -29,7 +29,7 @@
             </form>
         </div>
 
-        {{-- Tombol Tambah hanya untuk admin --}}
+        {{-- Tombol tambah progres --}}
         <div class="col-md-4 text-end">
             @unless($isRestricted)
                 <a href="{{ route('progres.create') }}" class="btn btn-primary">Tambah Progres</a>
@@ -37,7 +37,7 @@
         </div>
     </div>
 
-    {{-- Tabel daftar progres --}}
+    {{-- Tabel data progres --}}
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="table-responsive">
@@ -47,9 +47,9 @@
                             <th>No</th>
                             <th>Nama Mahasiswa</th>
                             <th>Kelompok</th>
-                            <th>Judul PBL</th>
+                            <th>Deskripsi Progres</th>
                             <th>Status</th>
-                            <th>Persentase</th>
+                            <th>Tanggal Update</th>
                             @unless($isRestricted)
                                 <th width="180">Aksi</th>
                             @endunless
@@ -58,22 +58,22 @@
                     <tbody>
                         @forelse($progres as $item)
                             <tr>
-                                <td class="text-center">{{ $loop->iteration + ($progres->currentPage() - 1) * $progres->perPage() }}</td>
+                                <td class="text-center">{{ $loop->iteration }}</td>
                                 <td>{{ $item->mahasiswa->nama ?? '-' }}</td>
                                 <td>{{ $item->kelompok->nama ?? '-' }}</td>
-                                <td>{{ $item->judul ?? '-' }}</td>
+                                <td>{{ $item->deskripsi ?? '-' }}</td>
                                 <td class="text-center">
                                     @if($item->status == 'Selesai')
                                         <span class="badge bg-success">Selesai</span>
                                     @elseif($item->status == 'Proses')
                                         <span class="badge bg-warning text-dark">Proses</span>
                                     @else
-                                        <span class="badge bg-secondary">Belum Mulai</span>
+                                        <span class="badge bg-secondary">Belum Dimulai</span>
                                     @endif
                                 </td>
-                                <td class="text-center">{{ $item->persentase ?? 0 }}%</td>
+                                <td class="text-center">{{ \Carbon\Carbon::parse($item->updated_at)->format('d-m-Y') }}</td>
 
-                                {{-- Kolom Aksi --}}
+                                {{-- Tombol aksi --}}
                                 @unless($isRestricted)
                                     <td class="text-center">
                                         <a href="{{ route('progres.show', $item->id) }}" class="btn btn-sm btn-info">Lihat</a>
@@ -102,4 +102,36 @@
         </div>
     </div>
 </div>
+
+{{-- Warna tabel dan card disamakan dengan halaman Data Dosen --}}
+@push('styles')
+<style>
+.table thead.table-dark th {
+    background-color: #212529 !important;
+    color: #ffffff !important;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #ffffff !important;
+}
+.table-striped tbody tr:nth-of-type(even) {
+    background-color: #f8f9fa !important;
+}
+.table-striped tbody tr:hover {
+    background-color: #e9ecef !important;
+}
+.card {
+    border: none !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+</style>
+@endpush
 @endsection
