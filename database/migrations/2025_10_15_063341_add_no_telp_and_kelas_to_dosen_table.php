@@ -6,25 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Jalankan migrasi.
-     */
     public function up(): void
     {
         Schema::table('dosens', function (Blueprint $table) {
-            if (!Schema::hasColumn('dosens', 'no_telp')) {
-                $table->string('no_telp', 20)->nullable()->after('email');
-            }
-
-            if (!Schema::hasColumn('dosens', 'kelas')) {
-                $table->string('kelas', 50)->nullable()->after('no_telp');
-            }
+            $table->string('no_telp', 20)->after('email')->nullable();
+            $table->string('kelas', 50)->after('no_telp')->nullable();
         });
     }
 
-    /**
-     * Rollback migrasi.
-     */
     public function down(): void
     {
         Schema::table('dosens', function (Blueprint $table) {
