@@ -93,6 +93,13 @@ class NilaiController extends Controller
                 ->withErrors(['mata_kuliah_id' => 'Mahasiswa ini sudah memiliki nilai untuk mata kuliah yang dipilih. Silakan edit nilai yang sudah ada.']);
         }
 
+        // Dapatkan dosen_id dari user yang login
+        $dosenId = null;
+        if (Auth::user()->role === 'dosen') {
+            $dosen = \App\Models\Dosen::where('email', Auth::user()->email)->first();
+            $dosenId = $dosen ? $dosen->id : null;
+        }
+
         // Simpan nilai berdasarkan jenis mata kuliah
         if ($isPengambilanKeputusan) {
             // Untuk Pengambilan Keputusan: simpan 4 komponen
@@ -109,7 +116,7 @@ class NilaiController extends Controller
             Nilai::create([
                 'mahasiswa_id' => $request->mahasiswa_id,
                 'mata_kuliah_id' => $request->mata_kuliah_id,
-                'dosen_id' => auth()->id(),
+                'dosen_id' => $dosenId,
                 'presentasi' => $request->aktivitas_partisipatif,
                 'kontribusi' => $request->nilai_kerja,
                 'laporan' => $request->penyajian_dokumentasi,
@@ -121,7 +128,7 @@ class NilaiController extends Controller
             Nilai::create([
                 'mahasiswa_id' => $request->mahasiswa_id,
                 'mata_kuliah_id' => $request->mata_kuliah_id,
-                'dosen_id' => auth()->id(),
+                'dosen_id' => $dosenId,
                 'laporan' => $request->nilai,
                 'presentasi' => 0,
                 'kontribusi' => 0,
@@ -169,10 +176,17 @@ class NilaiController extends Controller
                 ->withErrors(['mata_kuliah_id' => 'Mahasiswa ini sudah memiliki nilai untuk mata kuliah yang dipilih.']);
         }
 
+        // Dapatkan dosen_id dari user yang login (matching by email)
+        $dosenId = null;
+        if (Auth::user()->role === 'dosen') {
+            $dosen = \App\Models\Dosen::where('email', Auth::user()->email)->first();
+            $dosenId = $dosen ? $dosen->id : null;
+        }
+
         $nilai->update([
             'mahasiswa_id' => $request->mahasiswa_id,
             'mata_kuliah_id' => $request->mata_kuliah_id,
-            'dosen_id' => auth()->id(),
+            'dosen_id' => $dosenId,
             'laporan' => $request->nilai,
             'presentasi' => 0,
             'kontribusi' => 0,

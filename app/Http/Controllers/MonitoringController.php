@@ -29,14 +29,8 @@ class MonitoringController extends Controller
 
     public function show($id)
     {
-<<<<<<< HEAD
         // Tampilkan detail progres kelompok tertentu
-        $kelompok = Kelompok::with(['mahasiswas', 'milestones'])
-            ->findOrFail($id);
-=======
-        // Detail progres kelompok
-        $kelompok = Kelompok::with(['mahasiswa', 'milestone'])->findOrFail($id);
->>>>>>> 8fdb431 (coba progres)
+        $kelompok = Kelompok::with(['mahasiswas', 'milestone'])->findOrFail($id);
 
         return view('koordinator.monitoring_detail', compact('kelompok'));
     }
