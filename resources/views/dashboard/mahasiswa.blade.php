@@ -64,7 +64,7 @@
                     <p class="text-secondary mb-4" style="font-size: 0.95rem;">
                         Cek posisi Anda dan kelompok dalam peringkat PBL.
                     </p>
-                    <a href="{{ url('/ranking') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                    <a href="{{ url('/kelompok/rangking') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
                         Lihat Ranking
                     </a>
                 </div>
