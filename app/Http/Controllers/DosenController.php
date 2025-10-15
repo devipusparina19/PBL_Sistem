@@ -69,13 +69,7 @@ class DosenController extends Controller
             'mata_kuliah' => 'nullable|string|max:100', 
     ]);
 
-        $dosen->update($request->except('mata_kuliah'));
-
-        if ($request->has('mata_kuliah')) {
-            $dosen->mataKuliah()->sync($request->mata_kuliah);
-        } else {
-            $dosen->mataKuliah()->detach();
-        }
+        $dosen->update($request->all());
 
         return redirect()->route('dosen.index')->with('success', 'Data dosen berhasil diperbarui');
     }
