@@ -99,9 +99,11 @@ Route::middleware('auth')->group(function () {
     | CRUD DATA
     |--------------------------------------------------------------------------
     */
+    Route::get('mahasiswa/kelas/{kelas}', [MahasiswaController::class, 'showByKelas'])->name('mahasiswa.kelas');
     Route::resource('mahasiswa', MahasiswaController::class);
     Route::resource('data_dosen', DosenController::class);
     Route::resource('mata_kuliah', MataKuliahController::class);
+    Route::get('kelompok/kelas/{kelas}', [KelompokController::class, 'showByKelas'])->name('kelompok.kelas');
     Route::resource('kelompok', KelompokController::class);
     Route::resource('logbook', LogbookController::class);
 

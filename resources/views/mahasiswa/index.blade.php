@@ -1,119 +1,144 @@
 @extends('layouts.app')
 
-@section('title', 'Data Mahasiswa')
-
 @section('content')
 @php
-    $restrictedRoles = ['mahasiswa','dosen','koordinator_prodi','koordinator_pbl'];
+    $restrictedRoles = ['mahasiswa', 'dosen', 'koordinator_prodi', 'koordinator_pbl'];
     $isRestricted = in_array(auth()->user()->role, $restrictedRoles);
 @endphp
 
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Data Mahasiswa</h2>
-
-        {{-- Tombol Tambah --}}
-        @unless($isRestricted)
-            <a href="{{ route('mahasiswa.create') }}" class="btn btn-primary">Tambah Data Mahasiswa</a>
-        @endunless
+<div class="container-fluid mt-4">
+    <div class="mb-4">
+        <h1 class="mb-0">Data Mahasiswa</h1>
+        <p class="text-muted mt-2 mb-0">Klik pada card kelas untuk melihat dan mengelola data mahasiswa</p>
     </div>
 
-    {{-- Notifikasi Sukses --}}
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <i class="bi bi-check-circle-fill"></i> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>No</th>
-                    <th>NIM</th>
-                    <th>Nama</th>
-                    <th>Kelas</th>
-                    <th>Angkatan</th>
-                    <th>Email</th>
-                    @unless($isRestricted)
-                        <th>Aksi</th>
-                    @endunless
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($mahasiswas as $m)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $m->nim }}</td>
-                        <td>{{ $m->nama }}</td>
-                        <td>{{ $m->kelas }}</td>
-                        <td>{{ $m->angkatan }}</td>
-                        <td>{{ $m->email }}</td>
-                        @unless($isRestricted)
-                            <td>
-                                <a href="{{ route('mahasiswa.show', $m->id) }}" class="btn btn-info btn-sm">Lihat</a>
-                                <a href="{{ route('mahasiswa.edit', $m->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                <form action="{{ route('mahasiswa.destroy', $m->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah yakin ingin menghapus data ini?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                                </form>
-                            </td>
-                        @endunless
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="{{ $isRestricted ? 6 : 7 }}" class="text-center">Data mahasiswa tidak tersedia.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+    <!-- Card Layout untuk Kelas -->
+    <div class="row g-4">
+        @foreach($kelasList as $kelas)
+            <div class="col-12 col-md-6 col-xl-4">
+                <a href="{{ route('mahasiswa.kelas', $kelas) }}" class="text-decoration-none">
+                    <div class="card shadow-sm kelas-card h-100">
+                        <div class="card-header bg-success text-white">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-mortarboard-fill"></i> Kelas {{ $kelas }}
+                                </h5>
+                                <span class="badge bg-light text-success">
+                                    {{ $mahasiswaByKelas[$kelas]->count() }} Mahasiswa
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            @if($mahasiswaByKelas[$kelas]->count() > 0)
+                                <div class="list-group list-group-flush">
+                                    @foreach($mahasiswaByKelas[$kelas]->take(5) as $item)
+                                        <div class="list-group-item px-0 border-start-0 border-end-0">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-1 fw-bold">{{ $item->nama }}</h6>
+                                                    <p class="mb-0 text-muted small">
+                                                        <i class="bi bi-card-text"></i> {{ $item->nim }}
+                                                    </p>
+                                                </div>
+                                                <span class="badge bg-success">{{ $item->kelas }}</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                    @if($mahasiswaByKelas[$kelas]->count() > 5)
+                                        <div class="list-group-item px-0 border-0 text-center">
+                                            <small class="text-muted">
+                                                +{{ $mahasiswaByKelas[$kelas]->count() - 5 }} mahasiswa lainnya
+                                            </small>
+                                        </div>
+                                    @endif
+                                </div>
+                            @else
+                                <div class="text-center text-muted py-4">
+                                    <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                                    <p class="mb-0 mt-2">Belum ada mahasiswa di kelas {{ $kelas }}</p>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="card-footer text-center bg-light">
+                            <small class="text-muted">
+                                <i class="bi bi-arrow-right-circle"></i> Klik untuk lihat detail
+                            </small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        @endforeach
     </div>
 </div>
-@endsection
 
-{{-- ✅ Tambahan CSS agar tombol aksi tidak hilang atau turun --}}
 <style>
-    .table td, .table th {
-        vertical-align: middle;
-        text-align: center;
-    }
-
-    .table td:last-child {
-        white-space: nowrap; /* Supaya tombol tidak pecah ke baris baru */
-    }
-
-    .btn-sm {
-        padding: 5px 10px;
-        margin: 2px;
-        font-size: 0.85rem;
-        border-radius: 5px;
-    }
-
-    .btn-info {
-        background-color: #0dcaf0;
+    .kelas-card {
         border: none;
-        color: #fff;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        cursor: pointer;
     }
 
-    .btn-warning {
-        background-color: #ffc107;
-        border: none;
-        color: #fff;
+    .kelas-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
     }
 
-    .btn-danger {
-        background-color: #dc3545;
-        border: none;
-        color: #fff;
+    a:has(.kelas-card) {
+        display: block;
+        height: 100%;
     }
 
-    .btn-info:hover { background-color: #0bb4d8; }
-    .btn-warning:hover { background-color: #e0a800; }
-    .btn-danger:hover { background-color: #bb2d3b; }
+    .kelas-card .card-header {
+        border-radius: 12px 12px 0 0 !important;
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+        padding: 1rem;
+    }
 
-    .table-responsive {
-        overflow-x: auto;
+    .kelas-card .card-body {
+        padding: 0.5rem 1rem 1rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .list-group-item {
+        transition: background-color 0.2s ease;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+    }
+
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    /* Custom scrollbar */
+    .kelas-card .card-body::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .kelas-card .card-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .kelas-card .card-body::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
+    .kelas-card .card-body::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    .card-footer {
+        border-radius: 0 0 12px 12px !important;
     }
 </style>
+@endsection

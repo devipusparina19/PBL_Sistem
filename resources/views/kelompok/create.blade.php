@@ -36,6 +36,22 @@
         </div>
 
         <div class="mb-3">
+            <label for="kelas" class="form-label">Kelas</label>
+            <select class="form-select @error('kelas') is-invalid @enderror" 
+                    id="kelas" name="kelas" required>
+                <option value="">-- Pilih Kelas --</option>
+                <option value="3A" {{ old('kelas', $kelasDefault ?? '3A') == '3A' ? 'selected' : '' }}>3A</option>
+                <option value="3B" {{ old('kelas', $kelasDefault ?? '3A') == '3B' ? 'selected' : '' }}>3B</option>
+                <option value="3C" {{ old('kelas', $kelasDefault ?? '3A') == '3C' ? 'selected' : '' }}>3C</option>
+                <option value="3D" {{ old('kelas', $kelasDefault ?? '3A') == '3D' ? 'selected' : '' }}>3D</option>
+                <option value="3E" {{ old('kelas', $kelasDefault ?? '3A') == '3E' ? 'selected' : '' }}>3E</option>
+            </select>
+            @error('kelas')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
             <label for="judul_proyek" class="form-label">Judul Proyek</label>
             <input type="text" class="form-control @error('judul_proyek') is-invalid @enderror" 
                    id="judul_proyek" name="judul_proyek" value="{{ old('judul_proyek') }}" required>

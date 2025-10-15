@@ -6,88 +6,170 @@
     $isRestricted = in_array(auth()->user()->role, $restrictedRoles);
 @endphp
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">Daftar Kelompok</h1>
-        @unless($isRestricted)
-            <a href="{{ route('kelompok.create') }}" class="btn btn-primary">
-                Tambah Kelompok
-            </a>
-        @endunless
+<div class="container-fluid mt-4">
+    <div class="mb-4">
+        <h1 class="mb-0">Kelola Data Kelompok</h1>
+        <p class="text-muted mt-2 mb-0">Klik pada card kelas untuk melihat dan mengelola kelompok</p>
     </div>
 
     @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill"></i> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
     @endif
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>No</th>
-                    <th>Kode MK</th>
-                    <th>Nama Kelompok</th>
-                    <th>Judul Proyek</th>
-                    <th>Kelas</th> {{-- ✅ Tambahan kolom kelas --}}
-                    @unless($isRestricted)
-                        <th>Aksi</th>
-                    @endunless
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($kelompok as $item)
-                    <tr>
-                        <td>{{ $loop->iteration + ($kelompok->currentPage() - 1) * $kelompok->perPage() }}</td>
-                        <td>{{ $item->kode_mk }}</td>
-                        <td>{{ $item->nama_kelompok }}</td>
-                        <td>{{ $item->judul_proyek }}</td>
-                        <td>{{ $item->kelas ?? '-' }}</td> {{-- ✅ tampilkan kelas --}}
-                        
-                        @unless($isRestricted)
-                            <td>
-                                <div class="d-flex gap-1">
-                                    <a href="{{ route('kelompok.show', $item->id_kelompok) }}" class="btn btn-sm btn-info">Lihat</a>
-                                    <a href="{{ route('kelompok.edit', $item->id_kelompok) }}" class="btn btn-sm btn-warning">Edit</a>
-                                    <form action="{{ route('kelompok.destroy', $item->id_kelompok) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-danger">Hapus</button>
-                                    </form>
-                                </div>
-                            </td>
-                        @endunless
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="{{ $isRestricted ? 5 : 6 }}" class="text-center">Belum ada data kelompok</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+    <!-- Card Layout untuk Kelas -->
+    <div class="row g-4">
+        @foreach($kelasList as $kelas)
+            <div class="col-12 col-md-6 col-xl-4">
+                <a href="{{ route('kelompok.kelas', $kelas) }}" class="text-decoration-none">
+                    <div class="card shadow-sm kelas-card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-people-fill"></i> Kelas {{ $kelas }}
+                                </h5>
+                                <span class="badge bg-light text-primary">
+                                    {{ $kelompokByKelas[$kelas]->count() }} Kelompok
+                                </span>
+                            </div>
+                        </div>
 
-    <div class="d-flex justify-content-center">
-        {{ $kelompok->links() }}
+                        <div class="card-body">
+                            @if($kelompokByKelas[$kelas]->count() > 0)
+                                <div class="list-group list-group-flush">
+                                    @foreach($kelompokByKelas[$kelas] as $item)
+                                        <div class="list-group-item px-0 border-start-0 border-end-0">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-1 fw-bold">{{ $item->nama_kelompok }}</h6>
+                                                    <p class="mb-1 text-muted small">
+                                                        <i class="bi bi-book"></i> {{ $item->kode_mk }}
+                                                    </p>
+                                                    <p class="mb-1 small text-truncate" style="max-width: 300px;">
+                                                        <i class="bi bi-folder"></i> {{ $item->judul_proyek }}
+                                                    </p>
+                                                </div>
+
+                                                @unless($isRestricted)
+                                                    <div class="btn-group-vertical" role="group">
+                                                        <a href="{{ route('kelompok.show', $item->id_kelompok) }}" 
+                                                           class="btn btn-sm btn-outline-info" 
+                                                           title="Lihat Detail">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <a href="{{ route('kelompok.edit', $item->id_kelompok) }}" 
+                                                           class="btn btn-sm btn-outline-warning" 
+                                                           title="Edit">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                        <form action="{{ route('kelompok.destroy', $item->id_kelompok) }}" 
+                                                              method="POST" 
+                                                              onsubmit="return confirm('Yakin ingin menghapus kelompok {{ $item->nama_kelompok }}?')"
+                                                              class="d-inline">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button class="btn btn-sm btn-outline-danger w-100" 
+                                                                    title="Hapus">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                @endunless
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="text-center text-muted py-4">
+                                    <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                                    <p class="mb-0 mt-2">Belum ada kelompok di kelas {{ $kelas }}</p>
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="card-footer text-center bg-light">
+                            <small class="text-muted">
+                                <i class="bi bi-arrow-right-circle"></i> Klik untuk lihat detail
+                            </small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        @endforeach
     </div>
 </div>
 
 <style>
-    .btn-sm {
-        padding: 5px 10px;
-        font-size: 0.85rem;
-        border-radius: 5px;
-        color: #000 !important;
+    .kelas-card {
         border: none;
-        white-space: nowrap;
-        margin: 2px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        cursor: pointer;
     }
 
-    .btn-info { background-color: #0dcaf0; }
-    .btn-warning { background-color: #ffc107; }
-    .btn-danger { background-color: #dc3545; }
+    .kelas-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+    }
 
-    .btn-info:hover { background-color: #0bb4d8 !important; color: #000 !important; }
-    .btn-warning:hover { background-color: #e0a800 !important; color: #000 !important; }
-    .btn-danger:hover { background-color: #bb2d3b !important; color: #000 !important; }
+    a:has(.kelas-card) {
+        display: block;
+        height: 100%;
+    }
+
+    .kelas-card .card-header {
+        border-radius: 12px 12px 0 0 !important;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        padding: 1rem;
+    }
+
+    .kelas-card .card-body {
+        padding: 0.5rem 1rem 1rem;
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+    .list-group-item {
+        transition: background-color 0.2s ease;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+    }
+
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .btn-group-vertical .btn {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .text-truncate {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Custom scrollbar for card body */
+    .kelas-card .card-body::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .kelas-card .card-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .kelas-card .card-body::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
+    .kelas-card .card-body::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
 </style>
 @endsection
