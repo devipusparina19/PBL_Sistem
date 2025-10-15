@@ -66,10 +66,10 @@
                     
                     @if(Auth::check() && Auth::user()->role == 'dosen')
                         <h5 class="fw-bold text-dark">Input Nilai Kelompok</h5>
-                        <p class="text-muted small mb-4">Berikan penilaian untuk mahasiswa dalam kelompok.</p>
-                        <a href="{{ route('nilai.index') }}" 
+                        <p class="text-muted small mb-4">Berikan penilaian untuk kelompok PBL.</p>
+                        <a href="{{ route('nilai-kelompok.index') }}" 
                            class="btn btn-primary w-100 fw-semibold">
-                            Input Nilai
+                            Input Nilai Kelompok
                         </a>
                     @else
                         <h5 class="fw-bold text-dark">Ranking Kelompok</h5>
