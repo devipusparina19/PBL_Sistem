@@ -63,7 +63,7 @@
                                 <td>{{ $item->nama }}</td>
                                 <td>{{ $item->nip }}</td>
                                 <td>{{ $item->email }}</td>
-                                <td>{{ $item->no_telepon ?? '-' }}</td>
+                                <td>{{ $item->no_telp ?? '-' }}</td>
                                 <td>{{ $item->kelas ?? '-' }}</td>
                                 <td>{{ $item->mata_kuliah ?? '-' }}</td>
 

@@ -36,7 +36,7 @@ class DosenController extends Controller
             'nama' => 'required|string|max:255',
             'nip' => 'required|string|max:50|unique:dosens,nip',
             'email' => 'required|email|unique:dosens,email',
-            'no_telepon' => 'nullable|string|max:20',
+            'no_telp' => 'nullable|string|max:20',
             'kelas' => 'nullable|string|max:50',
             'mata_kuliah' => 'nullable|string|max:100',
         ]);
@@ -58,27 +58,29 @@ class DosenController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $dosen = Dosen::findOrFail($id);
-
-        $request->validate([
-            'nama' => 'required|string|max:255',
-            'nip' => 'required|string|max:20|unique:dosens,nip,' . $dosen->id,
-            'email' => 'required|email|unique:dosens,email,' . $dosen->id,
-            'no_telepon' => 'nullable|string|max:15',
-            'mata_kuliah' => 'nullable|string|max:100', 
+{
+    $request->validate([
+        'nama' => 'required|string|max:255',
+        'nip' => 'required|string|max:50',
+        'email' => 'required|email|max:255',
+        'no_telp' => 'nullable|string|max:20',
+        'kelas' => 'nullable|string|max:50',
+        'mata_kuliah' => 'nullable|string|max:100',
     ]);
 
-        $dosen->update($request->except('mata_kuliah'));
+    $dosen = Dosen::findOrFail($id);
 
-        if ($request->has('mata_kuliah')) {
-            $dosen->mataKuliah()->sync($request->mata_kuliah);
-        } else {
-            $dosen->mataKuliah()->detach();
-        }
+    $dosen->update([
+        'nama' => $request->nama,
+        'nip' => $request->nip,
+        'email' => $request->email,
+        'no_telp' => $request->no_telp,
+        'kelas' => $request->kelas,
+        'mata_kuliah' => $request->mata_kuliah,
+    ]);
 
-        return redirect()->route('dosen.index')->with('success', 'Data dosen berhasil diperbarui');
-    }
+    return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil diperbarui!');
+}
 
     public function destroy($id)
     {

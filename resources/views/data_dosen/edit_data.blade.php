@@ -46,10 +46,16 @@
         </div>
 
         <div class="mb-3">
-            <label for="no_telepon" class="form-label">No. Telepon</label>
-            <input type="text" id="no_telepon" name="no_telepon" class="form-control" 
-                   value="{{ old('no_telepon', $dosen->no_telepon) }}" required>
-        </div>
+    <label for="no_telp" class="form-label">No. Telepon</label>
+    <input type="text" 
+           class="form-control @error('no_telp') is-invalid @enderror"
+           id="no_telp" 
+           name="no_telp" 
+           value="{{ old('no_telp', $dosen->no_telp) }}">
+    @error('no_telp')
+        <div class="invalid-feedback">{{ $message }}</div>
+    @enderror
+</div>
 
         <div class="mb-3">
             <label for="kelas" class="form-label">Kelas</label>

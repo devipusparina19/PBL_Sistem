@@ -21,7 +21,7 @@
 
     <div class="mb-3">
         <label class="form-label">No. Telepon</label>
-        <input type="text" class="form-control" value="{{ $dosen->no_telepon ?? '-' }}" readonly>
+        <input type="text" class="form-control" value="{{ $dosen->no_telp ?? '-' }}" readonly>
     </div>
 
     <div class="mb-3">
