@@ -50,9 +50,8 @@
                                 <th width="5%">No</th>
                                 <th width="15%">Nama Kelompok</th>
                                 <th width="10%">Kode MK</th>
-                                <th width="25%">Judul Proyek</th>
-                                <th width="12%">NIP Dosen</th>
-                                <th width="18%">Deskripsi</th>
+                                <th width="40%">Judul Proyek</th>
+                                <th width="10%">Kelas</th>
                                 @unless($isRestricted)
                                     <th width="15%" class="text-center">Aksi</th>
                                 @endunless
@@ -62,29 +61,12 @@
                             @foreach($kelompok as $item)
                                 <tr>
                                     <td>{{ $loop->iteration + ($kelompok->currentPage() - 1) * $kelompok->perPage() }}</td>
-                                    <td>
-                                        <strong>{{ $item->nama_kelompok }}</strong>
-                                        <br>
-                                        <span class="badge bg-primary">{{ $item->kelas }}</span>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-info text-dark">{{ $item->kode_mk }}</span>
-                                    </td>
+                                    <td><strong>{{ $item->nama_kelompok }}</strong></td>
+                                    <td><span class="badge bg-info text-dark">{{ $item->kode_mk }}</span></td>
                                     <td>{{ $item->judul_proyek }}</td>
-                                    <td>
-                                        <i class="bi bi-person-badge text-muted"></i> {{ $item->nip }}
-                                    </td>
-                                    <td>
-                                        @if($item->deskripsi)
-                                            <div class="text-truncate" style="max-width: 200px;" title="{{ $item->deskripsi }}">
-                                                {{ $item->deskripsi }}
-                                            </div>
-                                        @else
-                                            <span class="text-muted">-</span>
-                                        @endif
-                                    </td>
+                                    <td><span class="badge bg-primary">{{ $item->kelas }}</span></td>
                                     @unless($isRestricted)
-                                        <td>
+                                        <td class="text-center">
                                             <div class="btn-group" role="group">
                                                 <a href="{{ route('kelompok.show', $item->id_kelompok) }}" 
                                                    class="btn btn-sm btn-info" 
@@ -102,8 +84,7 @@
                                                       class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button class="btn btn-sm btn-danger" 
-                                                            title="Hapus">
+                                                    <button class="btn btn-sm btn-danger" title="Hapus">
                                                         <i class="bi bi-trash"></i> Hapus
                                                     </button>
                                                 </form>
@@ -152,66 +133,22 @@
         white-space: nowrap;
     }
 
-    .btn-info { 
-        background-color: #0dcaf0; 
-        color: #000;
-    }
-    
-    .btn-warning { 
-        background-color: #ffc107; 
-        color: #000;
-    }
-    
-    .btn-danger { 
-        background-color: #dc3545; 
-        color: #fff;
-    }
+    .btn-info { background-color: #0dcaf0; color: #000; }
+    .btn-warning { background-color: #ffc107; color: #000; }
+    .btn-danger { background-color: #dc3545; color: #fff; }
 
-    .btn-info:hover { 
-        background-color: #0bb4d8 !important; 
-        color: #000 !important; 
-    }
-    
-    .btn-warning:hover { 
-        background-color: #e0a800 !important; 
-        color: #000 !important; 
-    }
-    
-    .btn-danger:hover { 
-        background-color: #bb2d3b !important; 
-        color: #fff !important; 
-    }
+    .btn-info:hover { background-color: #0bb4d8 !important; color: #000 !important; }
+    .btn-warning:hover { background-color: #e0a800 !important; color: #000 !important; }
+    .btn-danger:hover { background-color: #bb2d3b !important; color: #fff !important; }
 
-    .table-hover tbody tr:hover {
-        background-color: rgba(0, 123, 255, 0.05);
-    }
+    .table-hover tbody tr:hover { background-color: rgba(0, 123, 255, 0.05); }
 
-    .breadcrumb {
-        background-color: transparent;
-        padding: 0;
-    }
+    .breadcrumb { background-color: transparent; padding: 0; }
 
-    .text-truncate {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+    .card { border: none; border-radius: 12px; }
+    .card-body { padding: 1.5rem; }
 
-    .card {
-        border: none;
-        border-radius: 12px;
-    }
-
-    .card-body {
-        padding: 1.5rem;
-    }
-
-    .btn-group .btn {
-        margin-right: 2px;
-    }
-
-    .btn-group .btn:last-child {
-        margin-right: 0;
-    }
+    .btn-group .btn { margin-right: 2px; }
+    .btn-group .btn:last-child { margin-right: 0; }
 </style>
 @endsection
