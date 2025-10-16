@@ -10,7 +10,7 @@ class Kelompok extends Model
     use HasFactory;
 
     // Nama tabel sesuai database
-    protected $table = 'kelompoks';
+    protected $table = 'kelompok';
 
     // Primary key
     protected $primaryKey = 'id_kelompok';
@@ -23,16 +23,7 @@ class Kelompok extends Model
         'nama_kelompok',
         'kelas',
         'judul_proyek',
-        'nip',
-        'deskripsi',
-        // Nilai kelompok
-        'pemrograman_web',
-        'integrasi_sistem',
-        'pengambilan_keputusan',
-        'it_proyek',
-        'kontribusi_kelompok',
-        'penilaian_dosen',
-        'hasil_akhir',
+        'kelas',
     ];
 
     // Jika tabel memiliki kolom created_at dan updated_at
