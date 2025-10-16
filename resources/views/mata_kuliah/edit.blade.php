@@ -47,6 +47,23 @@
             @enderror
         </div>
 
+        {{-- Kelas --}}
+        <div class="mb-3">
+            <label for="kelas" class="form-label">Kelas</label>
+            <select class="form-control @error('kelas') is-invalid @enderror"
+                    id="kelas" name="kelas" required>
+                <option value="">-- Pilih Kelas --</option>
+                <option value="3A" {{ old('kelas', $mataKuliah->kelas) == '3A' ? 'selected' : '' }}>3A</option>
+                <option value="3B" {{ old('kelas', $mataKuliah->kelas) == '3B' ? 'selected' : '' }}>3B</option>
+                <option value="3C" {{ old('kelas', $mataKuliah->kelas) == '3C' ? 'selected' : '' }}>3C</option>
+                <option value="3D" {{ old('kelas', $mataKuliah->kelas) == '3D' ? 'selected' : '' }}>3D</option>
+                <option value="3E" {{ old('kelas', $mataKuliah->kelas) == '3E' ? 'selected' : '' }}>3E</option>
+            </select>
+            @error('kelas')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
         {{-- NIP Dosen Pengampu --}}
         <div class="mb-3">
             <label for="nip_dosen" class="form-label">NIP Dosen Pengampu</label>
@@ -58,40 +75,6 @@
                    placeholder="Masukkan NIP dosen pengampu"
                    required>
             @error('nip_dosen')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        {{-- Kelas --}}
-        <div class="mb-3">
-            <label for="kelas" class="form-label">Kelas</label>
-            <input type="text"
-                   id="kelas"
-                   name="kelas"
-                   class="form-control @error('kelas') is-invalid @enderror"
-                   value="{{ old('kelas', $mataKuliah->kelas) }}"
-                   placeholder="Masukkan kelas (misal: A, B, C)"
-                   required>
-            @error('kelas')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        {{-- Semester --}}
-        <div class="mb-3">
-            <label for="semester" class="form-label">Semester</label>
-            <select id="semester"
-                    name="semester"
-                    class="form-control @error('semester') is-invalid @enderror"
-                    required>
-                <option value="">-- Pilih Semester --</option>
-                @for ($i = 1; $i <= 8; $i++)
-                    <option value="{{ $i }}" {{ old('semester', $mataKuliah->semester) == $i ? 'selected' : '' }}>
-                        Semester {{ $i }}
-                    </option>
-                @endfor
-            </select>
-            @error('semester')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
