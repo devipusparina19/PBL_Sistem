@@ -59,7 +59,8 @@ class KelompokController extends Controller
             'nama_kelompok' => 'required|string|max:255',
             'kelas' => 'required|in:3A,3B,3C,3D,3E',
             'judul_proyek' => 'required|string|max:255',
-            'kelas' => 'required|string|max:255',
+            'nip' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
         ]);
 
         $kelompok = Kelompok::create($request->all());
@@ -86,7 +87,8 @@ class KelompokController extends Controller
             'nama_kelompok' => 'required|string|max:255',
             'kelas' => 'required|in:3A,3B,3C,3D,3E',
             'judul_proyek' => 'required|string|max:255',
-            'kelas' => 'required|string|max:255',
+            'nip' => 'required|string|max:255',
+            'deskripsi' => 'nullable|string',
         ]);
 
         $kelompok->update($request->all());
