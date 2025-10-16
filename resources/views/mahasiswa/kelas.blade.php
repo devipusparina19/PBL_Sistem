@@ -53,7 +53,6 @@
                                 <th width="8%">Kelas</th>
                                 <th width="10%">Angkatan</th>
                                 <th width="20%">Email</th>
-                                <th width="10%">Kelompok</th>
                                 @unless($isRestricted)
                                     <th width="15%" class="text-center">Aksi</th>
                                 @endunless
@@ -73,15 +72,6 @@
                                     <td>{{ $item->angkatan }}</td>
                                     <td>
                                         <i class="bi bi-envelope text-muted"></i> {{ $item->email }}
-                                    </td>
-                                    <td>
-                                        @if($item->kelompok_id)
-                                            <span class="badge bg-info text-dark">
-                                                {{ $item->kelompok->nama_kelompok ?? 'N/A' }}
-                                            </span>
-                                        @else
-                                            <span class="text-muted">-</span>
-                                        @endif
                                     </td>
                                     @unless($isRestricted)
                                         <td>
