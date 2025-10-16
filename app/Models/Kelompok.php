@@ -9,8 +9,8 @@ class Kelompok extends Model
 {
     use HasFactory;
 
-    // Nama tabel sesuai database
-    protected $table = 'kelompok';
+    // Nama tabel di database
+    protected $table = 'kelompok'; // ✅ Gunakan bentuk jamak sesuai konvensi Laravel
 
     // Primary key
     protected $primaryKey = 'id_kelompok';
@@ -21,17 +21,22 @@ class Kelompok extends Model
     protected $fillable = [
         'kode_mk',
         'nama_kelompok',
-        'kelas',
         'judul_proyek',
         'kelas',
     ];
 
     // Jika tabel memiliki kolom created_at dan updated_at
     public $timestamps = true;
-    
-    public function milestones()
-{
-    return $this->hasMany(Milestone::class, 'kelompok_id');
-}
 
+    // Relasi ke Milestone
+    public function milestones()
+    {
+        return $this->hasMany(Milestone::class, 'kelompok_id');
+    }
+
+    // Relasi opsional ke User (kalau nanti ada anggota/dosen pembimbing)
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'kelompok_user', 'kelompok_id', 'user_id');
+    }
 }

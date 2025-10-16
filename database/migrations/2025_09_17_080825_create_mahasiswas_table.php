@@ -6,27 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('mahasiswas', function (Blueprint $table) {
     $table->id();
     $table->string('nim')->unique();
     $table->string('nama');
-    $table->string('kelas'); 
+    $table->string('kelas');
     $table->string('angkatan');
     $table->string('email')->unique();
     $table->string('password');
     $table->string('foto')->nullable();
+
+    $table->unsignedBigInteger('kelompok_id')->nullable();
+    $table->foreign('kelompok_id')
+          ->references('id_kelompok')
+          ->on('kelompok')
+          ->onDelete('set null');
+
     $table->timestamps();
 });
     }
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('mahasiswas');

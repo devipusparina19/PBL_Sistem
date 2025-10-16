@@ -16,7 +16,8 @@ class Mahasiswa extends Model
         'angkatan',
         'email',
         'password',
-        'kelompok_id', // tambahkan ini kalau kolomnya ada di tabel
+        'foto',
+        'kelompok_id', // ✅ kolom relasi ke tabel kelompok
     ];
 
     // 🔹 Relasi ke model Nilai
@@ -28,6 +29,7 @@ class Mahasiswa extends Model
     // 🔹 Relasi ke model Kelompok
     public function kelompok()
     {
+        // ✅ Pastikan tabel tujuannya "kelompok" (tanpa 's')
         return $this->belongsTo(Kelompok::class, 'kelompok_id', 'id_kelompok');
     }
 }

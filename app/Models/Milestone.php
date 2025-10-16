@@ -9,6 +9,10 @@ class Milestone extends Model
 {
     use HasFactory;
 
+    // Nama tabel (Laravel otomatis paham, tapi tetap aman diset eksplisit)
+    protected $table = 'milestones';
+
+    // Kolom yang bisa diisi
     protected $fillable = [
         'judul',
         'deskripsi',
@@ -19,15 +23,15 @@ class Milestone extends Model
         'catatan_dosen',
     ];
 
-    // Relasi ke tabel users
+    // Relasi ke User
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Relasi ke tabel kelompok
+    // Relasi ke Kelompok
     public function kelompok()
     {
-        return $this->belongsTo(Kelompok::class, 'kelompok_id');
+        return $this->belongsTo(Kelompok::class, 'kelompok_id', 'id_kelompok');
     }
 }
