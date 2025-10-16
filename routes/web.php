@@ -102,6 +102,7 @@ Route::middleware('auth')->group(function () {
     Route::get('mahasiswa/kelas/{kelas}', [MahasiswaController::class, 'showByKelas'])->name('mahasiswa.kelas');
     Route::resource('mahasiswa', MahasiswaController::class);
     Route::resource('data_dosen', DosenController::class);
+    Route::get('mata_kuliah/kelas/{kelas}', [MataKuliahController::class, 'showByKelas'])->name('mata_kuliah.kelas');
     Route::resource('mata_kuliah', MataKuliahController::class);
     Route::get('kelompok/kelas/{kelas}', [KelompokController::class, 'showByKelas'])->name('kelompok.kelas');
     Route::resource('kelompok', KelompokController::class);
