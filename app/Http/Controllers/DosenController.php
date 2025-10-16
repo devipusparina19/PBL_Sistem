@@ -13,23 +13,40 @@ class DosenController extends Controller
      |  BAGIAN 1 — MANAJEMEN DATA DOSEN
      ======================================================== */
 
-    public function index(Request $request)
+    public function index()
     {
-        $search = $request->input('search');
-
-        $dosens = Dosen::when($search, function ($query, $search) {
-            return $query->where('nama', 'like', "%{$search}%")
-                ->orWhere('nip', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%")
-                ->orWhere('mata_kuliah', 'like', "%{$search}%");
-        })->paginate(10);
-
-        return view('data_dosen.index_data', compact('dosens'));
+        // Group dosen by kelas
+        $kelasList = ['3A', '3B', '3C', '3D', '3E'];
+        $dosenByKelas = [];
+        
+        foreach ($kelasList as $kelas) {
+            $dosenByKelas[$kelas] = Dosen::where('kelas', $kelas)
+                ->orderBy('nama', 'asc')
+                ->get();
+        }
+        
+        return view('data_dosen.index', compact('dosenByKelas', 'kelasList'));
     }
 
-    public function create()
+    // Menampilkan dosen berdasarkan kelas
+    public function showByKelas($kelas)
     {
-        return view('data_dosen.create_data');
+        // Validasi kelas
+        if (!in_array($kelas, ['3A', '3B', '3C', '3D', '3E'])) {
+            abort(404);
+        }
+
+        $dosens = Dosen::where('kelas', $kelas)
+            ->orderBy('nama', 'asc')
+            ->paginate(15);
+        
+        return view('data_dosen.kelas', compact('dosens', 'kelas'));
+    }
+
+    public function create(Request $request)
+    {
+        $kelasDefault = $request->query('kelas', '3A');
+        return view('data_dosen.create', compact('kelasDefault'));
     }
 
     public function store(Request $request)
@@ -43,7 +60,7 @@ class DosenController extends Controller
             'mata_kuliah'  => 'nullable|string|max:100',
         ]);
 
-        Dosen::create([
+        $dosen = Dosen::create([
             'nama'         => $request->nama,
             'nip'          => $request->nip,
             'email'        => $request->email,
@@ -51,6 +68,11 @@ class DosenController extends Controller
             'kelas'        => $request->kelas,
             'mata_kuliah'  => $request->mata_kuliah,
         ]);
+
+        // Redirect ke halaman kelas jika ada
+        if ($request->has('kelas')) {
+            return redirect()->route('data_dosen.kelas', $request->kelas)->with('success', 'Data dosen berhasil ditambahkan!');
+        }
 
         return redirect()->route('data_dosen.index')
                          ->with('success', 'Data dosen berhasil ditambahkan!');
@@ -90,6 +112,11 @@ class DosenController extends Controller
             'mata_kuliah'  => $request->mata_kuliah,
         ]);
 
+        // Redirect ke halaman kelas jika ada
+        if ($request->has('kelas')) {
+            return redirect()->route('data_dosen.kelas', $request->kelas)->with('success', 'Data dosen berhasil diperbarui!');
+        }
+
         return redirect()->route('data_dosen.index')
                          ->with('success', 'Data dosen berhasil diperbarui!');
     }
@@ -97,7 +124,13 @@ class DosenController extends Controller
     public function destroy($id)
     {
         $dosen = Dosen::findOrFail($id);
+        $kelas = $dosen->kelas; // Simpan kelas sebelum dihapus
         $dosen->delete();
+
+        // Cek apakah request dari halaman detail kelas
+        if (request()->server('HTTP_REFERER') && str_contains(request()->server('HTTP_REFERER'), 'data_dosen/kelas/')) {
+            return redirect()->route('data_dosen.kelas', $kelas)->with('success', 'Data dosen berhasil dihapus!');
+        }
 
         return redirect()->route('data_dosen.index')
                          ->with('success', 'Data dosen berhasil dihapus!');
