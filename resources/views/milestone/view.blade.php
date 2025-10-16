@@ -2,7 +2,7 @@
 
 @section('content')
 
-{{-- Tambahan styling agar warna badge lebih menonjol --}}
+{{-- Styling badge --}}
 <style>
     .badge {
         font-size: 0.9rem;
@@ -24,7 +24,7 @@
 </style>
 
 <div class="container mt-4">
-    <h1 class="mb-4">Daftar Milestone</h1>
+    <h1 class="mb-4">Daftar Milestone Kelompok</h1>
 
     {{-- Pesan sukses --}}
     @if(session('success'))
@@ -33,14 +33,18 @@
 
     {{-- Tombol tambah milestone --}}
     @if(auth()->user()->kelompok_id)
-        <a href="{{ route('milestone.create', ['id' => auth()->user()->kelompok_id]) }}" class="btn btn-primary mb-3">
+        <a href="{{ route('milestone.create', ['kelompok_id' => auth()->user()->kelompok_id]) }}" class="btn btn-primary mb-3">
             Tambah Milestone
         </a>
+    @else
+        <div class="alert alert-warning">
+            Anda belum tergabung dalam kelompok. Silakan hubungi admin atau koordinator PBL.
+        </div>
     @endif
 
     {{-- Tabel milestone --}}
-    <table class="table table-bordered">
-        <thead>
+    <table class="table table-bordered align-middle">
+        <thead class="table-dark">
             <tr>
                 <th>No</th>
                 <th>Judul</th>
@@ -48,6 +52,7 @@
                 <th>Minggu Ke</th>
                 <th>Status</th>
                 <th>Catatan Dosen</th>
+                <th>Dosen Validator</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -59,23 +64,33 @@
                     <td>{{ $milestone->deskripsi }}</td>
                     <td>{{ $milestone->minggu_ke }}</td>
                     <td>
-                        @if($milestone->status == 'selesai')
-                            <span class="badge bg-success">{{ ucfirst($milestone->status) }}</span>
-                        @elseif($milestone->status == 'pending')
-                            <span class="badge bg-warning text-dark">{{ ucfirst($milestone->status) }}</span>
+                        @if($milestone->status == 'disetujui')
+                            <span class="badge bg-success">Disetujui</span>
+                        @elseif($milestone->status == 'menunggu')
+                            <span class="badge bg-warning text-dark">Menunggu</span>
                         @elseif($milestone->status == 'ditolak')
-                            <span class="badge bg-danger">{{ ucfirst($milestone->status) }}</span>
+                            <span class="badge bg-danger">Ditolak</span>
+                        @else
+                            <span class="badge bg-secondary">Belum Divalidasi</span>
                         @endif
                     </td>
                     <td>{{ $milestone->catatan_dosen ?? '-' }}</td>
+
+                    {{-- Menampilkan nama dosen validator jika ada relasi --}}
+                    <td>{{ $milestone->dosen->name ?? '-' }}</td>
+
                     <td>
-                        {{-- Link edit --}}
-                        <a href="{{ route('milestone.edit', $milestone->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                        {{-- Hanya mahasiswa yang membuat bisa edit --}}
+                        @if(auth()->id() == $milestone->user_id && $milestone->status != 'disetujui')
+                            <a href="{{ route('milestone.edit', $milestone->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                        @else
+                            <span class="text-muted">-</span>
+                        @endif
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="text-center">Belum ada milestone.</td>
+                    <td colspan="8" class="text-center">Belum ada milestone.</td>
                 </tr>
             @endforelse
         </tbody>

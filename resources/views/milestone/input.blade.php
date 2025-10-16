@@ -2,13 +2,13 @@
 
 @section('content')
 <div class="container mt-4">
-    <h2>Input Milestone Kelompok {{ $id }}</h2>
+    <h2>Input Milestone Kelompok {{ $kelompok_id }}</h2>
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <form action="{{ route('milestone.store', $id) }}" method="POST">
+    <form action="{{ route('milestone.store', $kelompok_id) }}" method="POST">
         @csrf
 
         <div class="mb-3">

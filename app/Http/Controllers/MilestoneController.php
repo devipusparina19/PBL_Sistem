@@ -8,22 +8,23 @@ use App\Models\Milestone;
 class MilestoneController extends Controller
 {
     // =========================
-    // MEMBER / MAHASISWA
+    // MAHASISWA
     // =========================
 
-    // Tampilkan milestone untuk mahasiswa sesuai kelompok
+    // Tampilkan semua milestone mahasiswa berdasarkan kelompok
     public function indexForMember()
     {
         $user = auth()->user();
-        
-        $milestones = Milestone::where('kelompok_id', $user->kelompok_id)
-                                ->orderBy('minggu_ke', 'asc')
-                                ->get();
+
+        $milestones = Milestone::with(['user', 'kelompok'])
+            ->where('kelompok_id', $user->kelompok_id)
+            ->orderBy('minggu_ke', 'asc')
+            ->get();
 
         return view('milestone.view', compact('milestones', 'user'));
     }
 
-    // Form input milestone baru
+    // Form tambah milestone
     public function create($kelompok_id)
     {
         return view('milestone.create', compact('kelompok_id'));
@@ -39,25 +40,26 @@ class MilestoneController extends Controller
         ]);
 
         Milestone::create([
-            'kelompok_id' => $kelompok_id,
-            'user_id' => auth()->id(),
             'judul' => $request->judul,
             'deskripsi' => $request->deskripsi,
             'minggu_ke' => $request->minggu_ke,
-            'status' => 'menunggu', // default status
+            'kelompok_id' => $kelompok_id,
+            'user_id' => auth()->id(),
+            'status' => 'menunggu',
         ]);
 
-        return redirect()->route('milestone.view')->with('success', 'Milestone berhasil ditambahkan.');
+        return redirect()->route('milestone.view')
+            ->with('success', 'Milestone berhasil ditambahkan.');
     }
 
-    // Edit milestone
+    // Form edit milestone
     public function edit($id)
     {
-        $milestone = Milestone::findOrFail($id);
+        $milestone = Milestone::with(['user', 'kelompok'])->findOrFail($id);
         return view('milestone.edit', compact('milestone'));
     }
 
-    // Update milestone
+    // Update milestone mahasiswa
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -67,41 +69,48 @@ class MilestoneController extends Controller
         ]);
 
         $milestone = Milestone::findOrFail($id);
-        $milestone->update($request->only('judul', 'deskripsi', 'minggu_ke'));
 
-        return redirect()->route('milestone.view')->with('success', 'Milestone berhasil diupdate.');
+        $milestone->update([
+            'judul' => $request->judul,
+            'deskripsi' => $request->deskripsi,
+            'minggu_ke' => $request->minggu_ke,
+        ]);
+
+        return redirect()->route('milestone.view')
+            ->with('success', 'Milestone berhasil diperbarui.');
     }
 
     // =========================
-    // DOSEN / VALIDASI
+    // DOSEN (VALIDASI)
     // =========================
 
-    // Tampilkan milestone yang menunggu validasi
+    // Daftar milestone menunggu validasi
     public function indexForDosen()
     {
-        $milestones = Milestone::where('status', 'menunggu')
-                                ->with('user', 'kelompok')
-                                ->orderBy('minggu_ke', 'asc')
-                                ->get();
+        $milestones = Milestone::with(['user', 'kelompok'])
+            ->where('status', 'menunggu')
+            ->orderBy('minggu_ke', 'asc')
+            ->get();
 
         return view('milestone.validasi', compact('milestones'));
     }
 
-    // Update status milestone oleh dosen
+    // Dosen validasi milestone
     public function updateStatus(Request $request, $id)
     {
-        $milestone = Milestone::findOrFail($id);
-
         $request->validate([
             'status' => 'required|in:disetujui,ditolak',
             'catatan_dosen' => 'nullable|string',
         ]);
+
+        $milestone = Milestone::findOrFail($id);
 
         $milestone->update([
             'status' => $request->status,
             'catatan_dosen' => $request->catatan_dosen,
         ]);
 
-        return redirect()->route('milestone.validasi')->with('success', 'Milestone berhasil divalidasi.');
+        return redirect()->route('milestone.validasi')
+            ->with('success', 'Milestone berhasil divalidasi.');
     }
 }

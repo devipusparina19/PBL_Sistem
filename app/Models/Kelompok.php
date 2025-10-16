@@ -28,4 +28,10 @@ class Kelompok extends Model
 
     // Jika tabel memiliki kolom created_at dan updated_at
     public $timestamps = true;
+    
+    public function milestones()
+{
+    return $this->hasMany(Milestone::class, 'kelompok_id');
+}
+
 }

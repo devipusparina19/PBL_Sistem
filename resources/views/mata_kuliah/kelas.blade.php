@@ -49,10 +49,9 @@
                             <tr>
                                 <th width="5%">No</th>
                                 <th width="12%">Kode MK</th>
-                                <th width="25%">Nama Mata Kuliah</th>
+                                <th width="30%">Nama Mata Kuliah</th>
                                 <th width="10%">Kelas</th>
-                                <th width="15%">NIP Dosen</th>
-                                <th width="18%">Nama Dosen</th>
+                                <th width="20%">NIP Dosen</th>
                                 @unless($isRestricted)
                                     <th width="15%" class="text-center">Aksi</th>
                                 @endunless
@@ -72,13 +71,6 @@
                                     <td>
                                         @if($item->nip_dosen)
                                             <i class="bi bi-person-badge text-muted"></i> {{ $item->nip_dosen }}
-                                        @else
-                                            <span class="text-muted">-</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($item->dosen)
-                                            {{ $item->dosen->nama }}
                                         @else
                                             <span class="text-muted">-</span>
                                         @endif
@@ -142,70 +134,4 @@
         </a>
     </div>
 </div>
-
-<style>
-    .btn-sm {
-        padding: 5px 10px;
-        font-size: 0.85rem;
-        border-radius: 5px;
-        border: none;
-        white-space: nowrap;
-    }
-
-    .btn-info { 
-        background-color: #0dcaf0; 
-        color: #000;
-    }
-    
-    .btn-warning { 
-        background-color: #ffc107; 
-        color: #000;
-    }
-    
-    .btn-danger { 
-        background-color: #dc3545; 
-        color: #fff;
-    }
-
-    .btn-info:hover { 
-        background-color: #0bb4d8 !important; 
-        color: #000 !important; 
-    }
-    
-    .btn-warning:hover { 
-        background-color: #e0a800 !important; 
-        color: #000 !important; 
-    }
-    
-    .btn-danger:hover { 
-        background-color: #bb2d3b !important; 
-        color: #fff !important; 
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: rgba(255, 193, 7, 0.05);
-    }
-
-    .breadcrumb {
-        background-color: transparent;
-        padding: 0;
-    }
-
-    .card {
-        border: none;
-        border-radius: 12px;
-    }
-
-    .card-body {
-        padding: 1.5rem;
-    }
-
-    .btn-group .btn {
-        margin-right: 2px;
-    }
-
-    .btn-group .btn:last-child {
-        margin-right: 0;
-    }
-</style>
 @endsection
