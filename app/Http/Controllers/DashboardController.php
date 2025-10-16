@@ -70,6 +70,11 @@ class DashboardController extends Controller
     // Menu Dashboard Kelompok
     public function kelompok()
 {
+    // Cek role user yang login
+    if (auth()->user()->role !== 'mahasiswa') {
+        abort(403, 'Halaman ini hanya dapat diakses oleh mahasiswa.');
+    }
+
     return view('dashboard.kelompok');
 }
 

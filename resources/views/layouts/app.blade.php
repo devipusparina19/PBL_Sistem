@@ -43,7 +43,7 @@
     =========================== */
     .sidebar {
         width: 300px;
-        background: #0a1a40; /* lebih gelap, profesional */
+        background: #0a1a40;
         min-height: calc(100vh - 56px);
         padding-top: 0;
         display: flex;
@@ -127,7 +127,6 @@
         margin-top: auto;
     }
 
-    /* Tabel dan kartu */
     .table thead.bg-dark th {
         background-color: #212529 !important;
         color: #ffffff !important;
@@ -154,8 +153,7 @@
     .table th, .table td {
         vertical-align: middle !important;
     }
-</style>
-
+    </style>
 
     @stack('styles')
 </head>
@@ -188,19 +186,37 @@
     <div class="content-wrapper">
         <!-- Sidebar -->
         <div class="sidebar">
-    <div class="sidebar-header">
-        <i class="bi bi-mortarboard-fill me-2"></i> Menu Utama
-    </div>
+            <div class="sidebar-header">
+                <i class="bi bi-mortarboard-fill me-2"></i> Menu Utama
+            </div>
 
-    <a href="{{ url('/home') }}" class="{{ request()->is('home') ? 'active' : '' }}"><i class="bi bi-house-door-fill"></i> Home</a>
-    <a href="{{ url('dashboard/kelompok') }}" class="{{ request()->is('dashboard/kelompok') ? 'active' : '' }}"><i class="bi bi-people-fill"></i> Dashboard Kelompok</a>
-    <a href="{{ url('/data_dosen') }}" class="{{ request()->is('data_dosen*') ? 'active' : '' }}"><i class="bi bi-person-badge-fill"></i> Data Dosen</a>
-    <a href="{{ url('/mata_kuliah') }}" class="{{ request()->is('mata_kuliah*') ? 'active' : '' }}"><i class="bi bi-book-fill"></i> Data Mata Kuliah</a>
-    <a href="{{ url('/mahasiswa') }}" class="{{ request()->is('mahasiswa') ? 'active' : '' }}"><i class="bi bi-mortarboard"></i> Data Mahasiswa</a>
-    <a href="{{ url('/kelompok') }}" class="{{ request()->is('kelompok') ? 'active' : '' }}"><i class="bi bi-people"></i> Kelompok PBL</a>
-    <a href="{{ url('/profile') }}" class="{{ request()->is('profile') ? 'active' : '' }}"><i class="bi bi-person-circle"></i> Profile</a>
-</div>
+            <a href="{{ url('/home') }}" class="{{ request()->is('home') ? 'active' : '' }}">
+                <i class="bi bi-house-door-fill"></i> Home
+            </a>
 
+            {{-- hanya tampil jika role mahasiswa --}}
+            @if(auth()->user() && auth()->user()->role === 'mahasiswa')
+                <a href="{{ url('dashboard/kelompok') }}" class="{{ request()->is('dashboard/kelompok') ? 'active' : '' }}">
+                    <i class="bi bi-people-fill"></i> Dashboard Kelompok
+                </a>
+            @endif
+
+            <a href="{{ url('/data_dosen') }}" class="{{ request()->is('data_dosen*') ? 'active' : '' }}">
+                <i class="bi bi-person-badge-fill"></i> Data Dosen
+            </a>
+            <a href="{{ url('/mata_kuliah') }}" class="{{ request()->is('mata_kuliah*') ? 'active' : '' }}">
+                <i class="bi bi-book-fill"></i> Data Mata Kuliah
+            </a>
+            <a href="{{ url('/mahasiswa') }}" class="{{ request()->is('mahasiswa') ? 'active' : '' }}">
+                <i class="bi bi-mortarboard"></i> Data Mahasiswa
+            </a>
+            <a href="{{ url('/kelompok') }}" class="{{ request()->is('kelompok') ? 'active' : '' }}">
+                <i class="bi bi-people"></i> Kelompok PBL
+            </a>
+            <a href="{{ url('/profile') }}" class="{{ request()->is('profile') ? 'active' : '' }}">
+                <i class="bi bi-person-circle"></i> Profile
+            </a>
+        </div>
 
         <!-- Konten -->
         <div class="main-content">
