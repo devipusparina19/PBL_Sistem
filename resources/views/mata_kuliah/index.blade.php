@@ -1,108 +1,149 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-4">
-    <h1 class="mb-4">Daftar Mata Kuliah</h1>
+@php
+    $restrictedRoles = ['mahasiswa', 'dosen', 'koordinator_prodi', 'koordinator_pbl'];
+    $isRestricted = in_array(auth()->user()->role, $restrictedRoles);
+@endphp
 
-    {{-- Form pencarian --}}
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <form action="{{ route('mata_kuliah.index') }}" method="GET" class="d-flex" style="width: 80%;">
-            <input type="text" name="search" 
-                   class="form-control me-2"
-                   placeholder="Cari kode, nama mata kuliah, atau NIP dosen..."
-                   value="{{ request('search') }}">
-            <button type="submit" class="btn btn-secondary">Cari</button>
-        </form>
-
-        {{-- Tombol Tambah hanya untuk admin --}}
-        @if(auth()->user()->role === 'admin')
-            <a href="{{ route('mata_kuliah.create') }}" class="btn btn-primary">
-                Tambah Mata Kuliah
-            </a>
-        @endif
+<div class="container-fluid mt-4">
+    <div class="mb-4">
+        <h1 class="mb-0">Data Mata Kuliah</h1>
+        <p class="text-muted mt-2 mb-0">Klik pada card kelas untuk melihat dan mengelola mata kuliah per kelas</p>
     </div>
 
-    {{-- Tabel data mata kuliah --}}
-    <div class="table-responsive">
-        <table class="table table-bordered align-middle">
-            <thead class="table-dark text-center">
-                <tr>
-                    <th width="5%">No</th>
-                    <th>Kode MK</th>
-                    <th>Nama Mata Kuliah</th>
-                    <th>NIP Dosen</th>
-                    <th>Kelas</th>
-                    <th>Semester</th>
-                    @if(auth()->user()->role === 'admin')
-                        <th width="25%">Aksi</th>
-                    @endif
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($mataKuliah as $mk)
-                    <tr class="text-center">
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $mk->kode_mk }}</td>
-                        <td>{{ $mk->nama_mk }}</td>
-                        <td>{{ $mk->nip_dosen ?? '-' }}</td>
-                        <td>{{ $mk->kelas ?? '-' }}</td>
-                        <td>{{ $mk->semester ?? '-' }}</td>
-                        @if(auth()->user()->role === 'admin')
-                            <td>
-                                {{-- Tombol Lihat --}}
-                                <a href="{{ route('mata_kuliah.show', $mk->id) }}" class="btn btn-info btn-sm me-1">
-                                    Lihat
-                                </a>
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill"></i> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
 
-                                {{-- Tombol Edit --}}
-                                <a href="{{ route('mata_kuliah.edit', $mk->id) }}" class="btn btn-warning btn-sm me-1">
-                                    Edit
-                                </a>
-
-                                {{-- Tombol Hapus --}}
-                                <form action="{{ route('mata_kuliah.destroy', $mk->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="btn btn-danger btn-sm"
-                                            onclick="return confirm('Yakin ingin menghapus mata kuliah ini?')">
-                                        Hapus
-                                    </button>
-                                </form>
-                            </td>
-                        @endif
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="{{ auth()->user()->role === 'admin' ? 7 : 6 }}" class="text-center">
-                            Belum ada data mata kuliah
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-
-    {{-- Pagination --}}
-    <div class="d-flex justify-content-center mt-3">
-        {{ $mataKuliah->links() }}
+    <!-- Card Layout untuk Kelas -->
+    <div class="row g-4">
+        @foreach($kelasList as $kelas)
+            <div class="col-12 col-md-6 col-xl-4">
+                <a href="{{ route('mata_kuliah.kelas', $kelas) }}" class="text-decoration-none">
+                    <div class="card shadow-sm kelas-card h-100">
+                        <div class="card-header bg-warning text-dark">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-book-fill"></i> Kelas {{ $kelas }}
+                                </h5>
+                                <span class="badge bg-light text-dark">
+                                    {{ $mataKuliahByKelas[$kelas]->count() }} Mata Kuliah
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            @if($mataKuliahByKelas[$kelas]->count() > 0)
+                                <div class="list-group list-group-flush">
+                                    @foreach($mataKuliahByKelas[$kelas]->take(5) as $item)
+                                        <div class="list-group-item px-0 border-start-0 border-end-0">
+                                            <div class="d-flex align-items-start">
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-1 fw-bold">{{ $item->nama_mk }}</h6>
+                                                    <p class="mb-1 text-muted small">
+                                                        <i class="bi bi-hash"></i> {{ $item->kode_mk }}
+                                                    </p>
+                                                    @if($item->nip_dosen)
+                                                        <p class="mb-0 text-muted small">
+                                                            <i class="bi bi-person-badge"></i> {{ $item->nip_dosen }}
+                                                        </p>
+                                                    @endif
+                                                </div>
+                                                <span class="badge bg-warning text-dark">{{ $item->kelas }}</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                    @if($mataKuliahByKelas[$kelas]->count() > 5)
+                                        <div class="list-group-item px-0 border-0 text-center">
+                                            <small class="text-muted">
+                                                +{{ $mataKuliahByKelas[$kelas]->count() - 5 }} mata kuliah lainnya
+                                            </small>
+                                        </div>
+                                    @endif
+                                </div>
+                            @else
+                                <div class="text-center text-muted py-4">
+                                    <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                                    <p class="mb-0 mt-2">Belum ada mata kuliah di kelas {{ $kelas }}</p>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="card-footer text-center bg-light">
+                            <small class="text-muted">
+                                <i class="bi bi-arrow-right-circle"></i> Klik untuk lihat detail
+                            </small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        @endforeach
     </div>
 </div>
 
-{{-- Tambahan CSS --}}
 <style>
-    .table td, .table th { vertical-align: middle; text-align: center; }
-    .table td:last-child { white-space: nowrap; }
-    .btn-sm { padding: 5px 10px; margin: 2px; font-size: 0.85rem; border-radius: 5px; color: #000 !important; }
+    .kelas-card {
+        border: none;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
 
-    .btn-info { background-color: #0dcaf0; border: none; }
-    .btn-warning { background-color: #ffc107; border: none; }
-    .btn-danger { background-color: #dc3545; border: none; }
+    .kelas-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
+    }
 
-    .btn-info:hover { background-color: #0bb4d8; color: #000 !important; }
-    .btn-warning:hover { background-color: #e0a800; color: #000 !important; }
-    .btn-danger:hover { background-color: #bb2d3b; color: #000 !important; }
+    a:has(.kelas-card) {
+        display: block;
+        height: 100%;
+    }
 
-    .table-responsive { overflow-x: auto; }
+    .kelas-card .card-header {
+        border-radius: 12px 12px 0 0 !important;
+        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important;
+        padding: 1rem;
+    }
+
+    .kelas-card .card-body {
+        padding: 0.5rem 1rem 1rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .list-group-item {
+        transition: background-color 0.2s ease;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+    }
+
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    /* Custom scrollbar */
+    .kelas-card .card-body::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .kelas-card .card-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .kelas-card .card-body::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
+    .kelas-card .card-body::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    .card-footer {
+        border-radius: 0 0 12px 12px !important;
+    }
 </style>
 @endsection

@@ -1,0 +1,108 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container mt-4">
+    <h1 class="mb-4">Daftar Mata Kuliah</h1>
+
+    {{-- Form pencarian --}}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <form action="{{ route('mata_kuliah.index') }}" method="GET" class="d-flex" style="width: 80%;">
+            <input type="text" name="search" 
+                   class="form-control me-2"
+                   placeholder="Cari kode, nama mata kuliah, atau NIP dosen..."
+                   value="{{ request('search') }}">
+            <button type="submit" class="btn btn-secondary">Cari</button>
+        </form>
+
+        {{-- Tombol Tambah hanya untuk admin --}}
+        @if(auth()->user()->role === 'admin')
+            <a href="{{ route('mata_kuliah.create') }}" class="btn btn-primary">
+                Tambah Mata Kuliah
+            </a>
+        @endif
+    </div>
+
+    {{-- Tabel data mata kuliah --}}
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th width="5%">No</th>
+                    <th>Kode MK</th>
+                    <th>Nama Mata Kuliah</th>
+                    <th>NIP Dosen</th>
+                    <th>Kelas</th>
+                    <th>Semester</th>
+                    @if(auth()->user()->role === 'admin')
+                        <th width="25%">Aksi</th>
+                    @endif
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($mataKuliah as $mk)
+                    <tr class="text-center">
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $mk->kode_mk }}</td>
+                        <td>{{ $mk->nama_mk }}</td>
+                        <td>{{ $mk->nip_dosen ?? '-' }}</td>
+                        <td>{{ $mk->kelas ?? '-' }}</td>
+                        <td>{{ $mk->semester ?? '-' }}</td>
+                        @if(auth()->user()->role === 'admin')
+                            <td>
+                                {{-- Tombol Lihat --}}
+                                <a href="{{ route('mata_kuliah.show', $mk->id) }}" class="btn btn-info btn-sm me-1">
+                                    Lihat
+                                </a>
+
+                                {{-- Tombol Edit --}}
+                                <a href="{{ route('mata_kuliah.edit', $mk->id) }}" class="btn btn-warning btn-sm me-1">
+                                    Edit
+                                </a>
+
+                                {{-- Tombol Hapus --}}
+                                <form action="{{ route('mata_kuliah.destroy', $mk->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Yakin ingin menghapus mata kuliah ini?')">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </td>
+                        @endif
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="{{ auth()->user()->role === 'admin' ? 7 : 6 }}" class="text-center">
+                            Belum ada data mata kuliah
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    {{-- Pagination --}}
+    <div class="d-flex justify-content-center mt-3">
+        {{ $mataKuliah->links() }}
+    </div>
+</div>
+
+{{-- Tambahan CSS --}}
+<style>
+    .table td, .table th { vertical-align: middle; text-align: center; }
+    .table td:last-child { white-space: nowrap; }
+    .btn-sm { padding: 5px 10px; margin: 2px; font-size: 0.85rem; border-radius: 5px; color: #000 !important; }
+
+    .btn-info { background-color: #0dcaf0; border: none; }
+    .btn-warning { background-color: #ffc107; border: none; }
+    .btn-danger { background-color: #dc3545; border: none; }
+
+    .btn-info:hover { background-color: #0bb4d8; color: #000 !important; }
+    .btn-warning:hover { background-color: #e0a800; color: #000 !important; }
+    .btn-danger:hover { background-color: #bb2d3b; color: #000 !important; }
+
+    .table-responsive { overflow-x: auto; }
+</style>
+@endsection
