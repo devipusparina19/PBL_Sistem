@@ -15,69 +15,114 @@
     </div>
 
     <!-- Cards Section -->
-    <div class="row g-4 justify-content-center">
-        
-        <!-- Validasi Milestone -->
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
-                <div class="card-body text-center p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-check2-circle text-primary" style="font-size: 2.5rem;"></i>
-                    </div>
-                    <h5 class="fw-semibold mb-2 text-dark">Validasi Milestone</h5>
-                    <p class="text-secondary mb-4" style="font-size: 0.95rem;">
-                        Periksa dan setujui progres mahasiswa.
-                    </p>
-                    <a href="{{ route('milestone.validasi') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
-                        Validasi
-                    </a>
-                </div>
-            </div>
-        </div>
+    <div class="container text-center">
 
-        <!-- Input Nilai Mahasiswa (Individu) -->
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
-                <div class="card-body text-center p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-person-check text-primary" style="font-size: 2.5rem;"></i>
-                    </div>
-                    <h5 class="fw-semibold mb-2 text-dark">Nilai Mahasiswa</h5>
-                    <p class="text-secondary mb-4" style="font-size: 0.95rem;">
-                        Beri nilai individu mahasiswa (6 komponen).
-                    </p>
-                    <a href="{{ route('nilai.index') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
-                        Kelola Nilai Mahasiswa
-                    </a>
-                </div>
-            </div>
-        </div>
+        <!-- Baris 1 -->
+        <div class="row g-4 justify-content-center mb-4">
 
-        <!-- Monitoring Progres -->
-        <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
-                <div class="card-body text-center p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-graph-up text-primary" style="font-size: 2.5rem;"></i>
-                    </div>
-                    <h5 class="fw-semibold mb-2 text-dark">Monitoring Progres</h5>
-                    <p class="text-secondary mb-4" style="font-size: 0.95rem;">
-                        Pantau logbook mahasiswa dan progres kelompok.
-                    </p>
-
-                    @if(Auth::user()->role == 'admin')
-                        <a href="{{ url('/monitoring') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
-                            Lihat / Edit / Hapus
+            <!-- Validasi Milestone -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-check2-circle text-primary" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h5 class="fw-semibold mb-2 text-dark">Validasi Milestone</h5>
+                        <p class="text-secondary mb-4" style="font-size: 0.95rem;">
+                            Periksa dan setujui progres mahasiswa.
+                        </p>
+                        <a href="{{ route('milestone.validasi') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                            Validasi
                         </a>
-                    @else
-                        <a href="{{ url('/monitoring') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
-                            Pantau
-                        </a>
-                    @endif
+                    </div>
                 </div>
             </div>
+
+            <!-- Nilai Mahasiswa -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-person-check text-primary" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h5 class="fw-semibold mb-2 text-dark">Nilai Mahasiswa</h5>
+                        <p class="text-secondary mb-4" style="font-size: 0.95rem;">
+                            Beri nilai individu mahasiswa (6 komponen).
+                        </p>
+                        <a href="{{ route('nilai.index') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                            Kelola Nilai Mahasiswa
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monitoring Progres -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-graph-up text-primary" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h5 class="fw-semibold mb-2 text-dark">Monitoring Progres</h5>
+                        <p class="text-secondary mb-4" style="font-size: 0.95rem;">
+                            Pantau logbook mahasiswa dan progres kelompok.
+                        </p>
+
+                        @if(Auth::user()->role == 'admin')
+                            <a href="{{ url('/monitoring') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                                Lihat / Edit / Hapus
+                            </a>
+                        @else
+                            <a href="{{ url('/monitoring') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                                Pantau
+                            </a>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
         </div>
 
+        <!-- Baris 2 -->
+        <div class="row g-4 justify-content-center">
+
+            <!-- Nilai Kelompok -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-people-fill text-primary" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h5 class="fw-semibold mb-2 text-dark">Nilai Kelompok</h5>
+                        <p class="text-secondary mb-4" style="font-size: 0.95rem;">
+                            Kelola dan nilai performa tiap kelompok.
+                        </p>
+                        <a href="{{ url('/nilai_kelompok') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                            Kelola Nilai Kelompok
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Perangkingan -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-trophy-fill text-primary" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h5 class="fw-semibold mb-2 text-dark">Perangkingan</h5>
+                        <p class="text-secondary mb-4" style="font-size: 0.95rem;">
+                            Lihat peringkat kelompok dan mahasiswa.
+                        </p>
+                        <a href="{{ url('/perangkingan') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                            Buat Perangkingan
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 

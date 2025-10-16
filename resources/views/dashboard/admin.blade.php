@@ -15,84 +15,110 @@
     </div>
 
     <!-- Cards Section -->
-    <div class="row g-4 justify-content-center">
+    <div class="container text-center">
 
-        <!-- Manajemen Akun -->
-        <div class="col-md-3">
-            <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
-                <div class="card-body text-center p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-people-fill text-primary" style="font-size: 2.5rem;"></i>
+        <!-- Baris pertama -->
+        <div class="row g-4 justify-content-center mb-4">
+
+            <!-- Manajemen Akun -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-people-fill text-primary" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h5 class="fw-semibold mb-2 text-dark">Manajemen Akun</h5>
+                        <p class="text-secondary mb-4" style="font-size: 0.95rem;">
+                            Kelola akun pengguna sistem.
+                        </p>
+                        <a href="{{ url('/manajemen_akun') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                            Kelola
+                        </a>
                     </div>
-                    <h5 class="fw-semibold mb-2 text-dark">Manajemen Akun</h5>
-                    <p class="text-secondary mb-4" style="font-size: 0.95rem;">
-                        Kelola akun pengguna sistem.
-                    </p>
-                    <a href="{{ url('/manajemen_akun') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
-                        Kelola
-                    </a>
+                </div>
+            </div>
+
+            <!-- Data Mahasiswa -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-person-badge-fill text-primary" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h5 class="fw-semibold mb-2 text-dark">Data Mahasiswa</h5>
+                        <p class="text-secondary mb-4" style="font-size: 0.95rem;">
+                            Tambah/edit data mahasiswa.
+                        </p>
+                        <a href="{{ url('/mahasiswa') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                            Kelola
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Dosen -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-person-video3 text-primary" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h5 class="fw-semibold mb-2 text-dark">Data Dosen</h5>
+                        <p class="text-secondary mb-4" style="font-size: 0.95rem;">
+                            Tambah/edit data dosen.
+                        </p>
+                        <a href="{{ url('/data_dosen') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                            Kelola
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Data Mahasiswa -->
-        <div class="col-md-3">
-            <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
-                <div class="card-body text-center p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-person-badge-fill text-primary" style="font-size: 2.5rem;"></i>
+        <!-- Baris kedua -->
+        <div class="row g-4 justify-content-center">
+
+            <!-- Data Kelompok -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-people text-primary" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h5 class="fw-semibold mb-2 text-dark">Data Kelompok</h5>
+                        <p class="text-secondary mb-4" style="font-size: 0.95rem;">
+                            Atur kelompok mahasiswa.
+                        </p>
+                        <a href="{{ url('/kelompok') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                            Kelola
+                        </a>
                     </div>
-                    <h5 class="fw-semibold mb-2 text-dark">Data Mahasiswa</h5>
-                    <p class="text-secondary mb-4" style="font-size: 0.95rem;">
-                        Tambah/edit data mahasiswa.
-                    </p>
-                    <a href="{{ url('/mahasiswa') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
-                        Kelola
-                    </a>
                 </div>
             </div>
-        </div>
 
-        <!-- Data Dosen -->
-        <div class="col-md-3">
-            <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
-                <div class="card-body text-center p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-person-video3 text-primary" style="font-size: 2.5rem;"></i>
+            <!-- Data Mata Kuliah -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-journal-bookmark-fill text-primary" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h5 class="fw-semibold mb-2 text-dark">Data Mata Kuliah</h5>
+                        <p class="text-secondary mb-4" style="font-size: 0.95rem;">
+                            Tambah/edit data mata kuliah.
+                        </p>
+                        <a href="{{ url('/mata_kuliah') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                            Kelola
+                        </a>
                     </div>
-                    <h5 class="fw-semibold mb-2 text-dark">Data Dosen</h5>
-                    <p class="text-secondary mb-4" style="font-size: 0.95rem;">
-                        Tambah/edit data dosen.
-                    </p>
-                    <a href="{{ url('/data_dosen') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
-                        Kelola
-                    </a>
                 </div>
             </div>
-        </div>
 
-        <!-- Data Kelompok -->
-        <div class="col-md-3">
-            <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
-                <div class="card-body text-center p-4">
-                    <div class="mb-3">
-                        <i class="bi bi-people text-primary" style="font-size: 2.5rem;"></i>
-                    </div>
-                    <h5 class="fw-semibold mb-2 text-dark">Data Kelompok</h5>
-                    <p class="text-secondary mb-4" style="font-size: 0.95rem;">
-                        Atur kelompok mahasiswa.
-                    </p>
-                    <a href="{{ url('/kelompok') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
-                        Kelola
-                    </a>
-                </div>
-            </div>
         </div>
-
     </div>
 </div>
 
-<!-- Style tambahan (identik dengan mahasiswa & dosen) -->
+<!-- Style tambahan -->
 <style>
     body {
         background-color: #f5f7fa;
@@ -123,7 +149,8 @@
         transform: translateY(-1px);
     }
 
-    h2, h5 {
+    h2,
+    h5 {
         letter-spacing: 0.3px;
     }
 
