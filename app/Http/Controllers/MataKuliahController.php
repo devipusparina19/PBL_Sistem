@@ -45,14 +45,18 @@ class MataKuliahController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'kode_mk' => 'required|string|max:50',
             'nama_mk' => 'required|string|max:255',
             'kelas' => 'required|in:3A,3B,3C,3D,3E',
-            'nip_dosen' => 'required|string|max:30',
+            'nip_dosen' => 'required|array',              // ✅ ubah dari string jadi array
+            'nip_dosen.*' => 'required|string|max:30',    // ✅ tiap elemen wajib string
         ]);
 
-        $mataKuliah = MataKuliah::create($request->only(['kode_mk', 'nama_mk', 'kelas', 'nip_dosen']));
+        // Gabungkan jadi satu string, dipisahkan koma
+        $validated['nip_dosen'] = implode(',', $validated['nip_dosen']);
+
+        MataKuliah::create($validated);
 
         // Smart redirect
         if ($request->has('kelas')) {
@@ -75,14 +79,17 @@ class MataKuliahController extends Controller
 
     public function update(Request $request, MataKuliah $mataKuliah)
     {
-        $request->validate([
+        $validated = $request->validate([
             'kode_mk' => 'required|string|max:50',
             'nama_mk' => 'required|string|max:255',
             'kelas' => 'required|in:3A,3B,3C,3D,3E',
-            'nip_dosen' => 'required|string|max:30',
+            'nip_dosen' => 'required|array',
+            'nip_dosen.*' => 'required|string|max:30',
         ]);
 
-        $mataKuliah->update($request->only(['kode_mk', 'nama_mk', 'kelas', 'nip_dosen']));
+        $validated['nip_dosen'] = implode(',', $validated['nip_dosen']);
+
+        $mataKuliah->update($validated);
 
         // Smart redirect
         if ($request->has('kelas')) {
