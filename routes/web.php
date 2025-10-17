@@ -100,6 +100,8 @@ Route::middleware('auth')->group(function () {
     | CRUD DATA
     |--------------------------------------------------------------------------
     */
+
+    /**milestone*/
     Route::get('mahasiswa/kelas/{kelas}', [MahasiswaController::class, 'showByKelas'])->name('mahasiswa.kelas');
     Route::resource('mahasiswa', MahasiswaController::class);
     Route::get('data_dosen/kelas/{kelas}', [DosenController::class, 'showByKelas'])->name('data_dosen.kelas');
@@ -110,22 +112,22 @@ Route::middleware('auth')->group(function () {
     Route::resource('kelompok', KelompokController::class);
     Route::resource('logbook', LogbookController::class);
 
-    /*
-    |--------------------------------------------------------------------------
-    | MILESTONE ROUTES
-    |--------------------------------------------------------------------------
-    */
+    Route::middleware(['auth'])->group(function () {
     Route::get('/milestone/view', [MilestoneController::class, 'indexForMember'])->name('milestone.view');
-    Route::get('/milestone/input/{id}', [MilestoneController::class, 'create'])->name('milestone.create');
-    Route::post('/milestone/input/{id}', [MilestoneController::class, 'store'])->name('milestone.store');
+
+    // Create & store tanpa id
+    Route::get('/milestone/input', [MilestoneController::class, 'create'])->name('milestone.create');
+    Route::post('/milestone/input', [MilestoneController::class, 'store'])->name('milestone.store');
+
     Route::get('/milestone/edit/{id}', [MilestoneController::class, 'edit'])->name('milestone.edit');
     Route::post('/milestone/edit/{id}', [MilestoneController::class, 'update'])->name('milestone.update');
+});
 
-    // Validasi Dosen
-    Route::middleware('role:dosen')->group(function () {
-        Route::get('/milestone/validasi', [MilestoneController::class, 'indexForDosen'])->name('milestone.validasi');
-        Route::post('/milestone/validasi/{id}', [MilestoneController::class, 'updateStatus'])->name('milestone.updateStatus');
-    });
+// Validasi Dosen
+Route::middleware('role:dosen')->group(function () {
+    Route::get('/milestone/validasi', [MilestoneController::class, 'indexForDosen'])->name('milestone.validasi');
+    Route::post('/milestone/validasi/{id}', [MilestoneController::class, 'updateStatus'])->name('milestone.updateStatus');
+});
 
     /*
     |--------------------------------------------------------------------------

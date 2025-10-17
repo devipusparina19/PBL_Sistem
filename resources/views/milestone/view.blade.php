@@ -1,99 +1,87 @@
 @extends('layouts.app')
 
 @section('content')
-
-{{-- Styling badge --}}
-<style>
-    .badge {
-        font-size: 0.9rem;
-        padding: 6px 10px;
-        border-radius: 8px;
-    }
-    .bg-success {
-        background-color: #28a745 !important;
-        color: white;
-    }
-    .bg-warning {
-        background-color: #ffc107 !important;
-        color: black;
-    }
-    .bg-danger {
-        background-color: #dc3545 !important;
-        color: white;
-    }
-</style>
-
 <div class="container mt-4">
-    <h1 class="mb-4">Daftar Milestone Kelompok</h1>
+    <h1 class="mb-4 text-center">Daftar Milestone Kelompok</h1>
 
-    {{-- Pesan sukses --}}
+    {{-- Pesan sukses / warning --}}
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    {{-- Tombol tambah milestone --}}
-    @if(auth()->user()->kelompok_id)
-        <a href="{{ route('milestone.create', ['kelompok_id' => auth()->user()->kelompok_id]) }}" class="btn btn-primary mb-3">
-            Tambah Milestone
-        </a>
-    @else
-        <div class="alert alert-warning">
-            Anda belum tergabung dalam kelompok. Silakan hubungi admin atau koordinator PBL.
+    @if(isset($warning))
+        <div class="alert alert-warning">{{ $warning }}</div>
+    @endif
+
+    {{-- Tombol tambah milestone (hanya ketua) --}}
+    @if($user->role_di_kelompok === 'ketua')
+        <div class="text-center mb-4">
+            <a href="{{ route('milestone.create') }}" class="btn btn-primary">
+                Tambah Milestone
+            </a>
         </div>
     @endif
 
-    {{-- Tabel milestone --}}
-    <table class="table table-bordered align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th>No</th>
-                <th>Judul</th>
-                <th>Deskripsi</th>
-                <th>Minggu Ke</th>
-                <th>Status</th>
-                <th>Catatan Dosen</th>
-                <th>Dosen Validator</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($milestones as $index => $milestone)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $milestone->judul }}</td>
-                    <td>{{ $milestone->deskripsi }}</td>
-                    <td>{{ $milestone->minggu_ke }}</td>
-                    <td>
-                        @if($milestone->status == 'disetujui')
-                            <span class="badge bg-success">Disetujui</span>
-                        @elseif($milestone->status == 'menunggu')
-                            <span class="badge bg-warning text-dark">Menunggu</span>
-                        @elseif($milestone->status == 'ditolak')
-                            <span class="badge bg-danger">Ditolak</span>
-                        @else
-                            <span class="badge bg-secondary">Belum Divalidasi</span>
-                        @endif
-                    </td>
-                    <td>{{ $milestone->catatan_dosen ?? '-' }}</td>
+    {{-- Grid Kartu Minggu --}}
+    <div class="row g-4">
+        @for($i = 1; $i <= 16; $i++)
+            <div class="col-md-3 col-sm-6">
+                <div class="card shadow-sm h-100 border-0 rounded-4 card-week">
+                    <div class="card-header bg-soft-blue text-center fw-semibold">
+                        Minggu {{ $i }}
+                    </div>
+                    <div class="card-body">
+                        @php
+                            $milestoneMinggu = $milestones->where('minggu_ke', $i);
+                        @endphp
 
-                    {{-- Menampilkan nama dosen validator jika ada relasi --}}
-                    <td>{{ $milestone->dosen->name ?? '-' }}</td>
-
-                    <td>
-                        {{-- Hanya mahasiswa yang membuat bisa edit --}}
-                        @if(auth()->id() == $milestone->user_id && $milestone->status != 'disetujui')
-                            <a href="{{ route('milestone.edit', $milestone->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                        @if($milestoneMinggu->isEmpty())
+                            <p class="text-muted small text-center">Belum ada milestone.</p>
                         @else
-                            <span class="text-muted">-</span>
+                            @foreach($milestoneMinggu as $m)
+                                <div class="milestone-item mb-2 p-2 rounded-3 shadow-sm bg-white">
+                                    <h6 class="fw-semibold">{{ $m->judul }}</h6>
+                                    <p class="text-muted small mb-1">{{ Str::limit($m->deskripsi, 50) }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge 
+                                            @if($m->status == 'disetujui') bg-success
+                                            @elseif($m->status == 'menunggu') bg-warning text-dark
+                                            @elseif($m->status == 'ditolak') bg-danger
+                                            @else bg-secondary
+                                            @endif">
+                                            {{ ucfirst($m->status ?? 'Belum Divalidasi') }}
+                                        </span>
+                                        @if(auth()->id() == $m->user_id && $m->status != 'disetujui')
+                                            <a href="{{ route('milestone.edit', $m->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                        @elseif(Auth::user()->role === 'dosen')
+                                            <a href="{{ route('milestone.edit', $m->id) }}" class="btn btn-sm btn-success">Validasi</a>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
                         @endif
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="8" class="text-center">Belum ada milestone.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+                    </div>
+                </div>
+            </div>
+        @endfor
+    </div>
 </div>
+
+{{-- CSS --}}
+<style>
+.card-week {
+    transition: all 0.3s ease;
+}
+.card-week:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
+.bg-soft-blue { background: #71a4edff; }
+.milestone-item:hover { 
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: 0.2s;
+}
+</style>
 @endsection

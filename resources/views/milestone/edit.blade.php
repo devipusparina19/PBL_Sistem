@@ -52,23 +52,24 @@
                     </select>
                 </div>
 
-                {{-- Status --}}
-                <div class="mb-3">
-                    <label for="status" class="form-label fw-semibold">Status</label>
-                    <select name="status" id="status" class="form-select" required>
-                        <option value="menunggu" {{ $milestone->status == 'menunggu' ? 'selected' : '' }}>Menunggu</option>
-                        <option value="disetujui" {{ $milestone->status == 'disetujui' ? 'selected' : '' }}>Disetujui</option>
-                        <option value="ditolak" {{ $milestone->status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
-                    </select>
-                </div>
+                {{-- Status & Catatan Dosen (hanya untuk dosen) --}}
+                @if(Auth::user()->role === 'dosen')
+                    <div class="mb-3">
+                        <label for="status" class="form-label fw-semibold">Status</label>
+                        <select name="status" id="status" class="form-select" required>
+                            <option value="menunggu" {{ $milestone->status == 'menunggu' ? 'selected' : '' }}>Menunggu</option>
+                            <option value="disetujui" {{ $milestone->status == 'disetujui' ? 'selected' : '' }}>Disetujui</option>
+                            <option value="ditolak" {{ $milestone->status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                        </select>
+                    </div>
 
-                {{-- Catatan Dosen --}}
-                <div class="mb-3">
-                    <label for="catatan_dosen" class="form-label fw-semibold">Catatan Dosen</label>
-                    <textarea name="catatan_dosen" id="catatan_dosen" rows="3" 
-                              class="form-control" 
-                              placeholder="Tambahkan catatan jika ada...">{{ old('catatan_dosen', $milestone->catatan_dosen) }}</textarea>
-                </div>
+                    <div class="mb-3">
+                        <label for="catatan_dosen" class="form-label fw-semibold">Catatan Dosen</label>
+                        <textarea name="catatan_dosen" id="catatan_dosen" rows="3" 
+                                  class="form-control" 
+                                  placeholder="Tambahkan catatan jika ada...">{{ old('catatan_dosen', $milestone->catatan_dosen) }}</textarea>
+                    </div>
+                @endif
 
                 {{-- Tombol --}}
                 <div class="d-flex justify-content-between mt-4">
@@ -86,15 +87,15 @@
 
 {{-- Styling tambahan --}}
 <style>
-    .card {
-        border-radius: 12px;
-        transition: 0.2s ease;
-    }
-    .card:hover {
-        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
-    }
-    .form-label {
-        font-weight: 600;
-    }
+.card {
+    border-radius: 12px;
+    transition: 0.2s ease;
+}
+.card:hover {
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+}
+.form-label {
+    font-weight: 600;
+}
 </style>
 @endsection
