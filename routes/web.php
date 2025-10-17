@@ -24,7 +24,8 @@ use App\Http\Controllers\NilaiKelompokController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\RangkingController;
-use App\Http\Controllers\ProgresController; // ✅ Tambahan
+use App\Http\Controllers\ProgresController;
+use App\Http\Controllers\PenilaianSejawatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -210,3 +211,13 @@ Route::resource('dosen', DosenController::class)->middleware('auth');
 Route::resource('mahasiswa', MahasiswaController::class)->middleware('auth');
 Route::resource('kelompok', KelompokController::class)->middleware('auth');
 Route::resource('logbook', LogbookController::class)->middleware('auth');
+
+//Penilaian Sejawat
+Route::middleware(['auth'])->group(function () {
+    Route::get('/penilaian/sejawat', [PenilaianSejawatController::class, 'index'])->name('penilaian.sejawat.index');
+    Route::post('/penilaian/sejawat', [PenilaianSejawatController::class, 'store'])->name('penilaian.sejawat.store');
+    Route::get('/penilaian/sejawat/rekap', [PenilaianSejawatController::class, 'rekap'])->name('penilaian.sejawat.rekap');
+    Route::get('/penilaian/sejawat/{id}', [PenilaianSejawatController::class, 'show'])->name('penilaian.sejawat.show');
+    Route::get('/penilaian/sejawat/{id}/edit', [PenilaianSejawatController::class, 'edit'])->name('penilaian.sejawat.edit');
+    Route::put('/penilaian/sejawat/{id}', [PenilaianSejawatController::class, 'update'])->name('penilaian.sejawat.update');
+});
