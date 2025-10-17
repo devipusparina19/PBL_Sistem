@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -12,7 +13,8 @@ class LoginController extends Controller
     // ===== TAMPILKAN FORM LOGIN =====
     public function showLogin()
     {
-        return view('login.login');
+        // 🔧 ubah path view agar sesuai folder baru
+        return view('auth.login');
     }
 
     // ===== PROSES LOGIN =====
@@ -57,39 +59,44 @@ class LoginController extends Controller
     // ===== TAMPILKAN FORM REGISTER =====
     public function showRegister()
     {
-        return view('login.register');
+        // 🔧 ubah path view agar sesuai folder baru
+        return view('auth.register');
     }
 
     // ===== PROSES REGISTER =====
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:6|confirmed',
-            'role' => 'required|string|in:mahasiswa,dosen,admin,koordinator_pbl,koordinator_prodi',
-        ]);
+    'name' => 'required|string|max:255',
+    'email' => 'required|string|email|max:255|unique:users,email',
+    'password' => 'required|string|min:6|confirmed',
+    'role' => 'required|string|in:mahasiswa,dosen,admin,koordinator_pbl,koordinator_prodi',
+    'nim_nip' => 'nullable|string|max:50',  // ✅ tambahkan agar tidak error
+    'kelas' => 'nullable|string|max:50',     // ✅ opsional (buat mahasiswa)
+]);
 
-        // Validasi domain Politala
-        if (
-            !str_ends_with($request->email, '@politala.ac.id') &&
-            !str_ends_with($request->email, '@mhs.politala.ac.id')
-        ) {
-            return back()->withErrors([
-                'email' => 'Gunakan email Politala yang valid.',
-            ]);
-        }
+// ✅ Validasi domain email Politala
+if (
+    !str_ends_with($request->email, '@politala.ac.id') &&
+    !str_ends_with($request->email, '@mhs.politala.ac.id')
+) {
+    return back()->withErrors([
+        'email' => 'Gunakan email Politala yang valid.',
+    ]);
+}
 
-        // Buat akun baru
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]);
+// ✅ Buat akun baru dengan semua field yang ada di migration
+$user = User::create([
+    'name' => $request->name,
+    'email' => $request->email,
+    'password' => Hash::make($request->password),
+    'role' => $request->role,
+    'nim_nip' => $request->nim_nip,  // boleh kosong
+    'kelas' => $request->kelas,      // boleh kosong
+]);
 
-        Auth::login($user);
-        return $this->redirectByRole($user);
+Auth::login($user);
+return $this->redirectByRole($user);
     }
 
     // ===== ARAHKAN BERDASARKAN ROLE =====

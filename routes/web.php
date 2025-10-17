@@ -21,7 +21,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AkunController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\NilaiKelompokController;
-use App\Http\Controllers\LoginController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\RangkingController;
 use App\Http\Controllers\ProgresController; // ✅ Tambahan
@@ -41,8 +41,8 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/', [LoginController::class, 'showLogin'])->name('user.showLogin');
 
 // Register
-Route::get('/register', [LoginController::class, 'showRegister'])->name('user.showRegister');
-Route::post('/register', [LoginController::class, 'register'])->name('user.register');
+Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('user.showRegister');
+Route::post('/register', [RegisterController::class, 'register'])->name('user.register');
 
 // Login
 Route::get('/login', [LoginController::class, 'showLogin'])->name('login');

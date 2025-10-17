@@ -155,7 +155,7 @@ footer {
 
   <div class="form-group">
     <label>Nim/Nip</label>
-    <input type="text" name="nim/nip" required>
+    <input type="text" name="nim_nip" required>
   </div>
 
   <div class="form-group">
