@@ -26,6 +26,7 @@ use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\RangkingController;
 use App\Http\Controllers\ProgresController;
 use App\Http\Controllers\PenilaianSejawatController;
+use App\Http\Controllers\LaporanController; // ✅ Tambahan untuk laporan penilaian
 
 /*
 |--------------------------------------------------------------------------
@@ -67,10 +68,8 @@ Route::get('/about', function () {
 
 /*
 |--------------------------------------------------------------------------
-
 | ROUTE YANG BUTUH LOGIN
 |--------------------------------------------------------------------------
-
 */
 Route::middleware('auth')->group(function () {
 
@@ -89,7 +88,6 @@ Route::middleware('auth')->group(function () {
     /*
     |--------------------------------------------------------------------------
     | RANGKING MAHASISWA & KELOMPOK
-    | ⚠️ HARUS SEBELUM RESOURCE KELOMPOK agar tidak conflict
     |--------------------------------------------------------------------------
     */
     Route::get('/mahasiswa/rangking', [RangkingController::class, 'mahasiswa'])->name('mahasiswa.rangking');
@@ -100,8 +98,6 @@ Route::middleware('auth')->group(function () {
     | CRUD DATA
     |--------------------------------------------------------------------------
     */
-
-    /**milestone*/
     Route::get('mahasiswa/kelas/{kelas}', [MahasiswaController::class, 'showByKelas'])->name('mahasiswa.kelas');
     Route::resource('mahasiswa', MahasiswaController::class);
     Route::get('data_dosen/kelas/{kelas}', [DosenController::class, 'showByKelas'])->name('data_dosen.kelas');
@@ -113,21 +109,18 @@ Route::middleware('auth')->group(function () {
     Route::resource('logbook', LogbookController::class);
 
     Route::middleware(['auth'])->group(function () {
-    Route::get('/milestone/view', [MilestoneController::class, 'indexForMember'])->name('milestone.view');
+        Route::get('/milestone/view', [MilestoneController::class, 'indexForMember'])->name('milestone.view');
+        Route::get('/milestone/input', [MilestoneController::class, 'create'])->name('milestone.create');
+        Route::post('/milestone/input', [MilestoneController::class, 'store'])->name('milestone.store');
+        Route::get('/milestone/edit/{id}', [MilestoneController::class, 'edit'])->name('milestone.edit');
+        Route::post('/milestone/edit/{id}', [MilestoneController::class, 'update'])->name('milestone.update');
+    });
 
-    // Create & store tanpa id
-    Route::get('/milestone/input', [MilestoneController::class, 'create'])->name('milestone.create');
-    Route::post('/milestone/input', [MilestoneController::class, 'store'])->name('milestone.store');
-
-    Route::get('/milestone/edit/{id}', [MilestoneController::class, 'edit'])->name('milestone.edit');
-    Route::post('/milestone/edit/{id}', [MilestoneController::class, 'update'])->name('milestone.update');
-});
-
-// Validasi Dosen
-Route::middleware('role:dosen')->group(function () {
-    Route::get('/milestone/validasi', [MilestoneController::class, 'indexForDosen'])->name('milestone.validasi');
-    Route::post('/milestone/validasi/{id}', [MilestoneController::class, 'updateStatus'])->name('milestone.updateStatus');
-});
+    // Validasi Dosen
+    Route::middleware('role:dosen')->group(function () {
+        Route::get('/milestone/validasi', [MilestoneController::class, 'indexForDosen'])->name('milestone.validasi');
+        Route::post('/milestone/validasi/{id}', [MilestoneController::class, 'updateStatus'])->name('milestone.updateStatus');
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -168,7 +161,6 @@ Route::middleware('role:dosen')->group(function () {
     */
     Route::middleware(['isAdmin'])->group(function () {
         Route::get('/manajemen_akun', [AdminController::class, 'manajemenAkun'])->name('manajemen_akun');
-
         Route::get('/akun', [AkunController::class, 'index'])->name('akun.index');
         Route::get('/akun/create', [AkunController::class, 'create'])->name('akun.create');
         Route::post('/akun', [AkunController::class, 'store'])->name('akun.store');
@@ -187,19 +179,25 @@ Route::middleware('role:dosen')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | PROGRES KELOMPOK (KOORDINATOR & ADMIN)
+    | PROGRES KELOMPOK
     |--------------------------------------------------------------------------
     */
-    // ✅ Tambahan baru untuk fitur Progres
     Route::middleware(['auth'])->group(function () {
         Route::get('/progres', [ProgresController::class, 'index'])->name('progres.index');
-        Route::get('/progres/{id}', [ProgresController::class, 'show'])->name('progres.show'); // ✅ Tambahan: detail progres
+        Route::get('/progres/{id}', [ProgresController::class, 'show'])->name('progres.show');
         Route::get('/progres/create', [ProgresController::class, 'create'])->name('progres.create');
         Route::post('/progres', [ProgresController::class, 'store'])->name('progres.store');
         Route::get('/progres/{id}/edit', [ProgresController::class, 'edit'])->name('progres.edit');
         Route::put('/progres/{id}', [ProgresController::class, 'update'])->name('progres.update');
         Route::delete('/progres/{id}', [ProgresController::class, 'destroy'])->name('progres.destroy');
     });
+
+    /*
+    |--------------------------------------------------------------------------
+    | LAPORAN PENILAIAN AKHIR (KOORDINATOR)
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/laporan/akhir', [LaporanController::class, 'index'])->name('laporan.akhir'); // ✅ Tambahan baru
 });
 
 /*
