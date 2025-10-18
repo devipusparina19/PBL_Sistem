@@ -91,6 +91,8 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::get('/mahasiswa/rangking', [RangkingController::class, 'mahasiswa'])->name('mahasiswa.rangking');
+    Route::get('/kelompok/sinkron', [KelompokController::class, 'sinkron'])->name('kelompok.sinkron');
+
     /*
     |--------------------------------------------------------------------------
     | CRUD DATA

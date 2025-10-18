@@ -4,10 +4,44 @@ namespace App\Http\Controllers;
 
 use App\Models\Kelompok;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class KelompokController extends Controller
 {
+    // ===============================
+    // Method untuk sinkronisasi kelompok
+    // ===============================
+    public function sinkron()
+    {
+        // Ambil semua users yang belum ada di tabel kelompok
+        $users = DB::table('users')
+            ->leftJoin('kelompok', 'kelompok.id_kelompok', '=', 'users.role_kelompok')
+            ->whereNotNull('users.role_kelompok')
+            ->whereNull('kelompok.id_kelompok')
+            ->select('users.role_kelompok')
+            ->get();
+
+        $kelasList = ['3A', '3B', '3C', '3D', '3E'];
+
+        foreach ($users as $u) {
+            // Pilih kelas berdasarkan role_kelompok (contoh: modulo untuk merata)
+            $kelas = $kelasList[$u->role_kelompok % count($kelasList)];
+
+            DB::table('kelompok')->insert([
+                'id_kelompok' => $u->role_kelompok,
+                'kode_mk' => 'A0'.$u->role_kelompok.'K',
+                'nama_kelompok' => 'Kelompok '.$u->role_kelompok,
+                'judul_proyek' => 'Judul Proyek Default',
+                'kelas' => $kelas,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Sinkronisasi kelompok berhasil!');
+    }
+
+    // ===============================
     // Menampilkan daftar kelompok grouped by kelas
+    // ===============================
     public function index()
     {
         $kelasList = ['3A', '3B', '3C', '3D', '3E'];
@@ -22,7 +56,9 @@ class KelompokController extends Controller
         return view('kelompok.index', compact('kelasList', 'kelompokByKelas'));
     }
 
+    // ===============================
     // Menampilkan kelompok berdasarkan kelas
+    // ===============================
     public function showByKelas($kelas)
     {
         if (!in_array($kelas, ['3A', '3B', '3C', '3D', '3E'])) {
@@ -36,20 +72,26 @@ class KelompokController extends Controller
         return view('kelompok.byKelas', compact('kelompok', 'kelas'));
     }
 
+    // ===============================
     // Menampilkan detail kelompok
+    // ===============================
     public function show(Kelompok $kelompok)
     {
         return view('kelompok.show_data', compact('kelompok'));
     }
 
+    // ===============================
     // Menampilkan form tambah kelompok
+    // ===============================
     public function create(Request $request)
     {
         $kelasDefault = $request->query('kelas', '3A');
         return view('kelompok.create', compact('kelasDefault'));
     }
 
+    // ===============================
     // Menyimpan data kelompok baru
+    // ===============================
     public function store(Request $request)
     {
         $request->validate([
@@ -66,13 +108,17 @@ class KelompokController extends Controller
             ->with('success', 'Data kelompok berhasil ditambahkan!');
     }
 
+    // ===============================
     // Menampilkan form edit kelompok
+    // ===============================
     public function edit(Kelompok $kelompok)
     {
         return view('kelompok.edit', compact('kelompok'));
     }
 
+    // ===============================
     // Memperbarui data kelompok
+    // ===============================
     public function update(Request $request, Kelompok $kelompok)
     {
         $request->validate([
@@ -90,7 +136,9 @@ class KelompokController extends Controller
             ->with('success', 'Data kelompok berhasil diperbarui!');
     }
 
+    // ===============================
     // Menghapus data kelompok
+    // ===============================
     public function destroy(Kelompok $kelompok)
     {
         $kelas = $kelompok->kelas;

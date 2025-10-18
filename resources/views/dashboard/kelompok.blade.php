@@ -11,7 +11,16 @@
             Selamat datang, <strong>{{ Auth::user()->name ?? 'Mahasiswa' }}</strong>
         </p>
     </div>
-
+    <!-- Tombol Sinkronisasi (hanya ketua/admin) -->
+    @if(auth()->user()->role_di_kelompok === 'ketua' || auth()->user()->role === 'admin')
+    <div class="text-center my-4">
+        <a href="{{ route('kelompok.sinkron') }}" 
+           class="btn btn-gradient-blue rounded-pill fw-semibold px-4 py-2">
+            <i class="bi bi-arrow-repeat me-2"></i> Sinkronisasi Kelompok
+        </a>
+    </div>
+    @endif
+    
     <!-- Card Section -->
     <div class="row justify-content-center g-4">
 
