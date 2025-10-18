@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+    // Role yang tidak boleh lihat tombol aksi
+    $restrictedRoles = ['mahasiswa', 'dosen', 'koordinator_prodi', 'koordinator_pbl'];
+    $isRestricted = in_array(auth()->user()->role, $restrictedRoles);
+@endphp
+
 <div class="container-fluid mt-4">
     <h1 class="mb-4">Kelola Data Kelompok</h1>
 
@@ -26,15 +32,18 @@
                                                 <strong>{{ $item->nama_kelompok }}</strong><br>
                                                 <small>{{ $item->kode_mk }} | {{ $item->judul_proyek }}</small>
                                             </div>
-                                            <div class="btn-group-vertical">
-                                                <a href="{{ route('kelompok.show', $item->id_kelompok) }}" class="btn btn-sm btn-outline-info">Lihat</a>
-                                                <a href="{{ route('kelompok.edit', $item->id_kelompok) }}" class="btn btn-sm btn-outline-warning">Edit</a>
-                                                <form action="{{ route('kelompok.destroy', $item->id_kelompok) }}" method="POST" onsubmit="return confirm('Yakin ingin hapus?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="btn btn-sm btn-outline-danger">Hapus</button>
-                                                </form>
-                                            </div>
+
+                                            @if(!$isRestricted)
+                                                <div class="btn-group-vertical">
+                                                    <a href="{{ route('kelompok.show', $item->id_kelompok) }}" class="btn btn-sm btn-outline-info">Lihat</a>
+                                                    <a href="{{ route('kelompok.edit', $item->id_kelompok) }}" class="btn btn-sm btn-outline-warning">Edit</a>
+                                                    <form action="{{ route('kelompok.destroy', $item->id_kelompok) }}" method="POST" onsubmit="return confirm('Yakin ingin hapus?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-sm btn-outline-danger">Hapus</button>
+                                                    </form>
+                                                </div>
+                                            @endif
                                         </li>
                                     @endforeach
                                 </ul>
