@@ -7,26 +7,24 @@ use Illuminate\Http\Request;
 
 class KelompokController extends Controller
 {
-    // menampilkan daftar kelompok (grouped by kelas)
+    // Menampilkan daftar kelompok grouped by kelas
     public function index()
     {
-        // Group kelompok by kelas
         $kelasList = ['3A', '3B', '3C', '3D', '3E'];
         $kelompokByKelas = [];
-        
+
         foreach ($kelasList as $kelas) {
             $kelompokByKelas[$kelas] = Kelompok::where('kelas', $kelas)
                 ->orderBy('nama_kelompok', 'asc')
                 ->get();
         }
-        
-        return view('kelompok.index', compact('kelompokByKelas', 'kelasList'));
+
+        return view('kelompok.index', compact('kelasList', 'kelompokByKelas'));
     }
 
-    // menampilkan kelompok berdasarkan kelas
+    // Menampilkan kelompok berdasarkan kelas
     public function showByKelas($kelas)
     {
-        // Validasi kelas
         if (!in_array($kelas, ['3A', '3B', '3C', '3D', '3E'])) {
             abort(404);
         }
@@ -34,24 +32,24 @@ class KelompokController extends Controller
         $kelompok = Kelompok::where('kelas', $kelas)
             ->orderBy('nama_kelompok', 'asc')
             ->paginate(10);
-        
-        return view('kelompok.kelas', compact('kelompok', 'kelas'));
+
+        return view('kelompok.byKelas', compact('kelompok', 'kelas'));
     }
 
-    // menampilkan detail kelompok
+    // Menampilkan detail kelompok
     public function show(Kelompok $kelompok)
     {
-        return view('kelompok.show', compact('kelompok'));
+        return view('kelompok.show_data', compact('kelompok'));
     }
 
-    // menampilkan form tambah kelompok
+    // Menampilkan form tambah kelompok
     public function create(Request $request)
     {
-        $kelasDefault = $request->query('kelas', '3A'); // Default 3A jika tidak ada
+        $kelasDefault = $request->query('kelas', '3A');
         return view('kelompok.create', compact('kelasDefault'));
     }
 
-    // menyimpan data kelompok baru
+    // Menyimpan data kelompok baru
     public function store(Request $request)
     {
         $request->validate([
@@ -59,27 +57,22 @@ class KelompokController extends Controller
             'nama_kelompok' => 'required|string|max:255',
             'kelas' => 'required|in:3A,3B,3C,3D,3E',
             'judul_proyek' => 'required|string|max:255',
-            'nip' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
         ]);
 
         $kelompok = Kelompok::create($request->all());
 
-        // Redirect ke halaman kelas jika ada
-        if ($request->has('kelas')) {
-            return redirect()->route('kelompok.kelas', $request->kelas)->with('success', 'Data kelompok berhasil ditambahkan!');
-        }
-
-        return redirect()->route('kelompok.index')->with('success', 'Data kelompok berhasil ditambahkan!');
+        return redirect()->route('kelompok.byKelas', $request->kelas)
+            ->with('success', 'Data kelompok berhasil ditambahkan!');
     }
 
-    // menampilkan form edit kelompok
+    // Menampilkan form edit kelompok
     public function edit(Kelompok $kelompok)
     {
         return view('kelompok.edit', compact('kelompok'));
     }
 
-    // memperbarui data kelompok
+    // Memperbarui data kelompok
     public function update(Request $request, Kelompok $kelompok)
     {
         $request->validate([
@@ -93,25 +86,17 @@ class KelompokController extends Controller
 
         $kelompok->update($request->all());
 
-        // Redirect ke halaman kelas jika ada
-        if ($request->has('kelas')) {
-            return redirect()->route('kelompok.kelas', $request->kelas)->with('success', 'Data kelompok berhasil diperbarui!');
-        }
-
-        return redirect()->route('kelompok.index')->with('success', 'Data kelompok berhasil diperbarui!');
+        return redirect()->route('kelompok.byKelas', $request->kelas)
+            ->with('success', 'Data kelompok berhasil diperbarui!');
     }
 
-    // menghapus data kelompok
+    // Menghapus data kelompok
     public function destroy(Kelompok $kelompok)
     {
-        $kelas = $kelompok->kelas; // Simpan kelas sebelum dihapus
+        $kelas = $kelompok->kelas;
         $kelompok->delete();
 
-        // Cek apakah request dari halaman detail kelas
-        if (request()->server('HTTP_REFERER') && str_contains(request()->server('HTTP_REFERER'), 'kelompok/kelas/')) {
-            return redirect()->route('kelompok.kelas', $kelas)->with('success', 'Data kelompok berhasil dihapus!');
-        }
-
-        return redirect()->route('kelompok.index')->with('success', 'Data kelompok berhasil dihapus!');
+        return redirect()->route('kelompok.byKelas', $kelas)
+            ->with('success', 'Data kelompok berhasil dihapus!');
     }
 }
