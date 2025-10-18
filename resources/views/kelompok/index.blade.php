@@ -23,7 +23,7 @@
     <div class="row g-4">
         @foreach($kelasList as $kelas)
             <div class="col-12 col-md-6 col-xl-4">
-                <a href="{{ route('kelompok.kelas', $kelas) }}" class="text-decoration-none">
+                <a href="{{ route('kelompok.byKelas', $kelas) }}" class="text-decoration-none">
                     <div class="card shadow-sm kelas-card h-100">
                         <div class="card-header bg-primary text-white">
                             <div class="d-flex justify-content-between align-items-center">
