@@ -20,13 +20,14 @@
         @csrf
         @method('PUT')
 
+        {{-- ID kelompok --}}
         <input type="hidden" name="id_kelompok" value="{{ $kelompok->id_kelompok }}">
 
         {{-- Kode MK --}}
         <div class="mb-3">
             <label for="kode_mk" class="form-label">Kode MK</label>
-            <input type="text" id="kode_mk" name="kode_mk" 
-                   class="form-control @error('kode_mk') is-invalid @enderror" 
+            <input type="text" id="kode_mk" name="kode_mk"
+                   class="form-control @error('kode_mk') is-invalid @enderror"
                    value="{{ old('kode_mk', $kelompok->kode_mk) }}" required>
             @error('kode_mk')
                 <div class="invalid-feedback">{{ $message }}</div>
@@ -36,8 +37,8 @@
         {{-- Nama Kelompok --}}
         <div class="mb-3">
             <label for="nama_kelompok" class="form-label">Nama Kelompok</label>
-            <input type="text" id="nama_kelompok" name="nama_kelompok" 
-                   class="form-control @error('nama_kelompok') is-invalid @enderror" 
+            <input type="text" id="nama_kelompok" name="nama_kelompok"
+                   class="form-control @error('nama_kelompok') is-invalid @enderror"
                    value="{{ old('nama_kelompok', $kelompok->nama_kelompok) }}" required>
             @error('nama_kelompok')
                 <div class="invalid-feedback">{{ $message }}</div>
@@ -60,17 +61,11 @@
             @enderror
         </div>
 
-        {{-- Deskripsi (Opsional) --}}
-        <div class="mb-3">
-            <label for="deskripsi" class="form-label">Deskripsi</label>
-            <textarea id="deskripsi" name="deskripsi" class="form-control" rows="3">{{ old('deskripsi', $kelompok->deskripsi) }}</textarea>
-        </div>
-
         {{-- Judul Proyek --}}
         <div class="mb-3">
             <label for="judul_proyek" class="form-label">Judul Proyek</label>
-            <input type="text" id="judul_proyek" name="judul_proyek" 
-                   class="form-control @error('judul_proyek') is-invalid @enderror" 
+            <input type="text" id="judul_proyek" name="judul_proyek"
+                   class="form-control @error('judul_proyek') is-invalid @enderror"
                    value="{{ old('judul_proyek', $kelompok->judul_proyek) }}" required>
             @error('judul_proyek')
                 <div class="invalid-feedback">{{ $message }}</div>
