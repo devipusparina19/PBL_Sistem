@@ -64,23 +64,69 @@
             @enderror
         </div>
 
-        {{-- NIP Dosen Pengampu --}}
+        {{-- NIP Dosen Pengampu (bisa 2 dosen) --}}
         <div class="mb-3">
-            <label for="nip_dosen" class="form-label">NIP Dosen Pengampu</label>
-            <input type="text"
-                   id="nip_dosen"
-                   name="nip_dosen"
-                   class="form-control @error('nip_dosen') is-invalid @enderror"
-                   value="{{ old('nip_dosen', $mataKuliah->nip_dosen) }}"
-                   placeholder="Masukkan NIP dosen pengampu"
-                   required>
-            @error('nip_dosen')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+            <label class="form-label">NIP Dosen Pengampu</label>
+            <div id="nipDosenContainer">
+                @php
+                    $nipList = old('nip_dosen', explode(',', $mataKuliah->nip_dosen));
+                @endphp
+
+                @foreach ($nipList as $index => $nip)
+                    <div class="input-group mb-2">
+                        <input type="text"
+                               name="nip_dosen[]"
+                               class="form-control @error('nip_dosen.' . $index) is-invalid @enderror"
+                               value="{{ $nip }}"
+                               placeholder="Masukkan NIP Dosen {{ $index + 1 }}"
+                               required>
+                        @error('nip_dosen.' . $index)
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+
+                        @if ($index > 0)
+                            <button type="button" class="btn btn-danger btn-remove-nip">Hapus</button>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+
+            <button type="button" class="btn btn-sm btn-outline-success mt-2" id="btnTambahNip">
+                <i class="bi bi-plus-circle"></i> Tambah Dosen
+            </button>
         </div>
 
         <button type="submit" class="btn btn-primary">Perbarui</button>
         <a href="{{ route('mata_kuliah.index') }}" class="btn btn-secondary">Kembali</a>
     </form>
 </div>
+
+{{-- Script dinamis tambah/hapus dosen --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const btnTambah = document.getElementById('btnTambahNip');
+        const container = document.getElementById('nipDosenContainer');
+
+        btnTambah.addEventListener('click', function() {
+            if (container.querySelectorAll('input').length >= 2) {
+                alert('Maksimal 2 dosen pengampu.');
+                return;
+            }
+
+            const div = document.createElement('div');
+            div.classList.add('input-group', 'mb-2');
+            div.innerHTML = `
+                <input type="text" name="nip_dosen[]" class="form-control" placeholder="Masukkan NIP Dosen 2" required>
+                <button type="button" class="btn btn-danger btn-remove-nip">Hapus</button>
+            `;
+            container.appendChild(div);
+        });
+
+        container.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-remove-nip')) {
+                e.target.parentElement.remove();
+            }
+        });
+    });
+</script>
 @endsection

@@ -23,7 +23,7 @@
     <div class="mb-3">
         <label class="form-label">Kelas</label>
         <input type="text" class="form-control" 
-               value="{{ $kelompok->kelas ? $kelompok->kelas->nama_kelas : '-' }}" readonly>
+               value="{{ $kelompok->kelas ? $kelompok->kelas : '-' }}" readonly>
     </div>
 
     <div class="mb-3">

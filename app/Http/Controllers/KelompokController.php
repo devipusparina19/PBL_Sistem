@@ -77,7 +77,7 @@ class KelompokController extends Controller
     // ===============================
     public function show(Kelompok $kelompok)
     {
-        return view('kelompok.show_data', compact('kelompok'));
+        return view('kelompok.show', compact('kelompok'));
     }
 
     // ===============================

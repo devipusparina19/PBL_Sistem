@@ -49,12 +49,12 @@ class MataKuliahController extends Controller
             'kode_mk' => 'required|string|max:50',
             'nama_mk' => 'required|string|max:255',
             'kelas' => 'required|in:3A,3B,3C,3D,3E',
-            'nip_dosen' => 'required|array',              // ✅ ubah dari string jadi array
-            'nip_dosen.*' => 'required|string|max:30',    // ✅ tiap elemen wajib string
+            'nip_dosen' => 'required|array|min:1',        // ✅ pastikan array & minimal 1 dosen
+            'nip_dosen.*' => 'nullable|string|max:30',    // ✅ ubah dari required → nullable supaya ga error kalau cuma 1 dosen
         ]);
 
-        // Gabungkan jadi satu string, dipisahkan koma
-        $validated['nip_dosen'] = implode(',', $validated['nip_dosen']);
+        // Gabungkan jadi satu string, pisahkan koma, dan filter biar ga ada null kosong
+        $validated['nip_dosen'] = implode(',', array_filter($validated['nip_dosen'])); 
 
         MataKuliah::create($validated);
 
