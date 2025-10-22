@@ -8,40 +8,45 @@ use Illuminate\Support\Facades\DB;
 
 class KelompokController extends Controller
 {
-    // ===============================
-    // Method untuk sinkronisasi kelompok
-    // ===============================
+    /**
+     * Sinkronisasi kelompok berdasarkan data user.
+     * User menentukan kelas & role_kelompok di tabel users.
+     */
     public function sinkron()
     {
-        // Ambil semua users yang belum ada di tabel kelompok
+        // Ambil semua user yang sudah punya kelas dan role_kelompok
         $users = DB::table('users')
-            ->leftJoin('kelompok', 'kelompok.id_kelompok', '=', 'users.role_kelompok')
-            ->whereNotNull('users.role_kelompok')
-            ->whereNull('kelompok.id_kelompok')
-            ->select('users.role_kelompok')
+            ->whereNotNull('kelas')
+            ->whereNotNull('role_kelompok')
+            ->select('kelas', 'role_kelompok')
+            ->groupBy('kelas', 'role_kelompok')
             ->get();
 
-        $kelasList = ['3A', '3B', '3C', '3D', '3E'];
+        $inserted = 0;
 
         foreach ($users as $u) {
-            // Pilih kelas berdasarkan role_kelompok (contoh: modulo untuk merata)
-            $kelas = $kelasList[$u->role_kelompok % count($kelasList)];
+            // Cek apakah kelompok ini sudah ada
+            $exists = Kelompok::where('nama_kelompok', 'Kelompok ' . $u->role_kelompok)
+                ->where('kelas', $u->kelas)
+                ->exists();
 
-            DB::table('kelompok')->insert([
-                'id_kelompok' => $u->role_kelompok,
-                'kode_mk' => 'A0'.$u->role_kelompok.'K',
-                'nama_kelompok' => 'Kelompok '.$u->role_kelompok,
-                'judul_proyek' => 'Judul Proyek Default',
-                'kelas' => $kelas,
-            ]);
+            if (!$exists) {
+                Kelompok::create([
+                    'kode_mk' => 'A0' . str_pad($u->role_kelompok, 2, '0', STR_PAD_LEFT) . 'K',
+                    'nama_kelompok' => 'Kelompok ' . $u->role_kelompok,
+                    'judul_proyek' => 'Judul Proyek Default',
+                    'kelas' => $u->kelas,
+                ]);
+                $inserted++;
+            }
         }
 
-        return redirect()->back()->with('success', 'Sinkronisasi kelompok berhasil!');
+        return redirect()->back()->with('success', "Sinkronisasi selesai! $inserted kelompok baru berhasil ditambahkan.");
     }
 
-    // ===============================
-    // Menampilkan daftar kelompok grouped by kelas
-    // ===============================
+    /**
+     * Menampilkan daftar kelompok grouped by kelas
+     */
     public function index()
     {
         $kelasList = ['3A', '3B', '3C', '3D', '3E'];
@@ -56,9 +61,9 @@ class KelompokController extends Controller
         return view('kelompok.index', compact('kelasList', 'kelompokByKelas'));
     }
 
-    // ===============================
-    // Menampilkan kelompok berdasarkan kelas
-    // ===============================
+    /**
+     * Menampilkan kelompok per kelas
+     */
     public function showByKelas($kelas)
     {
         if (!in_array($kelas, ['3A', '3B', '3C', '3D', '3E'])) {
@@ -72,26 +77,17 @@ class KelompokController extends Controller
         return view('kelompok.byKelas', compact('kelompok', 'kelas'));
     }
 
-    // ===============================
-    // Menampilkan detail kelompok
-    // ===============================
     public function show(Kelompok $kelompok)
     {
         return view('kelompok.show', compact('kelompok'));
     }
 
-    // ===============================
-    // Menampilkan form tambah kelompok
-    // ===============================
     public function create(Request $request)
     {
         $kelasDefault = $request->query('kelas', '3A');
         return view('kelompok.create', compact('kelasDefault'));
     }
 
-    // ===============================
-    // Menyimpan data kelompok baru
-    // ===============================
     public function store(Request $request)
     {
         $request->validate([
@@ -102,23 +98,17 @@ class KelompokController extends Controller
             'deskripsi' => 'nullable|string',
         ]);
 
-        $kelompok = Kelompok::create($request->all());
+        Kelompok::create($request->only(['kode_mk', 'nama_kelompok', 'kelas', 'judul_proyek']));
 
         return redirect()->route('kelompok.byKelas', $request->kelas)
             ->with('success', 'Data kelompok berhasil ditambahkan!');
     }
 
-    // ===============================
-    // Menampilkan form edit kelompok
-    // ===============================
     public function edit(Kelompok $kelompok)
     {
         return view('kelompok.edit', compact('kelompok'));
     }
 
-    // ===============================
-    // Memperbarui data kelompok
-    // ===============================
     public function update(Request $request, Kelompok $kelompok)
     {
         $request->validate([
@@ -126,19 +116,16 @@ class KelompokController extends Controller
             'nama_kelompok' => 'required|string|max:255',
             'kelas' => 'required|in:3A,3B,3C,3D,3E',
             'judul_proyek' => 'required|string|max:255',
-            'nip' => 'required|string|max:255',
+            'nip' => 'nullable|string|max:255',
             'deskripsi' => 'nullable|string',
         ]);
 
-        $kelompok->update($request->all());
+        $kelompok->update($request->only(['kode_mk', 'nama_kelompok', 'kelas', 'judul_proyek', 'nip', 'deskripsi']));
 
         return redirect()->route('kelompok.byKelas', $request->kelas)
             ->with('success', 'Data kelompok berhasil diperbarui!');
     }
 
-    // ===============================
-    // Menghapus data kelompok
-    // ===============================
     public function destroy(Kelompok $kelompok)
     {
         $kelas = $kelompok->kelas;

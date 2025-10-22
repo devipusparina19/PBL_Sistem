@@ -9,15 +9,15 @@ class Kelompok extends Model
 {
     use HasFactory;
 
-    // Nama tabel di database
-    protected $table = 'kelompok'; // ✅ Gunakan bentuk jamak sesuai konvensi Laravel
+    // Nama tabel
+    protected $table = 'kelompok';
 
     // Primary key
     protected $primaryKey = 'id_kelompok';
     public $incrementing = true;
     protected $keyType = 'int';
 
-    // Kolom yang boleh diisi
+    // Kolom yang bisa diisi mass assignment
     protected $fillable = [
         'kode_mk',
         'nama_kelompok',
@@ -25,18 +25,29 @@ class Kelompok extends Model
         'kelas',
     ];
 
-    // Jika tabel memiliki kolom created_at dan updated_at
+    // Aktifkan timestamps
     public $timestamps = true;
 
-    // Relasi ke Milestone
+    // ===============================
+    // 🔗 RELASI
+    // ===============================
+
+    // Relasi ke Milestone (satu kelompok punya banyak milestone)
     public function milestones()
     {
-        return $this->hasMany(Milestone::class, 'kelompok_id');
+        // Pastikan foreign key di tabel milestone bernama 'id_kelompok'
+        return $this->hasMany(Milestone::class, 'id_kelompok', 'id_kelompok');
     }
 
-    // Relasi opsional ke User (kalau nanti ada anggota/dosen pembimbing)
+    // Relasi ke User (many-to-many lewat tabel pivot 'kelompok_user')
     public function users()
     {
-        return $this->belongsToMany(User::class, 'kelompok_user', 'kelompok_id', 'user_id');
+        // Gunakan foreign key sesuai nama kolom di tabel pivot
+        return $this->belongsToMany(
+            User::class,
+            'kelompok_user',    // nama tabel pivot
+            'id_kelompok',      // foreign key di pivot yang mengarah ke tabel ini
+            'id_user'           // foreign key di pivot yang mengarah ke tabel users
+        );
     }
 }

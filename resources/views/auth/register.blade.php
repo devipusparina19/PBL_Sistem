@@ -190,11 +190,11 @@ footer {
     <label for="kelas">Kelas</label>
     <select name="kelas" id="kelas" class="form-control">
         <option value="">Pilih Kelas</option>
-        <option value="TI-3A">3A</option>
-        <option value="TI-3B">3B</option>
-        <option value="TI-3C">3C</option>
-        <option value="TI-3D">3D</option>
-        <option value="TI-3E">3E</option>
+        <option value="3A">3A</option>
+        <option value="3B">3B</option>
+        <option value="3C">3C</option>
+        <option value="3D">3D</option>
+        <option value="3E">3E</option>
     </select>
 </div>
 
