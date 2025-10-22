@@ -15,23 +15,20 @@ class DosenController extends Controller
 
     public function index()
     {
-        // Group dosen by kelas
         $kelasList = ['3A', '3B', '3C', '3D', '3E'];
         $dosenByKelas = [];
-        
+
         foreach ($kelasList as $kelas) {
             $dosenByKelas[$kelas] = Dosen::where('kelas', $kelas)
                 ->orderBy('nama', 'asc')
                 ->get();
         }
-        
+
         return view('data_dosen.index', compact('dosenByKelas', 'kelasList'));
     }
 
-    // Menampilkan dosen berdasarkan kelas
     public function showByKelas($kelas)
     {
-        // Validasi kelas
         if (!in_array($kelas, ['3A', '3B', '3C', '3D', '3E'])) {
             abort(404);
         }
@@ -39,7 +36,7 @@ class DosenController extends Controller
         $dosens = Dosen::where('kelas', $kelas)
             ->orderBy('nama', 'asc')
             ->paginate(15);
-        
+
         return view('data_dosen.kelas', compact('dosens', 'kelas'));
     }
 
@@ -52,30 +49,72 @@ class DosenController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama'         => 'required|string|max:255',
-            'nip'          => 'required|string|max:50|unique:dosens,nip',
-            'email'        => 'required|email|unique:dosens,email',
-            'no_telp'      => 'nullable|string|max:20',
-            'kelas'        => 'nullable|string|max:50',
-            'mata_kuliah'  => 'nullable|string|max:100',
+            'nama'          => 'required|string|max:255',
+            'nip'           => [
+                'required',
+                'string',
+                'max:50',
+                function ($attribute, $value, $fail) use ($request) {
+                    // Cegah duplikat NIP di kelas yang sama
+                    $exists = Dosen::where('kelas', $request->kelas)
+                        ->where('nip', $value)
+                        ->exists();
+                    if ($exists) {
+                        $fail('NIP sudah digunakan oleh dosen lain di kelas ' . $request->kelas . '.');
+                    }
+                },
+            ],
+            'email'         => [
+                'required',
+                'email',
+                'max:255',
+                function ($attribute, $value, $fail) use ($request) {
+                    // Cegah duplikat Email di kelas yang sama
+                    $exists = Dosen::where('kelas', $request->kelas)
+                        ->where('email', $value)
+                        ->exists();
+                    if ($exists) {
+                        $fail('Email sudah digunakan oleh dosen lain di kelas ' . $request->kelas . '.');
+                    }
+                },
+            ],
+            'no_telp'       => 'nullable|string|max:20',
+            'kelas'         => 'nullable|string|max:50',
+            'mata_kuliah'   => 'required|array',
+            'mata_kuliah.*' => 'string|max:100',
         ]);
 
-        $dosen = Dosen::create([
-            'nama'         => $request->nama,
-            'nip'          => $request->nip,
-            'email'        => $request->email,
-            'no_telp'      => $request->no_telp,
-            'kelas'        => $request->kelas,
-            'mata_kuliah'  => $request->mata_kuliah,
+        $mataKuliahGabung = implode(', ', $request->mata_kuliah);
+
+        // Cegah duplikat persis seluruh kombinasi
+        $exists = Dosen::where('nip', $request->nip)
+            ->where('email', $request->email)
+            ->where('kelas', $request->kelas)
+            ->where('mata_kuliah', $mataKuliahGabung)
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors([
+                'nip' => 'Dosen dengan kombinasi data ini sudah terdaftar (NIP, Email, Kelas, dan Mata Kuliah sama persis).'
+            ])->withInput();
+        }
+
+        Dosen::create([
+            'nama'        => $request->nama,
+            'nip'         => $request->nip,
+            'email'       => $request->email,
+            'no_telp'     => $request->no_telp,
+            'kelas'       => $request->kelas,
+            'mata_kuliah' => $mataKuliahGabung,
         ]);
 
-        // Redirect ke halaman kelas jika ada
-        if ($request->has('kelas')) {
-            return redirect()->route('data_dosen.kelas', $request->kelas)->with('success', 'Data dosen berhasil ditambahkan!');
+        if ($request->filled('kelas')) {
+            return redirect()->route('data_dosen.kelas', $request->kelas)
+                ->with('success', 'Data dosen berhasil ditambahkan!');
         }
 
         return redirect()->route('data_dosen.index')
-                         ->with('success', 'Data dosen berhasil ditambahkan!');
+            ->with('success', 'Data dosen berhasil ditambahkan!');
     }
 
     public function show($id)
@@ -92,50 +131,94 @@ class DosenController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'nama'         => 'required|string|max:255',
-            'nip'          => 'required|string|max:50',
-            'email'        => 'required|email|max:255',
-            'no_telp'      => 'nullable|string|max:20',
-            'kelas'        => 'nullable|string|max:50',
-            'mata_kuliah'  => 'nullable|string|max:100',
-        ]);
-
         $dosen = Dosen::findOrFail($id);
 
-        $dosen->update([
-            'nama'         => $request->nama,
-            'nip'          => $request->nip,
-            'email'        => $request->email,
-            'no_telp'      => $request->no_telp,
-            'kelas'        => $request->kelas,
-            'mata_kuliah'  => $request->mata_kuliah,
+        $request->validate([
+            'nama'          => 'required|string|max:255',
+            'nip'           => [
+                'required',
+                'string',
+                'max:50',
+                function ($attribute, $value, $fail) use ($request, $dosen) {
+                    // Cegah duplikat NIP di kelas yang sama (kecuali dirinya)
+                    $exists = Dosen::where('kelas', $request->kelas)
+                        ->where('nip', $value)
+                        ->where('id', '!=', $dosen->id)
+                        ->exists();
+                    if ($exists) {
+                        $fail('NIP sudah digunakan oleh dosen lain di kelas ' . $request->kelas . '.');
+                    }
+                },
+            ],
+            'email'         => [
+                'required',
+                'email',
+                'max:255',
+                function ($attribute, $value, $fail) use ($request, $dosen) {
+                    // Cegah duplikat Email di kelas yang sama (kecuali dirinya)
+                    $exists = Dosen::where('kelas', $request->kelas)
+                        ->where('email', $value)
+                        ->where('id', '!=', $dosen->id)
+                        ->exists();
+                    if ($exists) {
+                        $fail('Email sudah digunakan oleh dosen lain di kelas ' . $request->kelas . '.');
+                    }
+                },
+            ],
+            'no_telp'       => 'nullable|string|max:20',
+            'kelas'         => 'nullable|string|max:50',
+            'mata_kuliah'   => 'required|array',
+            'mata_kuliah.*' => 'string|max:100',
         ]);
 
-        // Redirect ke halaman kelas jika ada
-        if ($request->has('kelas')) {
-            return redirect()->route('data_dosen.kelas', $request->kelas)->with('success', 'Data dosen berhasil diperbarui!');
+        $mataKuliahGabung = implode(', ', $request->mata_kuliah);
+
+        // Cegah kombinasi data identik selain dirinya
+        $exists = Dosen::where('nip', $request->nip)
+            ->where('email', $request->email)
+            ->where('kelas', $request->kelas)
+            ->where('mata_kuliah', $mataKuliahGabung)
+            ->where('id', '!=', $id)
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors([
+                'nip' => 'Dosen dengan kombinasi data ini sudah terdaftar (NIP, Email, Kelas, dan Mata Kuliah sama persis).'
+            ])->withInput();
+        }
+
+        $dosen->update([
+            'nama'        => $request->nama,
+            'nip'         => $request->nip,
+            'email'       => $request->email,
+            'no_telp'     => $request->no_telp,
+            'kelas'       => $request->kelas,
+            'mata_kuliah' => $mataKuliahGabung,
+        ]);
+
+        if ($request->filled('kelas')) {
+            return redirect()->route('data_dosen.kelas', $request->kelas)
+                ->with('success', 'Data dosen berhasil diperbarui!');
         }
 
         return redirect()->route('data_dosen.index')
-                         ->with('success', 'Data dosen berhasil diperbarui!');
+            ->with('success', 'Data dosen berhasil diperbarui!');
     }
 
     public function destroy($id)
     {
         $dosen = Dosen::findOrFail($id);
-        $kelas = $dosen->kelas; // Simpan kelas sebelum dihapus
+        $kelas = $dosen->kelas;
         $dosen->delete();
 
-        // Cek apakah request dari halaman detail kelas
         if (request()->server('HTTP_REFERER') && str_contains(request()->server('HTTP_REFERER'), 'data_dosen/kelas/')) {
-            return redirect()->route('data_dosen.kelas', $kelas)->with('success', 'Data dosen berhasil dihapus!');
+            return redirect()->route('data_dosen.kelas', $kelas)
+                ->with('success', 'Data dosen berhasil dihapus!');
         }
 
         return redirect()->route('data_dosen.index')
-                         ->with('success', 'Data dosen berhasil dihapus!');
+            ->with('success', 'Data dosen berhasil dihapus!');
     }
-
 
     /* ========================================================
      |  BAGIAN 2 — FITUR TAMBAHAN: INPUT NILAI MAHASISWA

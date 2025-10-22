@@ -70,12 +70,22 @@
             @enderror
         </div>
 
+        {{-- Bagian Mata Kuliah Dinamis --}}
         <div class="mb-3">
-            <label for="mata_kuliah" class="form-label">Mata Kuliah</label>
-            <input type="text" class="form-control @error('mata_kuliah') is-invalid @enderror"
-                   id="mata_kuliah" name="mata_kuliah" value="{{ old('mata_kuliah', $dosen->mata_kuliah) }}">
+            <label class="form-label">Mata Kuliah</label>
+            <div id="mataKuliahContainer">
+                @php
+                    $mataKuliahs = old('mata_kuliah', explode(',', $dosen->mata_kuliah ?? ''));
+                @endphp
+                @foreach ($mataKuliahs as $index => $mk)
+                    <input type="text" name="mata_kuliah[]" class="form-control mb-2" 
+                           placeholder="Masukkan nama mata kuliah"
+                           value="{{ trim($mk) }}">
+                @endforeach
+            </div>
+            <button type="button" class="btn btn-sm btn-success" id="addMataKuliah">+ Tambah Mata Kuliah</button>
             @error('mata_kuliah')
-                <div class="invalid-feedback">{{ $message }}</div>
+                <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>
 
@@ -83,4 +93,17 @@
         <a href="{{ route('data_dosen.index') }}" class="btn btn-secondary">Kembali</a>
     </form>
 </div>
+
+{{-- Script untuk tambah input dinamis --}}
+<script>
+    document.getElementById('addMataKuliah').addEventListener('click', function () {
+        const container = document.getElementById('mataKuliahContainer');
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.name = 'mata_kuliah[]';
+        input.className = 'form-control mb-2';
+        input.placeholder = 'Masukkan nama mata kuliah';
+        container.appendChild(input);
+    });
+</script>
 @endsection

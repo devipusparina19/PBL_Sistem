@@ -43,12 +43,27 @@
                                         <div class="list-group-item px-0 border-start-0 border-end-0">
                                             <h6 class="mb-1 fw-bold">{{ $item->nama }}</h6>
                                             <p class="mb-1 text-muted small">
-                                                <i class="bi bi-person-vcard"></i> {{ $item->nip }}
+                                                <i class="bi bi-person-vcard"></i> {{ $item->nip }}<br>
+                                                <i class="bi bi-envelope"></i> {{ $item->email }}
                                             </p>
-                                            @if($item->mata_kuliah)
-                                                <p class="mb-0 small text-truncate" style="max-width: 300px;">
-                                                    <i class="bi bi-book"></i> {{ $item->mata_kuliah }}
-                                                </p>
+
+                                            @php
+                                                // Pastikan bisa memuat banyak matkul
+                                                $mataKuliahList = collect(
+                                                    preg_split('/[,;\n]+/', $item->mata_kuliah)
+                                                )->map(fn($mk) => trim($mk))
+                                                 ->filter()
+                                                 ->unique(); // hindari duplikat matkul
+                                            @endphp
+
+                                            @if($mataKuliahList->isNotEmpty())
+                                                <ul class="mb-0 small ps-3">
+                                                    @foreach($mataKuliahList as $mk)
+                                                        <li class="text-truncate" style="max-width: 300px;">
+                                                            <i class="bi bi-book"></i> {{ $mk }}
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
                                             @endif
                                         </div>
                                     @endforeach
