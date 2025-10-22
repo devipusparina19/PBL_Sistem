@@ -4,28 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\MataKuliah;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
 
 class MataKuliahController extends Controller
 {
     public function index(Request $request)
     {
-        // Group mata kuliah by kelas
         $kelasList = ['3A', '3B', '3C', '3D', '3E'];
         $mataKuliahByKelas = [];
-        
+
         foreach ($kelasList as $kelas) {
             $mataKuliahByKelas[$kelas] = MataKuliah::where('kelas', $kelas)
                 ->orderBy('nama_mk', 'asc')
                 ->get();
         }
-        
+
         return view('mata_kuliah.index', compact('mataKuliahByKelas', 'kelasList'));
     }
 
-    // Display mata kuliah by kelas
     public function showByKelas($kelas)
     {
-        // Validasi kelas
         if (!in_array($kelas, ['3A', '3B', '3C', '3D', '3E'])) {
             abort(404);
         }
@@ -33,7 +31,7 @@ class MataKuliahController extends Controller
         $mataKuliah = MataKuliah::where('kelas', $kelas)
             ->orderBy('nama_mk', 'asc')
             ->paginate(10);
-        
+
         return view('mata_kuliah.kelas', compact('mataKuliah', 'kelas'));
     }
 
@@ -49,22 +47,42 @@ class MataKuliahController extends Controller
             'kode_mk' => 'required|string|max:50',
             'nama_mk' => 'required|string|max:255',
             'kelas' => 'required|in:3A,3B,3C,3D,3E',
-            'nip_dosen' => 'required|array|min:1',        // ✅ pastikan array & minimal 1 dosen
-            'nip_dosen.*' => 'nullable|string|max:30',    // ✅ ubah dari required → nullable supaya ga error kalau cuma 1 dosen
+            'nip_dosen' => 'required|array|min:1',
+            'nip_dosen.*' => 'nullable|string|max:30',
         ]);
 
-        // Gabungkan jadi satu string, pisahkan koma, dan filter biar ga ada null kosong
-        $validated['nip_dosen'] = implode(',', array_filter($validated['nip_dosen'])); 
+        $validated['nip_dosen'] = implode(',', array_filter($validated['nip_dosen']));
 
-        MataKuliah::create($validated);
+        // ✅ Tambahkan pemeriksaan duplikasi (kode_mk + kelas)
+        $exists = MataKuliah::where('kode_mk', $validated['kode_mk'])
+            ->where('kelas', $validated['kelas'])
+            ->exists();
 
-        // Smart redirect
+        if ($exists) {
+            return back()
+                ->withErrors(['kode_mk' => 'Kode mata kuliah sudah terdaftar di kelas ini.'])
+                ->withInput();
+        }
+
+        try {
+            MataKuliah::create($validated);
+        } catch (QueryException $e) {
+            // ✅ Tangani error duplikat agar tidak muncul 500
+            if ($e->errorInfo[1] == 1062) {
+                return back()
+                    ->withErrors(['kode_mk' => 'Kode mata kuliah sudah digunakan.'])
+                    ->withInput();
+            }
+            throw $e;
+        }
+
         if ($request->has('kelas')) {
             return redirect()->route('mata_kuliah.kelas', $request->kelas)
                 ->with('success', 'Mata kuliah berhasil ditambahkan.');
         }
 
-        return redirect()->route('mata_kuliah.index')->with('success', 'Mata kuliah berhasil ditambahkan.');
+        return redirect()->route('mata_kuliah.index')
+            ->with('success', 'Mata kuliah berhasil ditambahkan.');
     }
 
     public function show(MataKuliah $mataKuliah)
@@ -89,15 +107,27 @@ class MataKuliahController extends Controller
 
         $validated['nip_dosen'] = implode(',', $validated['nip_dosen']);
 
+        // ✅ Cegah duplikasi saat update (kecuali baris yang sama)
+        $exists = MataKuliah::where('kode_mk', $validated['kode_mk'])
+            ->where('kelas', $validated['kelas'])
+            ->where('id', '!=', $mataKuliah->id)
+            ->exists();
+
+        if ($exists) {
+            return back()
+                ->withErrors(['kode_mk' => 'Kode mata kuliah sudah digunakan di kelas ini.'])
+                ->withInput();
+        }
+
         $mataKuliah->update($validated);
 
-        // Smart redirect
         if ($request->has('kelas')) {
             return redirect()->route('mata_kuliah.kelas', $request->kelas)
                 ->with('success', 'Data mata kuliah berhasil diperbarui.');
         }
 
-        return redirect()->route('mata_kuliah.index')->with('success', 'Data mata kuliah berhasil diperbarui.');
+        return redirect()->route('mata_kuliah.index')
+            ->with('success', 'Data mata kuliah berhasil diperbarui.');
     }
 
     public function destroy(MataKuliah $mataKuliah)
@@ -105,12 +135,12 @@ class MataKuliahController extends Controller
         $kelas = $mataKuliah->kelas;
         $mataKuliah->delete();
 
-        // Smart redirect
         if (request()->server('HTTP_REFERER') && str_contains(request()->server('HTTP_REFERER'), 'mata_kuliah/kelas/')) {
             return redirect()->route('mata_kuliah.kelas', $kelas)
                 ->with('success', 'Mata kuliah berhasil dihapus.');
         }
 
-        return redirect()->route('mata_kuliah.index')->with('success', 'Mata kuliah berhasil dihapus.');
+        return redirect()->route('mata_kuliah.index')
+            ->with('success', 'Mata kuliah berhasil dihapus.');
     }
 }
