@@ -41,7 +41,7 @@
             <label for="kelas" class="form-label">Kelas</label>
             <select class="form-control @error('kelas') is-invalid @enderror" id="kelas" name="kelas" required>
                 <option value="">-- Pilih Kelas --</option>
-                @foreach(['TI 3A','TI 3B','TI 3C','TI 3D','TI 3E'] as $kelas)
+                @foreach(['3A','3B','3C','3D','3E'] as $kelas)
                     <option value="{{ $kelas }}" {{ old('kelas', $mahasiswa->kelas) == $kelas ? 'selected' : '' }}>
                         {{ $kelas }}
                     </option>
