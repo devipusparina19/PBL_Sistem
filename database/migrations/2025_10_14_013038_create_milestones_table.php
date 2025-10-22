@@ -14,7 +14,7 @@ return new class extends Migration
             $table->text('deskripsi');
             $table->unsignedTinyInteger('minggu_ke');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('kelompok_id');
+            $table->unsignedBigInteger('id_kelompok');
             $table->enum('status', ['menunggu', 'disetujui', 'ditolak'])->default('menunggu');
             $table->text('catatan_dosen')->nullable();
             $table->timestamps();
@@ -27,7 +27,7 @@ return new class extends Migration
                 ->onDelete('cascade');
 
             $table
-                ->foreign('kelompok_id')
+                ->foreign('id_kelompok')
                 ->references('id_kelompok')
                 ->on('kelompok')
                 ->onDelete('cascade');
