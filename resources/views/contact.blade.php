@@ -21,7 +21,7 @@
                     <p>Jika kamu memiliki pertanyaan, kritik, atau saran, kamu bisa menghubungi kami melalui informasi berikut:</p>
 
                     <ul class="list-unstyled text-secondary mt-3">
-                        <li><strong>📍 Alamat:</strong> Jl. Pendidikan No. 45, Surabaya, Jawa Timur</li>
+                        <li><strong>📍 Alamat:</strong> Jl. Ahmad Yani No.Km.06, Pemuda, Kec. Pelaihari, Kabupaten Tanah Laut, Kalimantan Selatan 70815</li>
                         <li><strong>📧 Email:</strong> 
                             <a href="mailto:pblsupport@gmail.com" class="text-primary text-decoration-none">pblsupport@gmail.com</a>
                         </li>
