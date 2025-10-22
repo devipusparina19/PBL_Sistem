@@ -25,12 +25,12 @@
             <div class="col-12 col-md-6 col-xl-4">
                 <a href="{{ route('mata_kuliah.kelas', $kelas) }}" class="text-decoration-none">
                     <div class="card shadow-sm kelas-card h-100">
-                        <div class="card-header bg-warning text-dark">
+                        <div class="card-header bg-info text-white">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">
                                     <i class="bi bi-book-fill"></i> Kelas {{ $kelas }}
                                 </h5>
-                                <span class="badge bg-light text-dark">
+                                <span class="badge bg-light text-info">
                                     {{ $mataKuliahByKelas[$kelas]->count() }} Mata Kuliah
                                 </span>
                             </div>
@@ -52,7 +52,7 @@
                                                         </p>
                                                     @endif
                                                 </div>
-                                                <span class="badge bg-warning text-dark">{{ $item->kelas }}</span>
+                                                <span class="badge bg-info text-white">{{ $item->kelas }}</span>
                                             </div>
                                         </div>
                                     @endforeach
@@ -71,8 +71,8 @@
                                 </div>
                             @endif
                         </div>
-                        <div class="card-footer text-center bg-light">
-                            <small class="text-muted">
+                        <div class="card-footer bg-transparent border-info text-center">
+                            <small class="text-info">
                                 <i class="bi bi-arrow-right-circle"></i> Klik untuk lihat detail
                             </small>
                         </div>
@@ -89,6 +89,7 @@
         border-radius: 12px;
         transition: all 0.3s ease;
         cursor: pointer;
+        overflow: hidden;
     }
 
     .kelas-card:hover {
@@ -96,34 +97,29 @@
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
     }
 
-    a:has(.kelas-card) {
-        display: block;
-        height: 100%;
-    }
-
     .kelas-card .card-header {
         border-radius: 12px 12px 0 0 !important;
-        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important;
-        padding: 1rem;
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%) !important;
+        padding: 1.25rem;
     }
 
     .kelas-card .card-body {
-        padding: 0.5rem 1rem 1rem;
+        padding: 1rem 1.25rem;
         max-height: 400px;
         overflow-y: auto;
     }
 
     .list-group-item {
         transition: background-color 0.2s ease;
-        border-radius: 8px;
-        margin-bottom: 0.5rem;
+        border-color: rgba(0, 0, 0, 0.05) !important;
+        padding: 0.75rem 0;
     }
 
     .list-group-item:hover {
         background-color: #f8f9fa;
     }
 
-    /* Custom scrollbar */
+    /* Scrollbar */
     .kelas-card .card-body::-webkit-scrollbar {
         width: 6px;
     }
@@ -134,16 +130,21 @@
     }
 
     .kelas-card .card-body::-webkit-scrollbar-thumb {
-        background: #888;
+        background: #17a2b8;
         border-radius: 10px;
     }
 
     .kelas-card .card-body::-webkit-scrollbar-thumb:hover {
-        background: #555;
+        background: #138496;
     }
 
     .card-footer {
         border-radius: 0 0 12px 12px !important;
+        padding: 0.75rem 1.25rem;
+    }
+
+    a.text-decoration-none:hover {
+        text-decoration: none !important;
     }
 </style>
 @endsection

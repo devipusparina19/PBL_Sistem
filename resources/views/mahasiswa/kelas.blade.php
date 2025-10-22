@@ -21,19 +21,19 @@
                 </ol>
             </nav>
             <h1 class="mb-0">
-                <i class="bi bi-mortarboard-fill text-success"></i> Mahasiswa Kelas {{ $kelas }}
+                <i class="bi bi-mortarboard-fill text-info"></i> Mahasiswa Kelas {{ $kelas }}
             </h1>
             <p class="text-muted mb-0">Total: {{ $mahasiswa->total() }} Mahasiswa</p>
         </div>
         @unless($isRestricted)
-            <a href="{{ route('mahasiswa.create', ['kelas' => $kelas]) }}" class="btn btn-success btn-lg">
+            <a href="{{ route('mahasiswa.create', ['kelas' => $kelas]) }}" class="btn btn-info btn-lg text-white">
                 <i class="bi bi-plus-circle"></i> Tambah Mahasiswa
             </a>
         @endunless
     </div>
 
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show">
             <i class="bi bi-check-circle-fill"></i> {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -62,22 +62,16 @@
                             @foreach($mahasiswa as $item)
                                 <tr>
                                     <td>{{ $loop->iteration + ($mahasiswa->currentPage() - 1) * $mahasiswa->perPage() }}</td>
-                                    <td>
-                                        <strong>{{ $item->nim }}</strong>
-                                    </td>
-                                    <td>{{ $item->nama }}</td>
-                                    <td>
-                                        <span class="badge bg-success">{{ $item->kelas }}</span>
-                                    </td>
+                                    <td><span class="badge bg-info text-dark">{{ $item->nim }}</span></td>
+                                    <td><strong>{{ $item->nama }}</strong></td>
+                                    <td><span class="badge bg-info">{{ $item->kelas }}</span></td>
                                     <td>{{ $item->angkatan }}</td>
-                                    <td>
-                                        <i class="bi bi-envelope text-muted"></i> {{ $item->email }}
-                                    </td>
+                                    <td><i class="bi bi-envelope text-muted"></i> {{ $item->email }}</td>
                                     @unless($isRestricted)
                                         <td>
-                                            <div class="btn-group" role="group">
+                                            <div class="btn-group">
                                                 <a href="{{ route('mahasiswa.show', $item->id) }}" 
-                                                   class="btn btn-sm btn-info" 
+                                                   class="btn btn-sm btn-info text-white" 
                                                    title="Lihat Detail">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
@@ -92,8 +86,7 @@
                                                       class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button class="btn btn-sm btn-danger" 
-                                                            title="Hapus">
+                                                    <button class="btn btn-sm btn-danger" title="Hapus">
                                                         <i class="bi bi-trash"></i>
                                                     </button>
                                                 </form>
@@ -116,7 +109,7 @@
                     <h4 class="mt-3 text-muted">Belum Ada Mahasiswa</h4>
                     <p class="text-muted">Belum ada mahasiswa di kelas {{ $kelas }}</p>
                     @unless($isRestricted)
-                        <a href="{{ route('mahasiswa.create', ['kelas' => $kelas]) }}" class="btn btn-success mt-3">
+                        <a href="{{ route('mahasiswa.create', ['kelas' => $kelas]) }}" class="btn btn-info text-white mt-3">
                             <i class="bi bi-plus-circle"></i> Tambah Mahasiswa Pertama
                         </a>
                     @endunless
@@ -134,68 +127,15 @@
 </div>
 
 <style>
-    .btn-sm {
-        padding: 5px 10px;
-        font-size: 0.85rem;
-        border-radius: 5px;
-        border: none;
-        white-space: nowrap;
-    }
-
-    .btn-info { 
-        background-color: #0dcaf0; 
-        color: #000;
-    }
-    
-    .btn-warning { 
-        background-color: #ffc107; 
-        color: #000;
-    }
-    
-    .btn-danger { 
-        background-color: #dc3545; 
-        color: #fff;
-    }
-
-    .btn-info:hover { 
-        background-color: #0bb4d8 !important; 
-        color: #000 !important; 
-    }
-    
-    .btn-warning:hover { 
-        background-color: #e0a800 !important; 
-        color: #000 !important; 
-    }
-    
-    .btn-danger:hover { 
-        background-color: #bb2d3b !important; 
-        color: #fff !important; 
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: rgba(40, 167, 69, 0.05);
-    }
-
-    .breadcrumb {
-        background-color: transparent;
-        padding: 0;
-    }
-
-    .card {
-        border: none;
-        border-radius: 12px;
-    }
-
-    .card-body {
-        padding: 1.5rem;
-    }
-
-    .btn-group .btn {
-        margin-right: 2px;
-    }
-
-    .btn-group .btn:last-child {
-        margin-right: 0;
-    }
+.btn-sm { padding: 5px 10px; font-size: 0.85rem; border-radius: 5px; border: none; white-space: nowrap; }
+.btn-info { background-color: #0dcaf0; border: none; color: #fff; }
+.btn-info:hover { background-color: #0bb4d8; color: #fff !important; }
+.btn-warning { color: #000; }
+.btn-danger { color: #fff; }
+.table-hover tbody tr:hover { background-color: rgba(23, 162, 184, 0.05); }
+.card { border: none; border-radius: 12px; }
+.card-body { padding: 1.5rem; }
+.btn-group .btn { margin-right: 2px; }
+.btn-group .btn:last-child { margin-right: 0; }
 </style>
 @endsection
