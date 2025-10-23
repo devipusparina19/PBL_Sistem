@@ -10,8 +10,7 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    if (!Schema::hasTable('penilaian')) {
+    {
         Schema::create('penilaian', function (Blueprint $table) {
             $table->id('id_penilaian');
             $table->unsignedBigInteger('kelompok_id');
@@ -20,13 +19,13 @@ return new class extends Migration
             $table->text('catatan')->nullable();
             $table->timestamps();
 
+            // Relasi ke tabel kelompok
             $table->foreign('kelompok_id')
                   ->references('id_kelompok')
                   ->on('kelompok')
                   ->onDelete('cascade');
         });
     }
-}
 
     /**
      * Reverse the migrations.
