@@ -11,7 +11,7 @@
     <!-- Card Section -->
     <div class="row justify-content-center g-4">
         <!-- Monitoring Keseluruhan -->
-        <div class="col-md-5">
+        <div class="col-md-4">
             <div class="card border-0 shadow-lg h-100 rounded-4 hover-card">
                 <div class="card-body text-center p-4">
                     <div class="mb-3 text-primary fs-1">
@@ -29,7 +29,7 @@
         </div>
 
         <!-- Laporan Penilaian -->
-        <div class="col-md-5">
+        <div class="col-md-4">
             <div class="card border-0 shadow-lg h-100 rounded-4 hover-card">
                 <div class="card-body text-center p-4">
                     <div class="mb-3 text-primary fs-1">

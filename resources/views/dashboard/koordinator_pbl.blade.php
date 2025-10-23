@@ -9,7 +9,7 @@
     </div>
 
     <!-- Card Section -->
-    <div class="row g-4 justify-content-center">
+    <div class="row justify-content-center g-4">
         <!-- Monitoring Progres (Koordinator only) -->
         <div class="col-md-4">
             <div class="card border-0 shadow-lg h-100 rounded-4 hover-card">
