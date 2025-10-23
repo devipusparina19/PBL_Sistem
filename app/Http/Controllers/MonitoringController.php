@@ -9,10 +9,8 @@ class MonitoringController extends Controller
 {
     public function index(Request $request)
     {
-        // Ambil semua data kelompok beserta mahasiswa & milestone
-        $query = Kelompok::with(['mahasiswa', 'milestone']);
+        $query = Kelompok::with(['mahasiswa', 'milestones']);
 
-        // Jika ada pencarian (nama mahasiswa / kelompok)
         if ($request->has('search') && $request->search != '') {
             $search = $request->search;
 
@@ -29,8 +27,7 @@ class MonitoringController extends Controller
 
     public function show($id)
     {
-        // Tampilkan detail progres kelompok tertentu
-        $kelompok = Kelompok::with(['mahasiswas', 'milestone'])->findOrFail($id);
+        $kelompok = Kelompok::with(['mahasiswa', 'milestones'])->findOrFail($id);
 
         return view('koordinator.monitoring_detail', compact('kelompok'));
     }

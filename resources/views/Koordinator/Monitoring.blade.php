@@ -48,9 +48,9 @@
                                     @endforeach
                                 </td>
                                 <td class="text-center">
-                                    @if($k->milestone->isNotEmpty())
+                                    @if($k->milestones->isNotEmpty())
                                         @php
-                                            $last = $k->milestone->last();
+                                            $last = $k->milestones->last();
                                         @endphp
                                         @if($last->status == 'Selesai')
                                             <span class="badge bg-success">Selesai</span>
