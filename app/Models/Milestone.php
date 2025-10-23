@@ -9,16 +9,16 @@ class Milestone extends Model
 {
     use HasFactory;
 
-    // Nama tabel (opsional, tapi aman untuk eksplisit)
+    // Nama tabel di database
     protected $table = 'milestones';
 
-    // Kolom yang bisa diisi (fillable)
+    // Kolom yang bisa diisi
     protected $fillable = [
         'judul',
         'deskripsi',
         'minggu_ke',
         'user_id',
-        'kelompok_id', // ✅ sudah sesuai dengan field hasil migrasi baru
+        'kelompok_id',
         'status',
         'catatan_dosen',
     ];
@@ -29,7 +29,7 @@ class Milestone extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     /**
@@ -38,8 +38,18 @@ class Milestone extends Model
      */
     public function kelompok()
     {
+        // ✅ Fix: jelaskan secara eksplisit foreign key & primary key agar tidak cari kolom `id`
         return $this->belongsTo(Kelompok::class, 'kelompok_id', 'id_kelompok');
-        // 'kelompok_id' = kolom di tabel milestones
-        // 'id_kelompok' = primary key di tabel kelompok
+    }
+
+    /**
+     * Scope untuk filter berdasarkan kelas
+     * Berguna agar kelompok dengan nama sama di kelas berbeda tidak tercampur
+     */
+    public function scopeFilterByKelas($query, $kelas)
+    {
+        return $query->whereHas('kelompok', function ($q) use ($kelas) {
+            $q->where('kelas', $kelas);
+        });
     }
 }

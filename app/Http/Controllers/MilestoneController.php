@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Milestone;
+use App\Models\Kelompok;
 
 class MilestoneController extends Controller
 {
@@ -16,18 +17,33 @@ class MilestoneController extends Controller
     {
         $user = auth()->user();
 
-        // Jika user belum tergabung di kelompok, beri array kosong
-        if (!$user->role_kelompok) {
+        if (!$user->role_kelompok || !$user->kelas) {
             return view('milestone.view', [
                 'milestones' => collect(),
                 'user' => $user,
-                'warning' => 'Anda belum tergabung dalam kelompok. Silakan hubungi admin atau koordinator PBL.'
+                'warning' => 'Anda belum tergabung dalam kelompok atau belum memiliki kelas. Silakan hubungi admin atau koordinator PBL.'
             ]);
         }
 
-        // Ambil milestone berdasarkan kelompok
+        // ✅ Cari kelompok sesuai ID dan kelas user
+        $kelompok = Kelompok::where('id_kelompok', $user->role_kelompok)
+            ->where('kelas', $user->kelas)
+            ->first();
+
+        if (!$kelompok) {
+            return view('milestone.view', [
+                'milestones' => collect(),
+                'user' => $user,
+                'warning' => 'Kelompok Anda tidak ditemukan untuk kelas ini.'
+            ]);
+        }
+
+        // ✅ Ambil milestone milik kelompok dan kelas yang sama
         $milestones = Milestone::with(['user', 'kelompok'])
-            ->where('kelompok_id', $user->role_kelompok)
+            ->where('kelompok_id', $kelompok->id_kelompok)
+            ->whereHas('kelompok', function ($q) use ($user) {
+                $q->where('kelas', $user->kelas);
+            })
             ->orderBy('minggu_ke', 'asc')
             ->get();
 
@@ -39,9 +55,9 @@ class MilestoneController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user->role_kelompok) {
+        if (!$user->role_kelompok || !$user->kelas) {
             return redirect()->route('milestone.view')
-                ->with('warning', 'Anda belum tergabung dalam kelompok.');
+                ->with('warning', 'Anda belum tergabung dalam kelompok atau belum memiliki kelas.');
         }
 
         if (strtolower($user->role_di_kelompok) !== 'ketua') {
@@ -52,14 +68,14 @@ class MilestoneController extends Controller
         return view('milestone.create', ['kelompok_id' => $user->role_kelompok]);
     }
 
-    // Simpan milestone baru (hanya ketua)
+    // Simpan milestone baru
     public function store(Request $request)
     {
         $user = auth()->user();
 
-        if (!$user->role_kelompok) {
+        if (!$user->role_kelompok || !$user->kelas) {
             return redirect()->route('milestone.view')
-                ->with('warning', 'Anda belum tergabung dalam kelompok.');
+                ->with('warning', 'Anda belum tergabung dalam kelompok atau belum memiliki kelas.');
         }
 
         if (strtolower($user->role_di_kelompok) !== 'ketua') {
@@ -73,11 +89,21 @@ class MilestoneController extends Controller
             'minggu_ke' => 'required|integer|min:1',
         ]);
 
+        // ✅ Pastikan kelompok sesuai kelas user
+        $kelompok = Kelompok::where('id_kelompok', $user->role_kelompok)
+            ->where('kelas', $user->kelas)
+            ->first();
+
+        if (!$kelompok) {
+            return redirect()->route('milestone.view')
+                ->with('warning', 'Kelompok Anda tidak ditemukan untuk kelas ini.');
+        }
+
         Milestone::create([
             'judul' => $request->judul,
             'deskripsi' => $request->deskripsi,
             'minggu_ke' => $request->minggu_ke,
-            'kelompok_id' => $user->role_kelompok,
+            'kelompok_id' => $kelompok->id_kelompok,
             'user_id' => $user->id,
             'status' => 'menunggu',
         ]);
@@ -92,7 +118,6 @@ class MilestoneController extends Controller
         $milestone = Milestone::with(['user', 'kelompok'])->findOrFail($id);
         $user = auth()->user();
 
-        // Mahasiswa hanya bisa edit milestone miliknya
         if ($user->role !== 'dosen' && $user->id != $milestone->user_id) {
             abort(403, 'Anda tidak berhak mengedit milestone ini.');
         }
@@ -106,7 +131,6 @@ class MilestoneController extends Controller
         $milestone = Milestone::findOrFail($id);
         $user = auth()->user();
 
-        // Mahasiswa hanya bisa update milestone miliknya
         if ($user->role !== 'dosen' && $user->id != $milestone->user_id) {
             abort(403, 'Anda tidak berhak mengubah milestone ini.');
         }
@@ -125,7 +149,6 @@ class MilestoneController extends Controller
             'minggu_ke' => $request->minggu_ke,
         ];
 
-        // Jika dosen, update status & catatan
         if ($user->role === 'dosen') {
             $data['status'] = $request->status;
             $data['catatan_dosen'] = $request->catatan_dosen;
@@ -141,7 +164,6 @@ class MilestoneController extends Controller
     // DOSEN (VALIDASI)
     // =========================
 
-    // Daftar milestone menunggu validasi (untuk dosen)
     public function indexForDosen()
     {
         $milestones = Milestone::with(['user', 'kelompok'])
@@ -152,7 +174,6 @@ class MilestoneController extends Controller
         return view('milestone.validasi', compact('milestones'));
     }
 
-    // Update status milestone oleh dosen
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
