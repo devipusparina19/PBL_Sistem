@@ -46,7 +46,7 @@
         </div>
     @endif
 
-    <!-- Kartu Identitas Mahasiswa (Muncul setelah pilih mahasiswa) -->
+    <!-- Kartu Identitas Mahasiswa -->
     @if($selectedMahasiswa)
         <div class="card shadow border-0 rounded-4 mb-4">
             <div class="card-body px-5 py-4">
@@ -65,7 +65,7 @@
         </div>
     @endif
 
-    <!-- Tabel Detail Nilai (Hanya muncul jika ada mahasiswa dipilih) -->
+    <!-- Tabel Nilai -->
     @if($selectedMahasiswa)
         <div class="card shadow border-0 rounded-4 mb-4">
             <div class="card-body px-5 py-4">
@@ -89,28 +89,57 @@
                                     <td>{{ $index + 1 }}</td>
                                     <td>
                                         {{ $n->mataKuliah->nama_mk ?? '-' }}
+                                        
+                                        {{-- Kondisi khusus Pengambilan Keputusan --}}
                                         @if($n->mataKuliah && stripos($n->mataKuliah->nama_mk, 'pengambilan keputusan') !== false)
                                             <br>
                                             <small class="text-muted">
                                                 <i class="bi bi-info-circle"></i> 
-                                                UTS: {{ $n->uts ?? 0 }} | UAS: {{ $n->uas ?? 0 }} | 
-                                                Keaktifan: {{ $n->presentasi }} | Kerja: {{ $n->kontribusi }} | 
-                                                Penyajian: {{ $n->laporan }} | Proyek: {{ $n->hasil_proyek }}
+                                                UTS: {{ $n->uts ?? 0 }} |
+                                                UAS: {{ $n->uas ?? 0 }} |
+                                                Keaktifan: {{ $n->presentasi ?? 0 }} |
+                                                Kerja: {{ $n->kontribusi ?? 0 }} |
+                                                Penyajian: {{ $n->laporan ?? 0 }} |
+                                                Proyek: {{ $n->hasil_proyek ?? 0 }}
+                                            </small>
+                                        
+                                        {{-- Kondisi khusus Integrasi Sistem --}}
+                                        @elseif($n->mataKuliah && $n->mataKuliah->nama_mk == 'Integrasi Sistem')
+                                            <br>
+                                            <small class="text-muted">
+                                                <i class="bi bi-diagram-3"></i> 
+                                                Kerja: {{ $n->nilai_kerja ?? 0 }},
+                                                Laporan: {{ $n->nilai_laporan ?? 0 }},
+                                                P1: {{ $n->ujian_praktikum_1 ?? 0 }},
+                                                P2: {{ $n->ujian_praktikum_2 ?? 0 }},
+                                                UTS: {{ $n->uts ?? 0 }},
+                                                UAS: {{ $n->uas ?? 0 }}
                                             </small>
                                         @endif
                                     </td>
+
                                     <td>
                                         @php
-                                            $nilaiAkhir = $n->laporan; // default untuk mata kuliah standar
-                                            
-                                            // Jika Pengambilan Keputusan, hitung nilai akhir
+                                            $nilaiAkhir = $n->laporan; // default mata kuliah biasa
+
+                                            // Pengambilan Keputusan
                                             if($n->mataKuliah && stripos($n->mataKuliah->nama_mk, 'pengambilan keputusan') !== false) {
                                                 $uts = $n->uts ?? 0;
                                                 $uas = $n->uas ?? 0;
-                                                $nilaiAkhir = ($uts * 0.1) + ($uas * 0.1) + ($n->presentasi * 0.1) + ($n->kontribusi * 0.2) + 
-                                                             ($n->laporan * 0.2) + ($n->hasil_proyek * 0.3);
+                                                $nilaiAkhir = ($uts * 0.1) + ($uas * 0.1) + 
+                                                              ($n->presentasi * 0.1) + ($n->kontribusi * 0.2) +
+                                                              ($n->laporan * 0.2) + ($n->hasil_proyek * 0.3);
+                                            }
+
+                                            // Integrasi Sistem
+                                            elseif($n->mataKuliah && $n->mataKuliah->nama_mk == 'Integrasi Sistem') {
+                                                $aktivitas = (($n->nilai_kerja ?? 0) * 0.6) + (($n->nilai_laporan ?? 0) * 0.4);
+                                                $project = (($n->ujian_praktikum_1 ?? 0) * 0.5) + (($n->ujian_praktikum_2 ?? 0) * 0.5);
+                                                $nilaiAkhir = ($aktivitas * 0.45) + ($project * 0.25) + 
+                                                              (($n->uts ?? 0) * 0.15) + (($n->uas ?? 0) * 0.15);
                                             }
                                         @endphp
+
                                         <span class="badge 
                                             @if($nilaiAkhir >= 85) bg-success
                                             @elseif($nilaiAkhir >= 75) bg-primary
@@ -120,7 +149,9 @@
                                             {{ number_format($nilaiAkhir, 2) }}
                                         </span>
                                     </td>
+
                                     <td>{{ $n->dosen->nama ?? '-' }}</td>
+
                                     @if(Auth::user()->role === 'dosen')
                                         <td class="text-center">
                                             <a href="{{ route('nilai.edit', $n->id) }}" class="btn btn-warning btn-sm">Edit</a>
@@ -134,7 +165,9 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="{{ Auth::user()->role === 'dosen' ? 5 : 4 }}" class="text-center">Belum ada data nilai untuk mahasiswa ini.</td>
+                                    <td colspan="{{ Auth::user()->role === 'dosen' ? 5 : 4 }}" class="text-center">
+                                        Belum ada data nilai untuk mahasiswa ini.
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>

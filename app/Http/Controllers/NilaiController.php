@@ -60,12 +60,55 @@ class NilaiController extends Controller
      */
     public function store(Request $request)
     {
-        // Cek mata kuliah yang dipilih
-        $mataKuliah = MataKuliah::find($request->mata_kuliah_id);
-        $isPengambilanKeputusan = $mataKuliah && stripos($mataKuliah->nama_mk, 'pengambilan keputusan') !== false;
+        // Tambahan Debugging: Hapus baris ini setelah masalah teratasi
+        // dd($request->all());
 
-        // Validasi berdasarkan jenis mata kuliah
-        if ($isPengambilanKeputusan) {
+        $mataKuliah = MataKuliah::find($request->mata_kuliah_id);
+        $dosenId = null;
+        if (Auth::user()->role === 'dosen') {
+            $dosen = \App\Models\Dosen::where('email', Auth::user()->email)->first();
+            $dosenId = $dosen ? $dosen->id : null;
+        }
+
+        // 🔹 Kasus khusus: Integrasi Sistem
+       if ($mataKuliah && $mataKuliah->nama_mk == 'Integrasi Sistem') {
+    $request->validate([
+        'mahasiswa_id' => 'required|exists:mahasiswas,id',
+        'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
+        'nilai_kerja' => 'required|numeric|min:0|max:100',
+        'nilai_laporan' => 'required|numeric|min:0|max:100',
+        'ujian_praktikum_1' => 'required|numeric|min:0|max:100',
+        'ujian_praktikum_2' => 'required|numeric|min:0|max:100',
+        'uts' => 'required|numeric|min:0|max:100',
+        'uas' => 'required|numeric|min:0|max:100',
+    ]);
+
+    $aktivitas_partisipatif = ($request->nilai_kerja * 0.6) + ($request->nilai_laporan * 0.4);
+    $hasil_project = ($request->ujian_praktikum_1 * 0.5) + ($request->ujian_praktikum_2 * 0.5);
+    $nilai_akhir = ($aktivitas_partisipatif * 0.45) +
+                   ($hasil_project * 0.25) +
+                   ($request->uts * 0.15) +
+                   ($request->uas * 0.15);
+
+    Nilai::create([
+        'mahasiswa_id' => $request->mahasiswa_id,
+        'mata_kuliah_id' => $request->mata_kuliah_id,
+        'dosen_id' => $dosenId,
+        'nilai_kerja' => $request->nilai_kerja,
+        'nilai_laporan' => $request->nilai_laporan,
+        'laporan' => $request->nilai_laporan,
+        'presentasi' => 0,  // Tambahkan baris ini
+        'kontribusi' => 0,  // Tambahkan baris ini
+        'ujian_praktikum_1' => $request->ujian_praktikum_1,
+        'ujian_praktikum_2' => $request->ujian_praktikum_2,
+        'uts' => $request->uts,
+        'uas' => $request->uas,
+        'hasil_proyek' => round($nilai_akhir, 2),
+        'catatan' => 'Nilai Akhir: ' . round($nilai_akhir, 2),
+    ]);
+
+        // 🔹 Kasus khusus: Pengambilan Keputusan
+        } elseif ($mataKuliah && stripos($mataKuliah->nama_mk, 'pengambilan keputusan') !== false) {
             $request->validate([
                 'mahasiswa_id' => 'required|exists:mahasiswas,id',
                 'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
@@ -76,49 +119,14 @@ class NilaiController extends Controller
                 'penyajian_dokumentasi' => 'required|numeric|min:0|max:100',
                 'hasil_proyek' => 'required|numeric|min:0|max:100',
             ]);
-        } else {
-            $request->validate([
-                'mahasiswa_id' => 'required|exists:mahasiswas,id',
-                'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
-                'nilai' => 'required|numeric|min:0|max:100',
-            ]);
-        }
 
-        // Cek apakah mahasiswa sudah punya nilai untuk mata kuliah ini
-        $existing = Nilai::where('mahasiswa_id', $request->mahasiswa_id)
-                        ->where('mata_kuliah_id', $request->mata_kuliah_id)
-                        ->first();
-
-        if ($existing) {
-            return redirect()->back()
-                ->withInput()
-                ->withErrors(['mata_kuliah_id' => 'Mahasiswa ini sudah memiliki nilai untuk mata kuliah yang dipilih. Silakan edit nilai yang sudah ada.']);
-        }
-
-        // Dapatkan dosen_id dari user yang login
-        $dosenId = null;
-        if (Auth::user()->role === 'dosen') {
-            $dosen = \App\Models\Dosen::where('email', Auth::user()->email)->first();
-            $dosenId = $dosen ? $dosen->id : null;
-        }
-
-        // Simpan nilai berdasarkan jenis mata kuliah
-        if ($isPengambilanKeputusan) {
-            // Untuk Pengambilan Keputusan: simpan 6 komponen
-            // uts = UTS (10%)
-            // uas = UAS (10%)
-            // presentasi = Aktivitas Partisipatif (10%)
-            // kontribusi = Nilai Kerja (20%)
-            // laporan = Penyajian dan Dokumentasi (20%)
-            // hasil_proyek = Hasil Proyek (30%)
-            
             $nilaiAkhir = ($request->uts * 0.1) + 
-                         ($request->uas * 0.1) + 
-                         ($request->aktivitas_partisipatif * 0.1) + 
-                         ($request->nilai_kerja * 0.2) + 
-                         ($request->penyajian_dokumentasi * 0.2) + 
-                         ($request->hasil_proyek * 0.3);
-            
+                          ($request->uas * 0.1) + 
+                          ($request->aktivitas_partisipatif * 0.1) + 
+                          ($request->nilai_kerja * 0.2) + 
+                          ($request->penyajian_dokumentasi * 0.2) + 
+                          ($request->hasil_proyek * 0.3);
+
             Nilai::create([
                 'mahasiswa_id' => $request->mahasiswa_id,
                 'mata_kuliah_id' => $request->mata_kuliah_id,
@@ -131,8 +139,15 @@ class NilaiController extends Controller
                 'hasil_proyek' => $request->hasil_proyek,
                 'catatan' => 'Nilai Akhir: ' . round($nilaiAkhir, 2),
             ]);
+
+        // 🔹 Default: mata kuliah standar
         } else {
-            // Untuk mata kuliah standar
+            $request->validate([
+                'mahasiswa_id' => 'required|exists:mahasiswas,id',
+                'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
+                'nilai' => 'required|numeric|min:0|max:100',
+            ]);
+
             Nilai::create([
                 'mahasiswa_id' => $request->mahasiswa_id,
                 'mata_kuliah_id' => $request->mata_kuliah_id,
@@ -218,55 +233,55 @@ class NilaiController extends Controller
      * Halaman pemilihan mata kuliah oleh dosen
      */
     public function pilihMatkul()
-{
-    $mataKuliah = \App\Models\MataKuliah::all(); // ubah variabel jadi $mataKuliah
-    return view('dosen.pilihMatkul', compact('mataKuliah')); // compact sesuai variabel
-}
+    {
+        $mataKuliah = \App\Models\MataKuliah::all(); // ubah variabel jadi $mataKuliah
+        return view('dosen.pilihMatkul', compact('mataKuliah')); // compact sesuai variabel
+    }
 
-/**
- * Form input nilai untuk mata kuliah tertentu (old method - deprecated)
- */
-public function createForMatkul($matkul_id)
-{
-    $matkul = MataKuliah::findOrFail($matkul_id);
-    $mahasiswa = Mahasiswa::all();
-    return view('dosen.input-nilai', compact('matkul', 'mahasiswa'));
-}
+    /**
+     * Form input nilai untuk mata kuliah tertentu (old method - deprecated)
+     */
+    public function createForMatkul($matkul_id)
+    {
+        $matkul = MataKuliah::findOrFail($matkul_id);
+        $mahasiswa = Mahasiswa::all();
+        return view('dosen.input-nilai', compact('matkul', 'mahasiswa'));
+    }
 
-/**
- * Store nilai untuk mata kuliah tertentu (old method - deprecated)
- */
-public function storeForMatkul(Request $request, $matkul_id)
-{
-    $request->validate([
-        'mahasiswa_id' => 'required',
-        'laporan' => 'required|numeric|min:0|max:100',
-        'presentasi' => 'required|numeric|min:0|max:100',
-        'kontribusi' => 'required|numeric|min:0|max:100',
-    ]);
+    /**
+     * Store nilai untuk mata kuliah tertentu (old method - deprecated)
+     */
+    public function storeForMatkul(Request $request, $matkul_id)
+    {
+        $request->validate([
+            'mahasiswa_id' => 'required',
+            'laporan' => 'required|numeric|min:0|max:100',
+            'presentasi' => 'required|numeric|min:0|max:100',
+            'kontribusi' => 'required|numeric|min:0|max:100',
+        ]);
 
-    Nilai::updateOrCreate(
-        [
-            'mahasiswa_id' => $request->mahasiswa_id,
-            'mata_kuliah_id' => $matkul_id
-        ],
-        [
-            'laporan' => $request->laporan,
-            'presentasi' => $request->presentasi,
-            'kontribusi' => $request->kontribusi,
-            'catatan' => $request->catatan,
-        ]
-    );
+        Nilai::updateOrCreate(
+            [
+                'mahasiswa_id' => $request->mahasiswa_id,
+                'mata_kuliah_id' => $matkul_id
+            ],
+            [
+                'laporan' => $request->laporan,
+                'presentasi' => $request->presentasi,
+                'kontribusi' => $request->kontribusi,
+                'catatan' => $request->catatan,
+            ]
+        );
 
-    return redirect()->route('nilai.createForMatkul', $matkul_id)
-        ->with('success', 'Nilai berhasil disimpan!');
-}
-public function inputNilai($id)
-{
-    $mataKuliah = MataKuliah::findOrFail($id);
-    $mahasiswa = Mahasiswa::where('mata_kuliah_id', $id)->get();
+        return redirect()->route('nilai.createForMatkul', $matkul_id)
+            ->with('success', 'Nilai berhasil disimpan!');
+    }
 
-    return view('dosen.input_nilai', compact('mataKuliah', 'mahasiswa'));
-}
+    public function inputNilai($id)
+    {
+        $mataKuliah = MataKuliah::findOrFail($id);
+        $mahasiswa = Mahasiswa::where('mata_kuliah_id', $id)->get();
 
+        return view('dosen.input_nilai', compact('mataKuliah', 'mahasiswa'));
+    }
 }
