@@ -27,11 +27,21 @@ class Nilai extends Model
         'uts',
         'uas',
         'hasil_proyek',
-        // Integrasi Sistem (NEW)
+        // Integrasi Sistem
         'nilai_kerja',
         'nilai_laporan',
         'ujian_praktikum_1',
         'ujian_praktikum_2',
+        // PWL (Pemrograman Web Lanjut)
+        'pwl_tugas_quiz',
+        'pwl_project',
+        'pwl_presentasi',
+        // IT Project
+        'it_proposal',
+        'it_progress_report',
+        'it_final_project',
+        'it_presentasi',
+        'it_dokumentasi',
         'catatan',
     ];
 
@@ -42,13 +52,18 @@ class Nilai extends Model
     {
         // Hitung nilai akhir berdasarkan mata kuliah
         $nilaiAkhir = $this->laporan; // Default
+        
         if ($this->mataKuliah && stripos($this->mataKuliah->nama_mk, 'pengambilan keputusan') !== false) {
             $nilaiAkhir = ($this->uts * 0.1) + ($this->uas * 0.1) + ($this->presentasi * 0.1) + ($this->kontribusi * 0.2) + ($this->laporan * 0.2) + ($this->hasil_proyek * 0.3);
         } elseif ($this->mataKuliah && $this->mataKuliah->nama_mk == 'Integrasi Sistem') {
             $aktivitas = (($this->nilai_kerja ?? 0) * 0.6) + (($this->nilai_laporan ?? 0) * 0.4);
             $project = (($this->ujian_praktikum_1 ?? 0) * 0.5) + (($this->ujian_praktikum_2 ?? 0) * 0.5);
             $nilaiAkhir = ($aktivitas * 0.45) + ($project * 0.25) + ($this->uts * 0.15) + ($this->uas * 0.15);
+        } elseif ($this->mataKuliah && stripos($this->mataKuliah->nama_mk, 'it project') !== false || stripos($this->mataKuliah->nama_mk, 'it proyek') !== false) {
+            // IT Project: Proposal 15%, Progress Report 15%, Final Project 40%, Presentasi 20%, Dokumentasi 10%
+            $nilaiAkhir = (($this->it_proposal ?? 0) * 0.15) + (($this->it_progress_report ?? 0) * 0.15) + (($this->it_final_project ?? 0) * 0.4) + (($this->it_presentasi ?? 0) * 0.2) + (($this->it_dokumentasi ?? 0) * 0.1);
         }
+        // PWL menggunakan sistem nilai tunggal (menggunakan default $nilaiAkhir = $this->laporan)
 
         if ($nilaiAkhir >= 85) {
             return 'A';

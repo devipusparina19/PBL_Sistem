@@ -106,7 +106,7 @@
                 </div>
 
                 <!-- Form Integrasi Sistem -->
-                <div id="form-integrasi-sistem" style="display: none;"></div>
+                <div id="form-integrasi-sistem" style="display: none;">
                     <h5 class="mb-3">📊 Komponen Penilaian Integrasi Sistem</h5>
 
                     <!-- Aktivitas Partisipatif -->
@@ -180,6 +180,100 @@
                     </div>
                 </div>
 
+                <!-- Form PWL (Pemrograman Web Lanjut) -->
+                <div id="form-pwl" style="display: none;">
+                    <h5 class="mb-3">💻 Komponen Penilaian PWL</h5>
+                    
+                    <div class="alert alert-info">
+                        <strong>Komponen Penilaian PWL:</strong><br>
+                        • UTS (15%)<br>
+                        • UAS (15%)<br>
+                        • Tugas/Quiz (20%)<br>
+                        • Project (30%)<br>
+                        • Presentasi (20%)
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">UTS (15%)</label>
+                            <input type="number" class="form-control" name="uts" id="pwl_uts" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">UAS (15%)</label>
+                            <input type="number" class="form-control" name="uas" id="pwl_uas" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Tugas/Quiz (20%)</label>
+                            <input type="number" class="form-control" name="pwl_tugas_quiz" id="pwl_tugas_quiz" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Project (30%)</label>
+                            <input type="number" class="form-control" name="pwl_project" id="pwl_project" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Presentasi (20%)</label>
+                            <input type="number" class="form-control" name="pwl_presentasi" id="pwl_presentasi" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                    </div>
+
+                    <div class="alert alert-primary mt-3">
+                        <h5>🎯 Nilai Akhir PWL: <span id="preview_nilai_akhir_pwl">0.00</span></h5>
+                        <small>Grade: <span id="grade_pwl">-</span></small>
+                    </div>
+                </div>
+
+                <!-- Form IT Project -->
+                <div id="form-it-project" style="display: none;">
+                    <h5 class="mb-3">🚀 Komponen Penilaian IT Project</h5>
+                    
+                    <div class="alert alert-info">
+                        <strong>Komponen Penilaian IT Project:</strong><br>
+                        • Proposal (15%)<br>
+                        • Progress Report (15%)<br>
+                        • Final Project (40%)<br>
+                        • Presentasi (20%)<br>
+                        • Dokumentasi (10%)
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Proposal (15%)</label>
+                            <input type="number" class="form-control" name="it_proposal" id="it_proposal" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Progress Report (15%)</label>
+                            <input type="number" class="form-control" name="it_progress_report" id="it_progress_report" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Final Project (40%)</label>
+                            <input type="number" class="form-control" name="it_final_project" id="it_final_project" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Presentasi (20%)</label>
+                            <input type="number" class="form-control" name="it_presentasi" id="it_presentasi" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Dokumentasi (10%)</label>
+                            <input type="number" class="form-control" name="it_dokumentasi" id="it_dokumentasi" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                    </div>
+
+                    <div class="alert alert-primary mt-3">
+                        <h5>🎯 Nilai Akhir IT Project: <span id="preview_nilai_akhir_it">0.00</span></h5>
+                        <small>Grade: <span id="grade_it">-</span></small>
+                    </div>
+                </div>
+
                 <hr class="my-4">
 
                 <!-- Tombol -->
@@ -213,10 +307,14 @@ function toggleNilaiForm() {
     const formStandar = document.getElementById('form-nilai-standar');
     const formPK = document.getElementById('form-nilai-pengambilan-keputusan');
     const formIntegrasi = document.getElementById('form-integrasi-sistem');
+    const formPWL = document.getElementById('form-pwl');
+    const formIT = document.getElementById('form-it-project');
 
     formStandar.style.display = 'none';
     formPK.style.display = 'none';
     formIntegrasi.style.display = 'none';
+    formPWL.style.display = 'none';
+    formIT.style.display = 'none';
 
     if (namaMK.includes('pengambilan keputusan')) {
         formPK.style.display = 'block';
@@ -224,7 +322,11 @@ function toggleNilaiForm() {
     } else if (namaMK.includes('integrasi sistem')) {
         formIntegrasi.style.display = 'block';
         setupIntegrasiSistemCalculation();
+    } else if (namaMK.includes('it project') || namaMK.includes('it proyek')) {
+        formIT.style.display = 'block';
+        setupITProjectCalculation();
     } else if (namaMK) {
+        // PWL dan mata kuliah standar lainnya menggunakan form nilai tunggal
         formStandar.style.display = 'block';
     }
 }
@@ -278,6 +380,62 @@ function calculateIntegrasiSistem() {
     else grade = 'E';
 
     document.getElementById('grade_integrasi').textContent = grade;
+}
+
+// Kalkulasi PWL
+function setupPWLCalculation() {
+    ['pwl_uts', 'pwl_uas', 'pwl_tugas_quiz', 'pwl_project', 'pwl_presentasi']
+        .forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('input', calculatePWL);
+        });
+}
+
+function calculatePWL() {
+    const val = id => parseFloat(document.getElementById(id)?.value) || 0;
+    
+    const nilaiAkhir = (val('pwl_uts') * 0.15) + (val('pwl_uas') * 0.15) + 
+                       (val('pwl_tugas_quiz') * 0.2) + (val('pwl_project') * 0.3) + 
+                       (val('pwl_presentasi') * 0.2);
+    
+    document.getElementById('preview_nilai_akhir_pwl').textContent = nilaiAkhir.toFixed(2);
+    
+    let grade = '-';
+    if (nilaiAkhir >= 85) grade = 'A';
+    else if (nilaiAkhir >= 75) grade = 'B';
+    else if (nilaiAkhir >= 65) grade = 'C';
+    else if (nilaiAkhir >= 50) grade = 'D';
+    else grade = 'E';
+    
+    document.getElementById('grade_pwl').textContent = grade;
+}
+
+// Kalkulasi IT Project
+function setupITProjectCalculation() {
+    ['it_proposal', 'it_progress_report', 'it_final_project', 'it_presentasi', 'it_dokumentasi']
+        .forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('input', calculateITProject);
+        });
+}
+
+function calculateITProject() {
+    const val = id => parseFloat(document.getElementById(id)?.value) || 0;
+    
+    const nilaiAkhir = (val('it_proposal') * 0.15) + (val('it_progress_report') * 0.15) + 
+                       (val('it_final_project') * 0.4) + (val('it_presentasi') * 0.2) + 
+                       (val('it_dokumentasi') * 0.1);
+    
+    document.getElementById('preview_nilai_akhir_it').textContent = nilaiAkhir.toFixed(2);
+    
+    let grade = '-';
+    if (nilaiAkhir >= 85) grade = 'A';
+    else if (nilaiAkhir >= 75) grade = 'B';
+    else if (nilaiAkhir >= 65) grade = 'C';
+    else if (nilaiAkhir >= 50) grade = 'D';
+    else grade = 'E';
+    
+    document.getElementById('grade_it').textContent = grade;
 }
 </script>
 @endsection

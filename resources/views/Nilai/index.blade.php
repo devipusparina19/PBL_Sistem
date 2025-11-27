@@ -115,6 +115,20 @@
                                                 UTS: {{ $n->uts ?? 0 }},
                                                 UAS: {{ $n->uas ?? 0 }}
                                             </small>
+                                        
+                                        {{-- PWL menggunakan sistem nilai tunggal (tidak perlu tampilkan detail) --}}
+                                        
+                                        {{-- Kondisi khusus IT Project --}}
+                                        @elseif($n->mataKuliah && (stripos($n->mataKuliah->nama_mk, 'it project') !== false || stripos($n->mataKuliah->nama_mk, 'it proyek') !== false))
+                                            <br>
+                                            <small class="text-muted">
+                                                <i class="bi bi-gear-fill"></i> 
+                                                Proposal: {{ $n->it_proposal ?? 0 }},
+                                                Progress: {{ $n->it_progress_report ?? 0 }},
+                                                Final: {{ $n->it_final_project ?? 0 }},
+                                                Presentasi: {{ $n->it_presentasi ?? 0 }},
+                                                Dokumentasi: {{ $n->it_dokumentasi ?? 0 }}
+                                            </small>
                                         @endif
                                     </td>
 
@@ -137,6 +151,17 @@
                                                 $project = (($n->ujian_praktikum_1 ?? 0) * 0.5) + (($n->ujian_praktikum_2 ?? 0) * 0.5);
                                                 $nilaiAkhir = ($aktivitas * 0.45) + ($project * 0.25) + 
                                                               (($n->uts ?? 0) * 0.15) + (($n->uas ?? 0) * 0.15);
+                                            }
+
+                                            // PWL menggunakan nilai tunggal (tidak perlu perhitungan khusus)
+
+                                            // IT Project
+                                            elseif($n->mataKuliah && (stripos($n->mataKuliah->nama_mk, 'it project') !== false || stripos($n->mataKuliah->nama_mk, 'it proyek') !== false)) {
+                                                $nilaiAkhir = (($n->it_proposal ?? 0) * 0.15) + 
+                                                              (($n->it_progress_report ?? 0) * 0.15) + 
+                                                              (($n->it_final_project ?? 0) * 0.4) + 
+                                                              (($n->it_presentasi ?? 0) * 0.2) + 
+                                                              (($n->it_dokumentasi ?? 0) * 0.1);
                                             }
                                         @endphp
 
