@@ -9,27 +9,24 @@ class Mahasiswa extends Model
 {
     use HasFactory;
 
+    // PAKSA Laravel memakai tabel 'mahasiswas'
+    protected $table = 'mahasiswas';
+
+    protected $primaryKey = 'id';
+
     protected $fillable = [
-        'nim',
         'nama',
+        'nim',
         'kelas',
         'angkatan',
         'email',
         'password',
         'foto',
-        'kelompok_id', // ✅ kolom relasi ke tabel kelompok
+        'kelompok_id'
     ];
 
-    // 🔹 Relasi ke model Nilai
-    public function nilai()
-    {
-        return $this->hasOne(Nilai::class, 'mahasiswa_id');
-    }
-
-    // 🔹 Relasi ke model Kelompok
     public function kelompok()
     {
-        // ✅ Pastikan tabel tujuannya "kelompok" (tanpa 's')
         return $this->belongsTo(Kelompok::class, 'kelompok_id', 'id_kelompok');
     }
 }

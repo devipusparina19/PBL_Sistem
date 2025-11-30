@@ -1,117 +1,62 @@
-<?php
-
-namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-use App\Models\User;
-
-class UserController extends Controller
+public function store(Request $request)
 {
-    /**
-     * Tampilkan form register
-     */
-    public function showRegister()
-    {
-        return view('login.register'); // resources/views/login/register.blade.php
+    $request->validate([
+        'name'      => 'required|string|max:255',
+        'nim_nip'   => 'required|string|max:50|unique:users,nim_nip',
+        'email'     => [
+            'required',
+            'string',
+            'email',
+            'max:255',
+            'unique:users',
+            function ($attribute, $value, $fail) {
+                if (!str_ends_with($value, '@politala.ac.id')) {
+                    $fail('Hanya email Politala yang diperbolehkan mendaftar.');
+                }
+            },
+        ],
+        'password'  => 'required|string|min:8|confirmed',
+        'role'      => 'required|string|in:mahasiswa,dosen,admin,koordinator_pbl,koordinator_prodi',
+        'kelas'     => 'nullable|string|max:100',
+        'role_kelompok' => 'nullable|integer',
+        'role_di_kelompok' => 'nullable|string|max:50',
+    ]);
+
+    // Simpan data ke tabel users
+    $user = User::create([
+        'name'      => $request->name,
+        'nim_nip'   => $request->nim_nip,
+        'email'     => $request->email,
+        'password'  => Hash::make($request->password),
+        'role'      => $request->role,
+    ]);
+
+    // Simpan ke tabel sesuai role
+    switch ($request->role) {
+        case 'mahasiswa':
+            \App\Models\Mahasiswa::create([
+                'user_id' => $user->id,
+                'nim' => $request->nim_nip,
+                'nama' => $request->name,
+                'kelas' => $request->kelas ?? '-',
+                'email' => $request->email,
+                'kelompok_id' => $request->role_kelompok ?? null,
+                'role_di_kelompok' => $request->role_di_kelompok ?? 'anggota',
+                'angkatan' => date('Y'),
+            ]);
+            break;
+
+        case 'dosen':
+            \App\Models\Dosen::create([
+                'user_id' => $user->id,
+                'nip' => $request->nim_nip,
+                'nama' => $request->name,
+                'email' => $request->email,
+            ]);
+            break;
     }
 
-    /**
-     * Tampilkan form login
-     */
-    public function showLogin()
-    {
-        return view('login.login'); // resources/views/login/login.blade.php
-    }
+    Auth::login($user);
 
-    /**
-     * Proses register user baru
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name'      => 'required|string|max:255',
-            'email'     => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                'unique:users',
-                function ($attribute, $value, $fail) {
-                    if (!str_ends_with($value, '@politala.ac.id')) {
-                        $fail('Hanya email Politala yang diperbolehkan mendaftar.');
-                    }
-                },
-            ],
-            'password'  => 'required|string|min:8|confirmed',
-            'role'      => 'required|string|in:mahasiswa,dosen,admin,koordinator_pbl,koordinator_prodi',
-        ]);
-
-        $user = User::create([
-            'name'      => $request->name,
-            'email'     => $request->email,
-            'password'  => Hash::make($request->password),
-            'role'      => $request->role,
-        ]);
-
-        Auth::login($user);
-
-        return $this->redirectToDashboard($user);
-    }
-
-    /**
-     * Proses login user
-     */
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email'     => 'required|email',
-            'password'  => 'required|min:6',
-        ]);
-
-        $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return $this->redirectToDashboard(Auth::user());
-        }
-
-        return back()->with('error', 'Email atau password salah!')->withInput();
-    }
-
-    /**
-     * Proses logout
-     */
-    public function logout(Request $request)
-    {
-        Auth::logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect()->route('login.form'); // Sesuai web.php
-    }
-
-    /**
-     * Redirect sesuai role user
-     */
-    private function redirectToDashboard(User $user)
-    {
-        return match ($user->role) {
-            'admin'             => redirect()->route('admin.dashboard'),
-            'dosen'             => redirect()->route('dosen.dashboard'),
-            'koordinator_pbl'   => redirect()->route('koordinator_pbl.dashboard'),
-            'koordinator_prodi' => redirect()->route('koordinator_prodi.dashboard'),
-            default             => redirect()->route('mahasiswa.dashboard'),
-        };
-    }
-
-    /**
-     * Halaman home opsional
-     */
-    public function home()
-    {
-        return view('login.home');
-    }
+    return $this->redirectToDashboard($user);
 }

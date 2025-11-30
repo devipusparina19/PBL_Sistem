@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class DosenController extends Controller
 {
     /* ========================================================
-     |  BAGIAN 1 — MANAJEMEN DATA DOSEN
+     |  BAGIAN 1 — MANAJEMEN DATA DOSEN (KODE KAMU)
      ======================================================== */
 
     public function index()
@@ -50,34 +50,8 @@ class DosenController extends Controller
     {
         $request->validate([
             'nama'          => 'required|string|max:255',
-            'nip'           => [
-                'required',
-                'string',
-                'max:50',
-                function ($attribute, $value, $fail) use ($request) {
-                    // Cegah duplikat NIP di kelas yang sama
-                    $exists = Dosen::where('kelas', $request->kelas)
-                        ->where('nip', $value)
-                        ->exists();
-                    if ($exists) {
-                        $fail('NIP sudah digunakan oleh dosen lain di kelas ' . $request->kelas . '.');
-                    }
-                },
-            ],
-            'email'         => [
-                'required',
-                'email',
-                'max:255',
-                function ($attribute, $value, $fail) use ($request) {
-                    // Cegah duplikat Email di kelas yang sama
-                    $exists = Dosen::where('kelas', $request->kelas)
-                        ->where('email', $value)
-                        ->exists();
-                    if ($exists) {
-                        $fail('Email sudah digunakan oleh dosen lain di kelas ' . $request->kelas . '.');
-                    }
-                },
-            ],
+            'nip'           => 'required|string|max:50',
+            'email'         => 'required|email|max:255',
             'no_telp'       => 'nullable|string|max:20',
             'kelas'         => 'nullable|string|max:50',
             'mata_kuliah'   => 'required|array',
@@ -85,19 +59,6 @@ class DosenController extends Controller
         ]);
 
         $mataKuliahGabung = implode(', ', $request->mata_kuliah);
-
-        // Cegah duplikat persis seluruh kombinasi
-        $exists = Dosen::where('nip', $request->nip)
-            ->where('email', $request->email)
-            ->where('kelas', $request->kelas)
-            ->where('mata_kuliah', $mataKuliahGabung)
-            ->exists();
-
-        if ($exists) {
-            return back()->withErrors([
-                'nip' => 'Dosen dengan kombinasi data ini sudah terdaftar (NIP, Email, Kelas, dan Mata Kuliah sama persis).'
-            ])->withInput();
-        }
 
         Dosen::create([
             'nama'        => $request->nama,
@@ -108,13 +69,7 @@ class DosenController extends Controller
             'mata_kuliah' => $mataKuliahGabung,
         ]);
 
-        if ($request->filled('kelas')) {
-            return redirect()->route('data_dosen.kelas', $request->kelas)
-                ->with('success', 'Data dosen berhasil ditambahkan!');
-        }
-
-        return redirect()->route('data_dosen.index')
-            ->with('success', 'Data dosen berhasil ditambahkan!');
+        return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil ditambahkan!');
     }
 
     public function show($id)
@@ -134,58 +89,16 @@ class DosenController extends Controller
         $dosen = Dosen::findOrFail($id);
 
         $request->validate([
-            'nama'          => 'required|string|max:255',
-            'nip'           => [
-                'required',
-                'string',
-                'max:50',
-                function ($attribute, $value, $fail) use ($request, $dosen) {
-                    // Cegah duplikat NIP di kelas yang sama (kecuali dirinya)
-                    $exists = Dosen::where('kelas', $request->kelas)
-                        ->where('nip', $value)
-                        ->where('id', '!=', $dosen->id)
-                        ->exists();
-                    if ($exists) {
-                        $fail('NIP sudah digunakan oleh dosen lain di kelas ' . $request->kelas . '.');
-                    }
-                },
-            ],
-            'email'         => [
-                'required',
-                'email',
-                'max:255',
-                function ($attribute, $value, $fail) use ($request, $dosen) {
-                    // Cegah duplikat Email di kelas yang sama (kecuali dirinya)
-                    $exists = Dosen::where('kelas', $request->kelas)
-                        ->where('email', $value)
-                        ->where('id', '!=', $dosen->id)
-                        ->exists();
-                    if ($exists) {
-                        $fail('Email sudah digunakan oleh dosen lain di kelas ' . $request->kelas . '.');
-                    }
-                },
-            ],
-            'no_telp'       => 'nullable|string|max:20',
-            'kelas'         => 'nullable|string|max:50',
-            'mata_kuliah'   => 'required|array',
+            'nama' => 'required|string|max:255',
+            'nip' => 'required|string|max:50',
+            'email' => 'required|email|max:255',
+            'no_telp' => 'nullable|string|max:20',
+            'kelas' => 'nullable|string|max:50',
+            'mata_kuliah' => 'required|array',
             'mata_kuliah.*' => 'string|max:100',
         ]);
 
         $mataKuliahGabung = implode(', ', $request->mata_kuliah);
-
-        // Cegah kombinasi data identik selain dirinya
-        $exists = Dosen::where('nip', $request->nip)
-            ->where('email', $request->email)
-            ->where('kelas', $request->kelas)
-            ->where('mata_kuliah', $mataKuliahGabung)
-            ->where('id', '!=', $id)
-            ->exists();
-
-        if ($exists) {
-            return back()->withErrors([
-                'nip' => 'Dosen dengan kombinasi data ini sudah terdaftar (NIP, Email, Kelas, dan Mata Kuliah sama persis).'
-            ])->withInput();
-        }
 
         $dosen->update([
             'nama'        => $request->nama,
@@ -196,32 +109,20 @@ class DosenController extends Controller
             'mata_kuliah' => $mataKuliahGabung,
         ]);
 
-        if ($request->filled('kelas')) {
-            return redirect()->route('data_dosen.kelas', $request->kelas)
-                ->with('success', 'Data dosen berhasil diperbarui!');
-        }
-
-        return redirect()->route('data_dosen.index')
-            ->with('success', 'Data dosen berhasil diperbarui!');
+        return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil diperbarui!');
     }
 
     public function destroy($id)
     {
         $dosen = Dosen::findOrFail($id);
-        $kelas = $dosen->kelas;
         $dosen->delete();
 
-        if (request()->server('HTTP_REFERER') && str_contains(request()->server('HTTP_REFERER'), 'data_dosen/kelas/')) {
-            return redirect()->route('data_dosen.kelas', $kelas)
-                ->with('success', 'Data dosen berhasil dihapus!');
-        }
-
-        return redirect()->route('data_dosen.index')
-            ->with('success', 'Data dosen berhasil dihapus!');
+        return redirect()->route('data_dosen.index')->with('success', 'Data dosen berhasil dihapus!');
     }
 
+
     /* ========================================================
-     |  BAGIAN 2 — FITUR TAMBAHAN: INPUT NILAI MAHASISWA
+     |  BAGIAN 2 — INPUT NILAI MAHASISWA (KODE KAMU)
      ======================================================== */
 
     public function inputNilai()
@@ -251,5 +152,45 @@ class DosenController extends Controller
         ]);
 
         return back()->with('success', 'Nilai mahasiswa berhasil disimpan.');
+    }
+
+
+    /* ========================================================
+     |  BAGIAN 3 — CRUD SEDERHANA (TAMBAHAN PERMINTAAN KAMU)
+     ======================================================== */
+
+    public function crudIndex()
+    {
+        $data = Dosen::all();
+        return view('dosen.index', compact('data'));
+    }
+
+    public function crudCreate()
+    {
+        return view('dosen.create');
+    }
+
+    public function crudStore(Request $request)
+    {
+        Dosen::create($request->all());
+        return redirect()->back()->with('success', 'Dosen berhasil ditambahkan');
+    }
+
+    public function crudEdit($id)
+    {
+        $dosen = Dosen::findOrFail($id);
+        return view('dosen.edit', compact('dosen'));
+    }
+
+    public function crudUpdate(Request $request, $id)
+    {
+        Dosen::findOrFail($id)->update($request->all());
+        return redirect()->back()->with('success', 'Dosen berhasil diupdate');
+    }
+
+    public function crudDestroy($id)
+    {
+        Dosen::destroy($id);
+        return redirect()->back()->with('success', 'Dosen berhasil dihapus');
     }
 }

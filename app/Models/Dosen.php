@@ -9,27 +9,40 @@ class Dosen extends Model
 {
     use HasFactory;
 
-    protected $table = 'dosens'; // ✅ Benar — pastikan nama tabel di migration juga 'dosens'
+    // Pastikan migration tabel kamu bernama 'dosens'
+    protected $table = 'dosens';
 
     protected $fillable = [
         'nama',
-        'nip',
+        'nip',          // dari model pertama
+        'nidn',         // dari model kedua
         'email',
-        'no_telp',
+        'no_telp',      // dari model pertama
+        'no_hp',        // dari model kedua
         'kelas',
-        'mata_kuliah', // ✅ disimpan dalam bentuk string, dipisah koma
+        'mata_kuliah',  // string (boleh daftar mata kuliah)
     ];
 
     /**
-     * Relasi ke tabel nilai
+     * Relasi ke tabel nilai (model Nilai)
+     * Dari model pertama
      */
     public function nilais()
     {
-        return $this->hasMany(Nilai::class, 'dosen_id'); // ✅ Sesuai konvensi relasi
+        return $this->hasMany(Nilai::class, 'dosen_id');
     }
 
     /**
-     * Akses mata kuliah sebagai array (otomatis di-decode)
+     * Relasi ke tabel kelompok
+     * Dari model kedua → ditambahkan, tidak dihapus
+     */
+    public function kelompok()
+    {
+        return $this->hasMany(Kelompok::class);
+    }
+
+    /**
+     * Getter untuk mata kuliah → mengubah string jadi array
      */
     public function getMataKuliahListAttribute()
     {
@@ -37,17 +50,15 @@ class Dosen extends Model
             return [];
         }
 
-        // ✅ Ini fleksibel — bisa pecah berdasarkan koma, titik koma, atau newline
         return preg_split('/[,;\n]+/', $this->mata_kuliah);
     }
 
     /**
-     * Setter agar bisa menerima array dan menyimpannya jadi string
+     * Setter untuk mata kuliah → menyimpan array sebagai string dipisah koma
      */
     public function setMataKuliahListAttribute($value)
     {
         if (is_array($value)) {
-            // ✅ Simpan sebagai string "A, B, C" tanpa elemen kosong
             $this->attributes['mata_kuliah'] = implode(', ', array_filter($value));
         } else {
             $this->attributes['mata_kuliah'] = $value;
