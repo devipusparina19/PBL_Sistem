@@ -106,11 +106,11 @@
                 </div>
 
                 <!-- Form Integrasi Sistem -->
-<<<<<<< HEAD
+
                 <div id="form-integrasi-sistem" style="display: none;">
-=======
+
                 <div id="form-integrasi-sistem" style="display: none;"></div>
->>>>>>> 3205a7a (Update files sebelum pull)
+
                     <h5 class="mb-3">📊 Komponen Penilaian Integrasi Sistem</h5>
 
                     <!-- Aktivitas Partisipatif -->
@@ -182,7 +182,7 @@
                         <h5>🎯 Nilai Akhir: <span id="preview_nilai_akhir_integrasi">0.00</span></h5>
                         <small>Grade: <span id="grade_integrasi">-</span></small>
                     </div>
-<<<<<<< HEAD
+
                 </div>
 
                 <!-- Form PWL (Pemrograman Web Lanjut) -->
@@ -277,8 +277,7 @@
                         <h5>🎯 Nilai Akhir IT Project: <span id="preview_nilai_akhir_it">0.00</span></h5>
                         <small>Grade: <span id="grade_it">-</span></small>
                     </div>
-=======
->>>>>>> 3205a7a (Update files sebelum pull)
+
                 </div>
 
                 <hr class="my-4">
@@ -329,15 +328,15 @@ function toggleNilaiForm() {
     } else if (namaMK.includes('integrasi sistem')) {
         formIntegrasi.style.display = 'block';
         setupIntegrasiSistemCalculation();
-<<<<<<< HEAD
+
     } else if (namaMK.includes('it project') || namaMK.includes('it proyek')) {
         formIT.style.display = 'block';
         setupITProjectCalculation();
     } else if (namaMK) {
         // PWL dan mata kuliah standar lainnya menggunakan form nilai tunggal
-=======
+
     } else if (namaMK) {
->>>>>>> 3205a7a (Update files sebelum pull)
+ (Update files sebelum pull)
         formStandar.style.display = 'block';
     }
 }
@@ -392,7 +391,6 @@ function calculateIntegrasiSistem() {
 
     document.getElementById('grade_integrasi').textContent = grade;
 }
-<<<<<<< HEAD
 
 // Kalkulasi PWL
 function setupPWLCalculation() {
@@ -449,7 +447,6 @@ function calculateITProject() {
     
     document.getElementById('grade_it').textContent = grade;
 }
-=======
->>>>>>> 3205a7a (Update files sebelum pull)
+ (Update files sebelum pull)
 </script>
 @endsection
