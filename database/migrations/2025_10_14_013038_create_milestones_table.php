@@ -13,23 +13,30 @@ return new class extends Migration
             $table->string('judul');
             $table->text('deskripsi');
             $table->unsignedTinyInteger('minggu_ke');
+
+            // relasi ke users
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('id_kelompok');
-            $table->enum('status', ['menunggu', 'disetujui', 'ditolak'])->default('menunggu');
+
+            // relasi ke tabel kelompok
+            $table->unsignedBigInteger('kelompok_id');
+
+            $table->enum('status', ['menunggu', 'disetujui', 'ditolak'])
+                ->default('menunggu');
+
             $table->text('catatan_dosen')->nullable();
+
             $table->timestamps();
 
-            // Relasi foreign key
-            $table
-                ->foreign('user_id')
+            // FK ke users
+            $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
 
-            $table
-                ->foreign('id_kelompok')
+            // FK ke kelompok (INI YANG BENAR)
+            $table->foreign('kelompok_id')
                 ->references('id_kelompok')
-                ->on('kelompok')
+                ->on('kelompok')     // <-- PERBAIKI BAGIAN INI
                 ->onDelete('cascade');
         });
     }
