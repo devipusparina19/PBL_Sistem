@@ -64,8 +64,8 @@
                     <p class="text-secondary mb-4" style="font-size: 0.95rem;">
                         Cek peringkat Anda berdasarkan nilai individu.
                     </p>
-                    <a href="{{ route('mahasiswa.rangking') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
-                        Lihat Ranking
+                   <a href="{{ route('kelompok.rangking') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                    Lihat Ranking
                     </a>
                 </div>
             </div>

@@ -17,6 +17,7 @@
                        placeholder="Cari nama kelompok atau mahasiswa..."
                        value="{{ request('search') }}">
                 <button type="submit" class="btn btn-secondary">Cari</button>
+
                 @if(request('search'))
                     <a href="{{ route('monitoring.index') }}" class="btn btn-outline-secondary ms-2">Reset</a>
                 @endif
@@ -37,21 +38,29 @@
                             <th>Status Progres</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         @forelse($kelompok as $index => $k)
                             <tr>
                                 <td class="text-center">{{ $index + 1 }}</td>
-                                <td>{{ $k->nama }}</td>
+
+                                {{-- Nama Kelompok --}}
+                                <td>{{ $k->nama_kelompok }}</td>
+
+                                {{-- Anggota --}}
                                 <td>
-                                    @foreach($k->mahasiswa as $m)
+                                    @foreach($k->mahasiswas ?? [] as $m)
                                         {{ $m->nama }} <br>
                                     @endforeach
                                 </td>
+
+                                {{-- Status Progres --}}
                                 <td class="text-center">
-                                    @if($k->milestones->isNotEmpty())
+                                    @if($k->milestones && $k->milestones->isNotEmpty())
                                         @php
                                             $last = $k->milestones->last();
                                         @endphp
+
                                         @if($last->status == 'Selesai')
                                             <span class="badge bg-success">Selesai</span>
                                         @elseif($last->status == 'Proses')
