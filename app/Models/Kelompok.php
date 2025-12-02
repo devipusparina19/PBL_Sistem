@@ -5,43 +5,66 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-// IMPORT semua model relasi
-use App\Models\Mahasiswa;
-use App\Models\NilaiKelompok;
-use App\Models\Milestone;
-
 class Kelompok extends Model
 {
     use HasFactory;
 
     protected $table = 'kelompok';
     protected $primaryKey = 'id_kelompok';
+    public $incrementing = true;
+    protected $keyType = 'int';
 
     protected $fillable = [
+        'kode_mk',
         'nama_kelompok',
         'judul_proyek',
-        'dosen_id',
-        'pemrograman_web',
-        'integrasi_sistem',
-        'pengambilan_keputusan',
-        'it_proyek',
-        'kontribusi_kelompok',
-        'penilaian_dosen',
-        'hasil_akhir'
+        'kelas',
+        'ketua_id',   // ✅ tambahkan ini
     ];
 
-    public function mahasiswas()
+    public $timestamps = true;
+
+    // 🔹 Relasi ke milestones
+    public function milestones()
+ {
+        return $this->hasMany(Milestone::class, 'kelompok_id', 'id_kelompok');
+    }
+
+    // 🔹 Relasi ke user (dosen / dll lewat pivot)
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'kelompok_user', 'kelompok_id', 'user_id');
+    }
+
+    // 🔹 (Masih) accessor dari kode_mk yang dipisah koma
+    //    (kalau ini tadinya kamu pakai untuk list kode MK, biarkan saja)
+    public function getAnggotaAttribute()
+    {
+        if (!$this->kode_mk) {
+            return [];
+        }
+        return array_map('trim', explode(',', $this->kode_mk));
+    }
+
+    public function getAnggotaStringAttribute()
+    {
+        return implode(', ', $this->anggota);
+    }
+
+    /**
+     * 🔹 Relasi ke tabel Mahasiswa
+     * Satu kelompok punya banyak mahasiswa
+*/
+    public function mahasiswa()
     {
         return $this->hasMany(Mahasiswa::class, 'kelompok_id', 'id_kelompok');
     }
 
-    public function nilaiKelompok()
+    /**
+     * 🔹 Satu ketua kelompok (satu mahasiswa)
+     */
+    public function ketua()
     {
-        return $this->hasOne(NilaiKelompok::class, 'kelompok_id', 'id_kelompok');
-    }
-
-    public function milestones()
-    {
-        return $this->hasMany(Milestone::class, 'kelompok_id', 'id_kelompok');
-    }
+        return $this->belongsTo(Mahasiswa::class, 'ketua_id');
+    }
 }

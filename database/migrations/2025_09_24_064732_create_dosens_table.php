@@ -5,18 +5,29 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up(): void {
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
         Schema::create('dosens', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('nidn')->unique();
+            // NIP dan Email dibuat unique (unik) sesuai best practice
+            $table->string('nip')->unique();
             $table->string('email')->unique();
-            $table->string('no_hp')->nullable();
+            $table->string('no_telp');
+            $table->string('kelas');
+            $table->string('mata_kuliah');
             $table->timestamps();
         });
     }
 
-    public function down(): void {
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
         Schema::dropIfExists('dosens');
     }
 };

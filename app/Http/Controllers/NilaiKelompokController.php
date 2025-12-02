@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kelompok;
-use App\Models\NilaiKelompok;
 use Illuminate\Http\Request;
 
 class NilaiKelompokController extends Controller
@@ -13,52 +12,35 @@ class NilaiKelompokController extends Controller
      */
     public function index()
     {
-        // Data lama (nilai berada di tabel kelompok)
         $kelompoks = Kelompok::with('mahasiswas')->orderBy('nama_kelompok', 'asc')->get();
-
-        // Data baru (nilai ada di tabel nilai_kelompoks)
-        $data = NilaiKelompok::with('kelompok')->get();
-
-        return view('nilai_kelompok.index', compact('kelompoks', 'data'));
+        return view('nilai_kelompok.index', compact('kelompoks'));
     }
 
     /**
-     * Menampilkan form input nilai kelompok
+     * Menampilkan form tambah nilai kelompok
      */
     public function create()
     {
-        $kelompoks = Kelompok::with('mahasiswas')->orderBy('nama_kelompok', 'asc')->get();
+        $kelompoks = Kelompok::orderBy('nama_kelompok', 'asc')->get();
         return view('nilai_kelompok.create', compact('kelompoks'));
     }
 
     /**
-     * Menyimpan nilai kelompok (tabel kelompok + tabel nilai_kelompoks)
+     * Menyimpan nilai kelompok baru
      */
     public function store(Request $request)
     {
-        // FIX: exists diarahkan ke tabel 'kelompok', bukan 'kelompoks'
         $request->validate([
-            'kelompok_id' => 'required|exists:kelompok,id_kelompok',
-
-            // nilai lama (tabel kelompok)
+            'kelompok_id' => 'required|exists:kelompoks,id_kelompok',
             'pemrograman_web' => 'required|numeric|min:0|max:100',
             'integrasi_sistem' => 'required|numeric|min:0|max:100',
             'pengambilan_keputusan' => 'required|numeric|min:0|max:100',
             'it_proyek' => 'required|numeric|min:0|max:100',
             'kontribusi_kelompok' => 'required|numeric|min:0|max:100',
             'penilaian_dosen' => 'required|numeric|min:0|max:100',
-
-            // nilai baru (tabel nilai_kelompoks)
-            'presentasi' => 'required|numeric|min:0|max:100',
-            'laporan' => 'required|numeric|min:0|max:100',
-            'kerjasama' => 'required|numeric|min:0|max:100',
         ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | 1. Simpan nilai ke tabel kelompok
-        |--------------------------------------------------------------------------
-        */
+        // Hitung hasil akhir (rata-rata 6 komponen)
         $hasil_akhir = (
             $request->pemrograman_web +
             $request->integrasi_sistem +
@@ -79,23 +61,7 @@ class NilaiKelompokController extends Controller
             'hasil_akhir' => round($hasil_akhir, 2),
         ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | 2. Simpan nilai ke tabel nilai_kelompoks
-        |--------------------------------------------------------------------------
-        */
-        $nilai_akhir = ($request->presentasi + $request->laporan + $request->kerjasama) / 3;
-
-        NilaiKelompok::create([
-            'kelompok_id' => $request->kelompok_id,
-            'presentasi' => $request->presentasi,
-            'laporan' => $request->laporan,
-            'kerjasama' => $request->kerjasama,
-            'nilai_akhir' => round($nilai_akhir, 2),
-        ]);
-
-        return redirect()->route('nilai_kelompok.index')
-            ->with('success', 'Nilai kelompok berhasil disimpan!');
+        return redirect()->route('nilai-kelompok.index')->with('success', 'Nilai kelompok berhasil disimpan!');
     }
 
     /**
@@ -108,7 +74,7 @@ class NilaiKelompokController extends Controller
     }
 
     /**
-     * Mengupdate nilai kelompok (tabel kelompok)
+     * Mengupdate nilai kelompok
      */
     public function update(Request $request, $id)
     {
@@ -121,6 +87,7 @@ class NilaiKelompokController extends Controller
             'penilaian_dosen' => 'required|numeric|min:0|max:100',
         ]);
 
+        // Hitung ulang hasil akhir
         $hasil_akhir = (
             $request->pemrograman_web +
             $request->integrasi_sistem +
@@ -141,12 +108,11 @@ class NilaiKelompokController extends Controller
             'hasil_akhir' => round($hasil_akhir, 2),
         ]);
 
-        return redirect()->route('nilai_kelompok.index')
-            ->with('success', 'Nilai kelompok berhasil diperbarui!');
+        return redirect()->route('nilai-kelompok.index')->with('success', 'Nilai kelompok berhasil diperbarui!');
     }
 
     /**
-     * Menghapus nilai di tabel kelompok
+     * Menghapus nilai kelompok (set null)
      */
     public function destroy($id)
     {
@@ -161,7 +127,6 @@ class NilaiKelompokController extends Controller
             'hasil_akhir' => null,
         ]);
 
-        return redirect()->route('nilai_kelompok.index')
-            ->with('success', 'Nilai kelompok berhasil dihapus!');
+        return redirect()->route('nilai-kelompok.index')->with('success', 'Nilai kelompok berhasil dihapus!');
     }
 }
