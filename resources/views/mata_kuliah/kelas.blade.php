@@ -64,7 +64,14 @@
                                     <td><span class="badge bg-info text-dark">{{ $item->kelas }}</span></td>
                                     <td>
                                         @if($item->nip_dosen)
-                                            <small><i class="bi bi-person-badge"></i> {{ $item->nip_dosen }}</small>
+                                            <div class="d-flex flex-column">
+                                                @foreach($item->dosens as $dosen)
+                                                    <small class="mb-1">
+                                                        <i class="bi bi-person"></i> {{ $dosen->nama }}
+                                                        <span class="text-muted" style="font-size: 0.75em;">({{ $dosen->nip }})</span>
+                                                    </small>
+                                                @endforeach
+                                            </div>
                                         @else
                                             <span class="text-muted">-</span>
                                         @endif

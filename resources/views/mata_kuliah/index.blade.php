@@ -51,11 +51,11 @@
                                     <div class="mb-0">
                                         <p class="mb-2">
                                             <strong><i class="bi bi-person-badge"></i> Dosen Pengampu:</strong><br>
-                                            @php
-                                                $dosens = explode(',', $mk->nip_dosen);
-                                            @endphp
-                                            @foreach($dosens as $nip)
-                                                <span class="badge bg-info text-white me-1 mb-1">{{ trim($nip) }}</span>
+                                            @foreach($mk->dosens as $dosen)
+                                                <div class="d-flex align-items-center mb-1">
+                                                    <span class="badge bg-secondary me-2">{{ $dosen->nip }}</span>
+                                                    <span class="text-muted small">{{ $dosen->nama }}</span>
+                                                </div>
                                             @endforeach
                                         </p>
                                     </div>
@@ -108,7 +108,10 @@
                                                         </p>
                                                         @if($item->nip_dosen)
                                                             <p class="mb-0 text-muted small">
-                                                                <i class="bi bi-person-badge"></i> {{ $item->nip_dosen }}
+                                                                <i class="bi bi-person-badge"></i> 
+                                                                @foreach($item->dosens as $dosen)
+                                                                    {{ $dosen->nama }}@if(!$loop->last), @endif
+                                                                @endforeach
                                                             </p>
                                                         @endif
                                                     </div>
