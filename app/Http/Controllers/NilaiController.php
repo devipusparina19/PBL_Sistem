@@ -107,8 +107,39 @@ class NilaiController extends Controller
         'catatan' => 'Nilai Akhir: ' . round($nilai_akhir, 2),
     ]);
 
-        // 🔹 CATATAN: PWL menggunakan sistem nilai tunggal (form standar)
-        // Tidak perlu kondisi khusus, langsung ke blok default
+        // 🔹 Kasus khusus: PWL (Pemrograman Web Lanjut)
+        } elseif ($mataKuliah && (stripos($mataKuliah->nama_mk, 'pwl') !== false || stripos($mataKuliah->nama_mk, 'pemrograman web lanjut') !== false)) {
+            $request->validate([
+                'mahasiswa_id' => 'required|exists:mahasiswas,id',
+                'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
+                'it_proposal' => 'required|numeric|min:0|max:100',
+                'it_progress_report' => 'required|numeric|min:0|max:100',
+                'it_final_project' => 'required|numeric|min:0|max:100',
+                'it_presentasi' => 'required|numeric|min:0|max:100',
+                'it_dokumentasi' => 'required|numeric|min:0|max:100',
+            ]);
+
+            $nilaiAkhir = ($request->it_proposal * 0.15) + 
+                          ($request->it_progress_report * 0.15) + 
+                          ($request->it_final_project * 0.4) + 
+                          ($request->it_presentasi * 0.2) + 
+                          ($request->it_dokumentasi * 0.1);
+
+            Nilai::create([
+                'mahasiswa_id' => $request->mahasiswa_id,
+                'mata_kuliah_id' => $request->mata_kuliah_id,
+                'dosen_id' => $dosenId,
+                'it_proposal' => $request->it_proposal,
+                'it_progress_report' => $request->it_progress_report,
+                'it_final_project' => $request->it_final_project,
+                'it_presentasi' => $request->it_presentasi,
+                'it_dokumentasi' => $request->it_dokumentasi,
+                'laporan' => 0,
+                'presentasi' => 0,
+                'kontribusi' => 0,
+                'hasil_proyek' => round($nilaiAkhir, 2),
+                'catatan' => 'Nilai Akhir PWL: ' . round($nilaiAkhir, 2),
+            ]);
 
         // 🔹 Kasus khusus: IT Project
         } elseif ($mataKuliah && (stripos($mataKuliah->nama_mk, 'it project') !== false || stripos($mataKuliah->nama_mk, 'it proyek') !== false)) {
@@ -235,6 +266,9 @@ class NilaiController extends Controller
                 ->withErrors(['mata_kuliah_id' => 'Mahasiswa ini sudah memiliki nilai untuk mata kuliah yang dipilih.']);
         }
 
+        // Ambil data mata kuliah untuk menentukan jenis penilaian
+        $mataKuliah = MataKuliah::find($request->mata_kuliah_id);
+
         // Dapatkan dosen_id dari user yang login (matching by email)
         $dosenId = null;
         if (Auth::user()->role === 'dosen') {
@@ -279,8 +313,39 @@ class NilaiController extends Controller
                 'catatan' => 'Nilai Akhir: ' . round($nilai_akhir, 2),
             ]);
 
-        // 🔹 CATATAN: PWL menggunakan sistem nilai tunggal (form standar)
-        // Tidak perlu kondisi khusus, langsung ke blok default
+        // 🔹 Kasus khusus: PWL (Pemrograman Web Lanjut)
+        } elseif ($mataKuliah && (stripos($mataKuliah->nama_mk, 'pwl') !== false || stripos($mataKuliah->nama_mk, 'pemrograman web lanjut') !== false)) {
+            $request->validate([
+                'mahasiswa_id' => 'required|exists:mahasiswas,id',
+                'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
+                'it_proposal' => 'required|numeric|min:0|max:100',
+                'it_progress_report' => 'required|numeric|min:0|max:100',
+                'it_final_project' => 'required|numeric|min:0|max:100',
+                'it_presentasi' => 'required|numeric|min:0|max:100',
+                'it_dokumentasi' => 'required|numeric|min:0|max:100',
+            ]);
+
+            $nilaiAkhir = ($request->it_proposal * 0.15) + 
+                          ($request->it_progress_report * 0.15) + 
+                          ($request->it_final_project * 0.4) + 
+                          ($request->it_presentasi * 0.2) + 
+                          ($request->it_dokumentasi * 0.1);
+
+            $nilai->update([
+                'mahasiswa_id' => $request->mahasiswa_id,
+                'mata_kuliah_id' => $request->mata_kuliah_id,
+                'dosen_id' => $dosenId,
+                'it_proposal' => $request->it_proposal,
+                'it_progress_report' => $request->it_progress_report,
+                'it_final_project' => $request->it_final_project,
+                'it_presentasi' => $request->it_presentasi,
+                'it_dokumentasi' => $request->it_dokumentasi,
+                'laporan' => 0,
+                'presentasi' => 0,
+                'kontribusi' => 0,
+                'hasil_proyek' => round($nilaiAkhir, 2),
+                'catatan' => 'Nilai Akhir PWL: ' . round($nilaiAkhir, 2),
+            ]);
 
         // 🔹 Kasus khusus: IT Project
         } elseif ($mataKuliah && (stripos($mataKuliah->nama_mk, 'it project') !== false || stripos($mataKuliah->nama_mk, 'it proyek') !== false)) {

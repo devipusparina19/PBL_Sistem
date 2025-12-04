@@ -12,7 +12,7 @@ class Milestone extends Model
     // Nama tabel di database
     protected $table = 'milestones';
 
-    // Kolom yang bisa diisi
+    // Kolom yang bisa diisi (sesuaikan dengan migration)
     protected $fillable = [
         'judul',
         'deskripsi',
@@ -38,7 +38,8 @@ class Milestone extends Model
      */
     public function kelompok()
     {
-        // ✅ Fix: jelaskan secara eksplisit foreign key & primary key agar tidak cari kolom `id`
+        // foreign key = milestones.kelompok_id
+        // local key   = kelompoks.id_kelompok
         return $this->belongsTo(Kelompok::class, 'kelompok_id', 'id_kelompok');
     }
 

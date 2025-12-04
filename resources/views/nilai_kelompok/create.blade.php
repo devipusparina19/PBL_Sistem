@@ -13,7 +13,7 @@
     <!-- Form Card -->
     <div class="card shadow border-0 rounded-4">
         <div class="card-body px-5 py-4">
-            <form action="{{ route('nilai_kelompok.store') }}" method="POST">
+            <form action="{{ route('nilai-kelompok.store') }}" method="POST">
                 @csrf
 
                 <!-- Pilih Kelompok -->
@@ -28,6 +28,7 @@
                                 @if($klp->judul_proyek)
                                     - {{ $klp->judul_proyek }}
                                 @endif
+                                ({{ $klp->mahasiswas->count() }} anggota)
                             </option>
                         @endforeach
                     </select>
@@ -37,45 +38,6 @@
                 </div>
 
                 <hr class="my-4">
-
-<h5 class="fw-bold text-dark mb-4">Penilaian Tambahan</h5>
-
-<div class="row">
-
-    <div class="col-md-4 mb-3">
-        <label for="presentasi" class="form-label">Presentasi <span class="text-danger">*</span></label>
-        <input type="number" name="presentasi" id="presentasi"
-               class="form-control @error('presentasi') is-invalid @enderror"
-               value="{{ old('presentasi') }}" 
-               min="0" max="100" step="0.01" required>
-        @error('presentasi')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-    </div>
-
-    <div class="col-md-4 mb-3">
-        <label for="laporan" class="form-label">Laporan <span class="text-danger">*</span></label>
-        <input type="number" name="laporan" id="laporan"
-               class="form-control @error('laporan') is-invalid @enderror"
-               value="{{ old('laporan') }}" 
-               min="0" max="100" step="0.01" required>
-        @error('laporan')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-    </div>
-
-    <div class="col-md-4 mb-3">
-        <label for="kerjasama" class="form-label">Kerjasama <span class="text-danger">*</span></label>
-        <input type="number" name="kerjasama" id="kerjasama"
-               class="form-control @error('kerjasama') is-invalid @enderror"
-               value="{{ old('kerjasama') }}" 
-               min="0" max="100" step="0.01" required>
-        @error('kerjasama')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-    </div>
-
-</div>
 
                 <h5 class="fw-bold text-dark mb-4">Komponen Penilaian Kelompok</h5>
 
@@ -169,7 +131,7 @@
 
                 <!-- Buttons -->
                 <div class="d-flex justify-content-end gap-2">
-                    <a href="{{ route('nilai_kelompok.index') }}" class="btn btn-secondary">
+                    <a href="{{ route('nilai-kelompok.index') }}" class="btn btn-secondary">
                         <i class="bi bi-x-circle me-2"></i>Batal
                     </a>
                     <button type="submit" class="btn btn-primary">

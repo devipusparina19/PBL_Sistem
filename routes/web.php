@@ -26,8 +26,7 @@ use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\RangkingController;
 use App\Http\Controllers\ProgresController;
 use App\Http\Controllers\PenilaianSejawatController;
-use App\Http\Controllers\PemeringkatanController;
-use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\LaporanController; // ✅ Tambahan untuk laporan penilaian
 
 /*
 |--------------------------------------------------------------------------
@@ -35,12 +34,12 @@ use App\Http\Controllers\LaporanController;
 |--------------------------------------------------------------------------
 */
 
-// Dashboard harus login
+// Home / Dashboard
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [DashboardController::class, 'index'])->name('home');
 });
 
-// Halaman utama → Login
+// Halaman utama langsung ke login
 Route::get('/', [LoginController::class, 'showLogin'])->name('user.showLogin');
 
 // Register
@@ -54,16 +53,18 @@ Route::post('/login', [LoginController::class, 'login'])->name('user.login');
 // Logout
 Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 
-// Google Login
+// Login via Google
 Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
 
-// Contact
+// Contact Publik
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
-// About
-Route::get('/about', fn() => view('about'))->name('about');
+// ✅ About Page (TAMBAHAN)
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
 
 /*
 |--------------------------------------------------------------------------
@@ -74,7 +75,7 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Dashboard Per Role
+    | DASHBOARD PER ROLE
     |--------------------------------------------------------------------------
     */
     Route::get('/dashboard/mahasiswa', fn() => view('dashboard.mahasiswa'))->name('mahasiswa.dashboard');
@@ -86,42 +87,36 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Perangkingan Kelompok
+    | RANGKING MAHASISWA & KELOMPOK
     |--------------------------------------------------------------------------
     */
-    Route::get('/perangkingan', [PemeringkatanController::class, 'index'])->name('perangkingan.index');
-    Route::get('/perangkingan/generate', [PemeringkatanController::class, 'generate'])->name('perangkingan.generate');
+    Route::get('/mahasiswa/rangking', [RangkingController::class, 'mahasiswa'])->name('mahasiswa.rangking');
+    Route::get('/kelompok/sinkron', [KelompokController::class, 'sinkron'])->name('kelompok.sinkron');
 
     /*
     |--------------------------------------------------------------------------
-    | CRUD Master Data
+    | CRUD DATA
     |--------------------------------------------------------------------------
     */
     Route::get('mahasiswa/kelas/{kelas}', [MahasiswaController::class, 'showByKelas'])->name('mahasiswa.kelas');
     Route::resource('mahasiswa', MahasiswaController::class);
-
     Route::get('data_dosen/kelas/{kelas}', [DosenController::class, 'showByKelas'])->name('data_dosen.kelas');
     Route::resource('data_dosen', DosenController::class);
-
     Route::get('mata_kuliah/kelas/{kelas}', [MataKuliahController::class, 'showByKelas'])->name('mata_kuliah.kelas');
+    Route::get('mata_kuliah/{id}/detail', [MataKuliahController::class, 'showDetail'])->name('mata_kuliah.detail');
     Route::resource('mata_kuliah', MataKuliahController::class);
-
     Route::get('kelompok/by-kelas/{kelas}', [KelompokController::class, 'showByKelas'])->name('kelompok.byKelas');
     Route::get('/kelompok/rangking', [RangkingController::class, 'kelompok'])->name('kelompok.rangking');
     Route::resource('kelompok', KelompokController::class);
-
     Route::resource('logbook', LogbookController::class);
 
-    /*
-    |--------------------------------------------------------------------------
-    | Milestone
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/milestone/view', [MilestoneController::class, 'indexForMember'])->name('milestone.view');
-    Route::get('/milestone/input', [MilestoneController::class, 'create'])->name('milestone.create');
-    Route::post('/milestone/input', [MilestoneController::class, 'store'])->name('milestone.store');
-    Route::get('/milestone/edit/{id}', [MilestoneController::class, 'edit'])->name('milestone.edit');
-    Route::post('/milestone/edit/{id}', [MilestoneController::class, 'update'])->name('milestone.update');
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/milestone/view', [MilestoneController::class, 'indexForMember'])->name('milestone.view');
+        Route::get('/milestone/input', [MilestoneController::class, 'create'])->name('milestone.create');
+        Route::post('/milestone/input', [MilestoneController::class, 'store'])->name('milestone.store');
+        Route::get('/milestone/edit/{id}', [MilestoneController::class, 'edit'])->name('milestone.edit');
+        Route::post('/milestone/edit/{id}', [MilestoneController::class, 'update'])->name('milestone.update');
+    });
 
     // Validasi Dosen
     Route::middleware('role:dosen')->group(function () {
@@ -131,38 +126,54 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Nilai Mahasiswa
+    | NILAI MAHASISWA
     |--------------------------------------------------------------------------
     */
-    Route::resource('nilai', NilaiController::class);
+    Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai.index');
+    Route::get('/nilai/create', [NilaiController::class, 'create'])->name('nilai.create');
+    Route::post('/nilai', [NilaiController::class, 'store'])->name('nilai.store');
+    Route::get('/nilai/{id}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');
+    Route::put('/nilai/{id}', [NilaiController::class, 'update'])->name('nilai.update');
+    Route::delete('/nilai/{id}', [NilaiController::class, 'destroy'])->name('nilai.destroy');
 
     /*
     |--------------------------------------------------------------------------
-    | Nilai Kelompok
+    | NILAI KELOMPOK - DOSEN
     |--------------------------------------------------------------------------
     */
-    Route::resource('nilai_kelompok', NilaiKelompokController::class);
+    Route::get('/nilai_kelompok', [NilaiKelompokController::class, 'index'])->name('nilai_kelompok.index');
+    Route::get('/nilai_kelompok/create', [NilaiKelompokController::class, 'create'])->name('nilai_kelompok.create');
+    Route::post('/nilai_kelompok', [NilaiKelompokController::class, 'store'])->name('nilai_kelompok.store');
+    Route::get('/nilai_kelompok/{id}/edit', [NilaiKelompokController::class, 'edit'])->name('nilai_kelompok.edit');
+    Route::put('/nilai_kelompok/{id}', [NilaiKelompokController::class, 'update'])->name('nilai_kelompok.update');
+    Route::delete('/nilai_kelompok/{id}', [NilaiKelompokController::class, 'destroy'])->name('nilai_kelompok.destroy');
 
     /*
     |--------------------------------------------------------------------------
-    | Monitoring Progres
+    | MONITORING PROGRES KELOMPOK (KOORDINATOR)
     |--------------------------------------------------------------------------
     */
-    Route::resource('monitoring', MonitoringController::class);
+    Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
+    Route::get('/monitoring/{id}', [MonitoringController::class, 'show'])->name('monitoring.show');
 
     /*
     |--------------------------------------------------------------------------
-    | Manajemen Akun (Admin)
+    | MANAJEMEN AKUN (ADMIN)
     |--------------------------------------------------------------------------
     */
-    Route::middleware('isAdmin')->group(function () {
+    Route::middleware(['isAdmin'])->group(function () {
         Route::get('/manajemen_akun', [AdminController::class, 'manajemenAkun'])->name('manajemen_akun');
-        Route::resource('akun', AkunController::class);
+        Route::get('/akun', [AkunController::class, 'index'])->name('akun.index');
+        Route::get('/akun/create', [AkunController::class, 'create'])->name('akun.create');
+        Route::post('/akun', [AkunController::class, 'store'])->name('akun.store');
+        Route::get('/akun/edit/{id}', [AkunController::class, 'edit'])->name('akun.edit');
+        Route::put('/akun/update/{id}', [AkunController::class, 'update'])->name('akun.update');
+        Route::delete('/akun/delete/{id}', [AkunController::class, 'destroy'])->name('akun.destroy');
     });
 
     /*
     |--------------------------------------------------------------------------
-    | Profile
+    | PROFIL PENGGUNA
     |--------------------------------------------------------------------------
     */
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
@@ -170,27 +181,45 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Progres Kelompok
+    | PROGRES KELOMPOK
     |--------------------------------------------------------------------------
     */
-    Route::resource('progres', ProgresController::class);
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/progres', [ProgresController::class, 'index'])->name('progres.index');
+        Route::get('/progres/{id}', [ProgresController::class, 'show'])->name('progres.show');
+        Route::get('/progres/create', [ProgresController::class, 'create'])->name('progres.create');
+        Route::post('/progres', [ProgresController::class, 'store'])->name('progres.store');
+        Route::get('/progres/{id}/edit', [ProgresController::class, 'edit'])->name('progres.edit');
+        Route::put('/progres/{id}', [ProgresController::class, 'update'])->name('progres.update');
+        Route::delete('/progres/{id}', [ProgresController::class, 'destroy'])->name('progres.destroy');
+    });
 
     /*
     |--------------------------------------------------------------------------
-    | Penilaian Sejawat (TIDAK ADA DUPLIKAT)
+    | LAPORAN PENILAIAN AKHIR (KOORDINATOR)
     |--------------------------------------------------------------------------
     */
+    Route::get('/laporan/akhir', [LaporanController::class, 'index'])->name('laporan.akhir'); // ✅ Tambahan baru
+});
+
+/*
+|--------------------------------------------------------------------------
+| ROUTE TAMBAHAN (AUTENTIKASI DASAR)
+|--------------------------------------------------------------------------
+*/
+Route::resource('mata_kuliah', MataKuliahController::class)->middleware('auth');
+Route::resource('user', UserController::class)->middleware('auth');
+Route::resource('dosen', DosenController::class)->middleware('auth');
+Route::resource('mahasiswa', MahasiswaController::class)->middleware('auth');
+Route::resource('kelompok', KelompokController::class)->middleware('auth');
+Route::resource('logbook', LogbookController::class)->middleware('auth');
+
+//Penilaian Sejawat
+Route::middleware(['auth'])->group(function () {
     Route::get('/penilaian/sejawat', [PenilaianSejawatController::class, 'index'])->name('penilaian.sejawat.index');
     Route::post('/penilaian/sejawat', [PenilaianSejawatController::class, 'store'])->name('penilaian.sejawat.store');
     Route::get('/penilaian/sejawat/rekap', [PenilaianSejawatController::class, 'rekap'])->name('penilaian.sejawat.rekap');
     Route::get('/penilaian/sejawat/{id}', [PenilaianSejawatController::class, 'show'])->name('penilaian.sejawat.show');
     Route::get('/penilaian/sejawat/{id}/edit', [PenilaianSejawatController::class, 'edit'])->name('penilaian.sejawat.edit');
     Route::put('/penilaian/sejawat/{id}', [PenilaianSejawatController::class, 'update'])->name('penilaian.sejawat.update');
-
-    /*
-    |--------------------------------------------------------------------------
-    | Laporan Penilaian Akhir
-    |--------------------------------------------------------------------------
-    */
-    Route::get('/laporan/akhir', [LaporanController::class, 'index'])->name('laporan.akhir');
 });

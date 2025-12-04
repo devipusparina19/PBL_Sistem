@@ -53,7 +53,7 @@
                 </div>
 
                 {{-- Status & Catatan Dosen (hanya untuk dosen) --}}
-                @if(Auth::user()->role === 'dosen')
+                @if(auth()->user()->role === 'dosen')
                     <div class="mb-3">
                         <label for="status" class="form-label fw-semibold">Status</label>
                         <select name="status" id="status" class="form-select" required>

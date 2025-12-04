@@ -120,54 +120,23 @@
                         <div class="col-md-6 mb-3">
                             <label class="form-label">UTS Teori (15%)</label>
                             <input type="number" class="form-control" name="uts"
-                                id="uts" min="0" max="100" step="0.01"
+                                id="integrasi_uts" min="0" max="100" step="0.01"
                                 value="{{ old('uts', $nilai->uts) }}">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">UAS (15%)</label>
                             <input type="number" class="form-control" name="uas"
-                                id="uas" min="0" max="100" step="0.01"
+                                id="integrasi_uas" min="0" max="100" step="0.01"
                                 value="{{ old('uas', $nilai->uas) }}">
                         </div>
                     </div>
                 </div>
 
-                <!-- Form PWL -->
-                <div id="form-pwl" style="display: none;">
-                    <h5 class="mb-3">💻 Komponen Penilaian PWL</h5>
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">UTS (15%)</label>
-                            <input type="number" class="form-control" name="uts" id="pwl_uts" 
-                                   min="0" max="100" step="0.01" value="{{ old('uts', $nilai->uts) }}">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">UAS (15%)</label>
-                            <input type="number" class="form-control" name="uas" id="pwl_uas" 
-                                   min="0" max="100" step="0.01" value="{{ old('uas', $nilai->uas) }}">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Tugas/Quiz (20%)</label>
-                            <input type="number" class="form-control" name="pwl_tugas_quiz" id="pwl_tugas_quiz" 
-                                   min="0" max="100" step="0.01" value="{{ old('pwl_tugas_quiz', $nilai->pwl_tugas_quiz) }}">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Project (30%)</label>
-                            <input type="number" class="form-control" name="pwl_project" id="pwl_project" 
-                                   min="0" max="100" step="0.01" value="{{ old('pwl_project', $nilai->pwl_project) }}">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Presentasi (20%)</label>
-                            <input type="number" class="form-control" name="pwl_presentasi" id="pwl_presentasi" 
-                                   min="0" max="100" step="0.01" value="{{ old('pwl_presentasi', $nilai->pwl_presentasi) }}">
-                        </div>
-                    </div>
-                </div>
+
 
                 <!-- Form IT Project -->
                 <div id="form-it-project" style="display: none;">
-                    <h5 class="mb-3">🚀 Komponen Penilaian IT Project</h5>
+                    <h5 class="mb-3">🚀 Komponen Penilaian IT Project / PWL</h5>
                     
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -249,22 +218,64 @@ function toggleNilaiForm() {
 
     const formStandar = document.getElementById('form-nilai-standar');
     const formIntegrasi = document.getElementById('form-integrasi-sistem');
-    const formPWL = document.getElementById('form-pwl');
     const formIT = document.getElementById('form-it-project');
 
     formStandar.style.display = 'none';
     formIntegrasi.style.display = 'none';
-    formPWL.style.display = 'none';
     formIT.style.display = 'none';
 
     if (namaMK.includes('integrasi sistem')) {
         formIntegrasi.style.display = 'block';
+        setupIntegrasiSistemCalculation();
+    } else if (namaMK.includes('pwl') || namaMK.includes('pemrograman web') || namaMK.includes('web lanjut')) {
+        // PWL menggunakan form yang sama dengan IT Project
+        formIT.style.display = 'block';
+        setupITProjectCalculation();
     } else if (namaMK.includes('it project') || namaMK.includes('it proyek')) {
         formIT.style.display = 'block';
+        setupITProjectCalculation();
     } else if (namaMK) {
-        // PWL dan mata kuliah standar lainnya menggunakan form nilai tunggal
+        // Mata kuliah standar lainnya menggunakan form nilai tunggal
         formStandar.style.display = 'block';
     }
+}
+
+// Kalkulasi Integrasi Sistem
+function setupIntegrasiSistemCalculation() {
+    ['nilai_kerja', 'nilai_laporan', 'ujian_praktikum_1', 'ujian_praktikum_2', 'integrasi_uts', 'integrasi_uas']
+        .forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('input', calculateIntegrasiSistem);
+        });
+}
+
+function calculateIntegrasiSistem() {
+    const val = id => parseFloat(document.getElementById(id)?.value) || 0;
+    
+    const aktivitas = (val('nilai_kerja') * 0.6) + (val('nilai_laporan') * 0.4);
+    const project = (val('ujian_praktikum_1') * 0.5) + (val('ujian_praktikum_2') * 0.5);
+    const nilaiAkhir = (aktivitas * 0.45) + (project * 0.25) + (val('integrasi_uts') * 0.15) + (val('integrasi_uas') * 0.15);
+    
+    console.log('Nilai Akhir Integrasi Sistem:', nilaiAkhir.toFixed(2));
+}
+
+// Kalkulasi IT Project
+function setupITProjectCalculation() {
+    ['it_proposal', 'it_progress_report', 'it_final_project', 'it_presentasi', 'it_dokumentasi']
+        .forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('input', calculateITProject);
+        });
+}
+
+function calculateITProject() {
+    const val = id => parseFloat(document.getElementById(id)?.value) || 0;
+    
+    const nilaiAkhir = (val('it_proposal') * 0.15) + (val('it_progress_report') * 0.15) + 
+                       (val('it_final_project') * 0.4) + (val('it_presentasi') * 0.2) + 
+                       (val('it_dokumentasi') * 0.1);
+    
+    console.log('Nilai Akhir IT Project:', nilaiAkhir.toFixed(2));
 }
 
 document.addEventListener('DOMContentLoaded', () => {
