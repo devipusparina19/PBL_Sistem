@@ -10,6 +10,32 @@ class MataKuliahController extends Controller
 {
     public function index(Request $request)
     {
+        // Check if logged-in user is a student
+        if (auth()->user()->role === 'mahasiswa') {
+            // Get student's class from users table
+            $studentKelas = auth()->user()->kelas;
+            
+            if (!$studentKelas) {
+                return view('mata_kuliah.index', [
+                    'mataKuliahList' => collect(),
+                    'isStudent' => true,
+                    'studentKelas' => null
+                ]);
+            }
+            
+            // Get courses for student's class
+            $mataKuliahList = MataKuliah::where('kelas', $studentKelas)
+                ->orderBy('nama_mk', 'asc')
+                ->get();
+            
+            return view('mata_kuliah.index', [
+                'mataKuliahList' => $mataKuliahList,
+                'isStudent' => true,
+                'studentKelas' => $studentKelas
+            ]);
+        }
+        
+        // For admin/dosen: show all classes
         $kelasList = ['3A', '3B', '3C', '3D', '3E'];
         $mataKuliahByKelas = [];
 
@@ -22,6 +48,7 @@ class MataKuliahController extends Controller
         return view('mata_kuliah.index', compact('mataKuliahByKelas', 'kelasList'));
     }
 
+
     public function showByKelas($kelas)
     {
         if (!in_array($kelas, ['3A', '3B', '3C', '3D', '3E'])) {
@@ -33,6 +60,19 @@ class MataKuliahController extends Controller
             ->paginate(10);
 
         return view('mata_kuliah.kelas', compact('mataKuliah', 'kelas'));
+    }
+
+    public function showDetail($id)
+    {
+        $mataKuliah = MataKuliah::findOrFail($id);
+        
+        // Get all students from the same class
+        $students = \App\Models\User::where('role', 'mahasiswa')
+            ->where('kelas', $mataKuliah->kelas)
+            ->orderBy('name', 'asc')
+            ->get();
+        
+        return view('mata_kuliah.detail', compact('mataKuliah', 'students'));
     }
 
     public function create(Request $request)

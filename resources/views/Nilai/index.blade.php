@@ -116,7 +116,17 @@
                                                 UAS: {{ $n->uas ?? 0 }}
                                             </small>
                                         
-                                        {{-- PWL menggunakan sistem nilai tunggal (tidak perlu tampilkan detail) --}}
+                                        {{-- Kondisi khusus PWL --}}
+                                        @elseif($n->mataKuliah && (stripos($n->mataKuliah->nama_mk, 'pwl') !== false || stripos($n->mataKuliah->nama_mk, 'pemrograman web lanjut') !== false))
+                                            <br>
+                                            <small class="text-muted">
+                                                <i class="bi bi-laptop"></i> 
+                                                Proposal: {{ $n->it_proposal ?? 0 }},
+                                                Progress: {{ $n->it_progress_report ?? 0 }},
+                                                Final: {{ $n->it_final_project ?? 0 }},
+                                                Presentasi: {{ $n->it_presentasi ?? 0 }},
+                                                Dokumentasi: {{ $n->it_dokumentasi ?? 0 }}
+                                            </small>
                                         
                                         {{-- Kondisi khusus IT Project --}}
                                         @elseif($n->mataKuliah && (stripos($n->mataKuliah->nama_mk, 'it project') !== false || stripos($n->mataKuliah->nama_mk, 'it proyek') !== false))
@@ -153,7 +163,14 @@
                                                               (($n->uts ?? 0) * 0.15) + (($n->uas ?? 0) * 0.15);
                                             }
 
-                                            // PWL menggunakan nilai tunggal (tidak perlu perhitungan khusus)
+                                            // PWL (Pemrograman Web Lanjut)
+                                            elseif($n->mataKuliah && (stripos($n->mataKuliah->nama_mk, 'pwl') !== false || stripos($n->mataKuliah->nama_mk, 'pemrograman web lanjut') !== false)) {
+                                                $nilaiAkhir = (($n->it_proposal ?? 0) * 0.15) + 
+                                                              (($n->it_progress_report ?? 0) * 0.15) + 
+                                                              (($n->it_final_project ?? 0) * 0.4) + 
+                                                              (($n->it_presentasi ?? 0) * 0.2) + 
+                                                              (($n->it_dokumentasi ?? 0) * 0.1);
+                                            }
 
                                             // IT Project
                                             elseif($n->mataKuliah && (stripos($n->mataKuliah->nama_mk, 'it project') !== false || stripos($n->mataKuliah->nama_mk, 'it proyek') !== false)) {
