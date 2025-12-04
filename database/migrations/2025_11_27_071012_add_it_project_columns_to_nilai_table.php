@@ -12,12 +12,28 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('nilai', function (Blueprint $table) {
-            // Kolom untuk IT Project
-            $table->decimal('it_proposal', 5, 2)->nullable()->after('catatan');
-            $table->decimal('it_progress_report', 5, 2)->nullable()->after('it_proposal');
-            $table->decimal('it_final_project', 5, 2)->nullable()->after('it_progress_report');
-            $table->decimal('it_presentasi', 5, 2)->nullable()->after('it_final_project');
-            $table->decimal('it_dokumentasi', 5, 2)->nullable()->after('it_presentasi');
+            // Cek apakah kolom belum ada sebelum menambahkan
+            // Ini mencegah error "Duplicate column" jika migration dijalankan ulang
+            
+            if (!Schema::hasColumn('nilai', 'it_proposal')) {
+                $table->decimal('it_proposal', 5, 2)->nullable()->after('catatan');
+            }
+            
+            if (!Schema::hasColumn('nilai', 'it_progress_report')) {
+                $table->decimal('it_progress_report', 5, 2)->nullable()->after('it_proposal');
+            }
+            
+            if (!Schema::hasColumn('nilai', 'it_final_project')) {
+                $table->decimal('it_final_project', 5, 2)->nullable()->after('it_progress_report');
+            }
+            
+            if (!Schema::hasColumn('nilai', 'it_presentasi')) {
+                $table->decimal('it_presentasi', 5, 2)->nullable()->after('it_final_project');
+            }
+            
+            if (!Schema::hasColumn('nilai', 'it_dokumentasi')) {
+                $table->decimal('it_dokumentasi', 5, 2)->nullable()->after('it_presentasi');
+            }
         });
     }
 
@@ -27,13 +43,26 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('nilai', function (Blueprint $table) {
-            $table->dropColumn([
-                'it_proposal',
-                'it_progress_report',
-                'it_final_project',
-                'it_presentasi',
-                'it_dokumentasi'
-            ]);
+            // Hanya drop kolom jika ada
+            if (Schema::hasColumn('nilai', 'it_proposal')) {
+                $table->dropColumn('it_proposal');
+            }
+            
+            if (Schema::hasColumn('nilai', 'it_progress_report')) {
+                $table->dropColumn('it_progress_report');
+            }
+            
+            if (Schema::hasColumn('nilai', 'it_final_project')) {
+                $table->dropColumn('it_final_project');
+            }
+            
+            if (Schema::hasColumn('nilai', 'it_presentasi')) {
+                $table->dropColumn('it_presentasi');
+            }
+            
+            if (Schema::hasColumn('nilai', 'it_dokumentasi')) {
+                $table->dropColumn('it_dokumentasi');
+            }
         });
     }
 };
