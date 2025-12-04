@@ -141,12 +141,12 @@ Route::middleware('auth')->group(function () {
     | NILAI KELOMPOK - DOSEN
     |--------------------------------------------------------------------------
     */
-    Route::get('/nilai-kelompok', [NilaiKelompokController::class, 'index'])->name('nilai-kelompok.index');
-    Route::get('/nilai-kelompok/create', [NilaiKelompokController::class, 'create'])->name('nilai-kelompok.create');
-    Route::post('/nilai-kelompok', [NilaiKelompokController::class, 'store'])->name('nilai-kelompok.store');
-    Route::get('/nilai-kelompok/{id}/edit', [NilaiKelompokController::class, 'edit'])->name('nilai-kelompok.edit');
-    Route::put('/nilai-kelompok/{id}', [NilaiKelompokController::class, 'update'])->name('nilai-kelompok.update');
-    Route::delete('/nilai-kelompok/{id}', [NilaiKelompokController::class, 'destroy'])->name('nilai-kelompok.destroy');
+    Route::get('/nilai_kelompok', [NilaiKelompokController::class, 'index'])->name('nilai_kelompok.index');
+    Route::get('/nilai_kelompok/create', [NilaiKelompokController::class, 'create'])->name('nilai_kelompok.create');
+    Route::post('/nilai_kelompok', [NilaiKelompokController::class, 'store'])->name('nilai_kelompok.store');
+    Route::get('/nilai_kelompok/{id}/edit', [NilaiKelompokController::class, 'edit'])->name('nilai_kelompok.edit');
+    Route::put('/nilai_kelompok/{id}', [NilaiKelompokController::class, 'update'])->name('nilai_kelompok.update');
+    Route::delete('/nilai_kelompok/{id}', [NilaiKelompokController::class, 'destroy'])->name('nilai_kelompok.destroy');
 
     /*
     |--------------------------------------------------------------------------

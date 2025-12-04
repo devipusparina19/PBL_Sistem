@@ -106,7 +106,15 @@
                 </div>
 
                 <!-- Form Integrasi Sistem -->
+<<<<<<< HEAD
+
                 <div id="form-integrasi-sistem" style="display: none;">
+
+                <div id="form-integrasi-sistem" style="display: none;"></div>
+
+=======
+                <div id="form-integrasi-sistem" style="display: none;">
+>>>>>>> 3d3758a9c02b22416dc552326179711aa77c66f2
                     <h5 class="mb-3">📊 Komponen Penilaian Integrasi Sistem</h5>
 
                     <!-- Aktivitas Partisipatif -->
@@ -176,6 +184,10 @@
                         <h5>🎯 Nilai Akhir: <span id="preview_nilai_akhir_integrasi">0.00</span></h5>
                         <small>Grade: <span id="grade_integrasi">-</span></small>
                     </div>
+<<<<<<< HEAD
+
+=======
+>>>>>>> 3d3758a9c02b22416dc552326179711aa77c66f2
                 </div>
 
 
@@ -225,6 +237,10 @@
                         <h5>🎯 Nilai Akhir IT Project: <span id="preview_nilai_akhir_it">0.00</span></h5>
                         <small>Grade: <span id="grade_it">-</span></small>
                     </div>
+<<<<<<< HEAD
+
+=======
+>>>>>>> 3d3758a9c02b22416dc552326179711aa77c66f2
                 </div>
 
                 <hr class="my-4">
@@ -273,15 +289,26 @@ function toggleNilaiForm() {
     } else if (namaMK.includes('integrasi sistem')) {
         formIntegrasi.style.display = 'block';
         setupIntegrasiSistemCalculation();
+<<<<<<< HEAD
+
+=======
     } else if (namaMK.includes('pwl') || namaMK.includes('pemrograman web') || namaMK.includes('web lanjut')) {
         // PWL menggunakan form yang sama dengan IT Project
         formIT.style.display = 'block';
         setupITProjectCalculation();
+>>>>>>> 3d3758a9c02b22416dc552326179711aa77c66f2
     } else if (namaMK.includes('it project') || namaMK.includes('it proyek')) {
         formIT.style.display = 'block';
         setupITProjectCalculation();
     } else if (namaMK) {
+<<<<<<< HEAD
+        // PWL dan mata kuliah standar lainnya menggunakan form nilai tunggal
+
+    } else if (namaMK) {
+ (Update files sebelum pull)
+=======
         // Mata kuliah standar lainnya menggunakan form nilai tunggal
+>>>>>>> 3d3758a9c02b22416dc552326179711aa77c66f2
         formStandar.style.display = 'block';
     }
 }
@@ -366,5 +393,9 @@ function calculateITProject() {
     
     document.getElementById('grade_it').textContent = grade;
 }
+<<<<<<< HEAD
+ (Update files sebelum pull)
+=======
+>>>>>>> 3d3758a9c02b22416dc552326179711aa77c66f2
 </script>
 @endsection
