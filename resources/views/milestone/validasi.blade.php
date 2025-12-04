@@ -37,7 +37,7 @@
                     <td>{{ $m->user->name ?? 'Tidak diketahui' }}</td>
 
                     {{-- Menampilkan nama kelompok (relasi kelompok) --}}
-                    <td>{{ $m->kelompok->nama ?? 'Belum ada kelompok' }}</td>
+                    <td>{{ $m->kelompok->nama_kelompok ?? 'Belum ada kelompok' }}</td>
 
                     {{-- Status --}}
                     <td>

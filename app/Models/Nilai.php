@@ -59,11 +59,14 @@ class Nilai extends Model
             $aktivitas = (($this->nilai_kerja ?? 0) * 0.6) + (($this->nilai_laporan ?? 0) * 0.4);
             $project = (($this->ujian_praktikum_1 ?? 0) * 0.5) + (($this->ujian_praktikum_2 ?? 0) * 0.5);
             $nilaiAkhir = ($aktivitas * 0.45) + ($project * 0.25) + ($this->uts * 0.15) + ($this->uas * 0.15);
-        } elseif ($this->mataKuliah && stripos($this->mataKuliah->nama_mk, 'it project') !== false || stripos($this->mataKuliah->nama_mk, 'it proyek') !== false) {
+        } elseif ($this->mataKuliah && (stripos($this->mataKuliah->nama_mk, 'pwl') !== false || stripos($this->mataKuliah->nama_mk, 'pemrograman web lanjut') !== false)) {
+            // PWL menggunakan sistem nilai seperti IT Project
+            $nilaiAkhir = (($this->it_proposal ?? 0) * 0.15) + (($this->it_progress_report ?? 0) * 0.15) + (($this->it_final_project ?? 0) * 0.4) + (($this->it_presentasi ?? 0) * 0.2) + (($this->it_dokumentasi ?? 0) * 0.1);
+        } elseif ($this->mataKuliah && (stripos($this->mataKuliah->nama_mk, 'it project') !== false || stripos($this->mataKuliah->nama_mk, 'it proyek') !== false)) {
             // IT Project: Proposal 15%, Progress Report 15%, Final Project 40%, Presentasi 20%, Dokumentasi 10%
             $nilaiAkhir = (($this->it_proposal ?? 0) * 0.15) + (($this->it_progress_report ?? 0) * 0.15) + (($this->it_final_project ?? 0) * 0.4) + (($this->it_presentasi ?? 0) * 0.2) + (($this->it_dokumentasi ?? 0) * 0.1);
         }
-        // PWL menggunakan sistem nilai tunggal (menggunakan default $nilaiAkhir = $this->laporan)
+        // Mata kuliah standar lainnya (menggunakan default $nilaiAkhir = $this->laporan)
 
         if ($nilaiAkhir >= 85) {
             return 'A';
