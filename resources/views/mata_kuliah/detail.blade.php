@@ -28,15 +28,15 @@
                 <div class="col-md-6">
                     <p class="mb-2"><strong><i class="bi bi-door-open"></i> Kelas:</strong> <span class="badge bg-primary">{{ $mataKuliah->kelas }}</span></p>
                     @if($mataKuliah->nip_dosen)
-                        <p class="mb-2">
+                        <div class="mb-2">
                             <strong><i class="bi bi-person-badge"></i> Dosen Pengampu:</strong><br>
-                            @php
-                                $dosens = explode(',', $mataKuliah->nip_dosen);
-                            @endphp
-                            @foreach($dosens as $nip)
-                                <span class="badge bg-info text-white me-1">{{ trim($nip) }}</span>
+                            @foreach($mataKuliah->dosens as $dosen)
+                                <div class="d-flex align-items-center mt-1">
+                                    <span class="badge bg-info text-white me-2">{{ $dosen->nip }}</span>
+                                    <span>{{ $dosen->nama }}</span>
+                                </div>
                             @endforeach
-                        </p>
+                        </div>
                     @endif
                 </div>
             </div>

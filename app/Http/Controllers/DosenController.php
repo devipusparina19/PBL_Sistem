@@ -15,16 +15,33 @@ class DosenController extends Controller
 
     public function index()
     {
+        // Cek apakah user adalah mahasiswa
+        $user = auth()->user();
+        $isStudent = $user->role === 'mahasiswa';
+        
+        if ($isStudent) {
+            // Ambil kelas mahasiswa langsung dari tabel users
+            $kelas = $user->kelas;
+            
+            // Ambil dosen sesuai kelas mahasiswa
+            $dosens = Dosen::where('kelas', $kelas)
+                ->orderBy('nama', 'asc')
+                ->get();
+                
+            return view('data_dosen.index', compact('dosens', 'isStudent', 'kelas'));
+        }
+
+        // Logic untuk admin/dosen (tampilkan semua kelas)
         $kelasList = ['3A', '3B', '3C', '3D', '3E'];
         $dosenByKelas = [];
 
-        foreach ($kelasList as $kelas) {
-            $dosenByKelas[$kelas] = Dosen::where('kelas', $kelas)
+        foreach ($kelasList as $kelasItem) {
+            $dosenByKelas[$kelasItem] = Dosen::where('kelas', $kelasItem)
                 ->orderBy('nama', 'asc')
                 ->get();
         }
 
-        return view('data_dosen.index', compact('dosenByKelas', 'kelasList'));
+        return view('data_dosen.index', compact('dosenByKelas', 'kelasList', 'isStudent'));
     }
 
     public function showByKelas($kelas)
