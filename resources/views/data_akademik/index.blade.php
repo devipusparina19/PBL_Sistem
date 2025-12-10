@@ -219,7 +219,7 @@
                                         @foreach($mahasiswas as $mhs)
                                             <tr>
                                                 <td><strong>{{ $mhs->name }}</strong></td>
-                                                <td>{{ $mhs->nim ?? '-' }}</td>
+                                                <td>{{ $mhs->nim_nip ?? '-' }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -246,7 +246,7 @@
                                                 <strong>{{ $item->name }}</strong>
                                                 <br>
                                                 <small class="text-muted">
-                                                    <i class="bi bi-card-text"></i> {{ $item->nim ?? '-' }}
+                                                    <i class="bi bi-card-text"></i> {{ $item->nim_nip ?? '-' }}
                                                 </small>
                                             </li>
                                         @endforeach
