@@ -201,14 +201,8 @@
                 </a>
             @endif
 
-            <a href="{{ url('/data_dosen') }}" class="{{ request()->is('data_dosen*') ? 'active' : '' }}">
-                <i class="bi bi-person-badge-fill"></i> Data Dosen
-            </a>
-            <a href="{{ url('/mata_kuliah') }}" class="{{ request()->is('mata_kuliah*') ? 'active' : '' }}">
-                <i class="bi bi-book-fill"></i> Data Mata Kuliah
-            </a>
-            <a href="{{ url('/mahasiswa') }}" class="{{ request()->is('mahasiswa') ? 'active' : '' }}">
-                <i class="bi bi-mortarboard"></i> Data Mahasiswa
+            <a href="{{ url('/data_akademik') }}" class="{{ request()->is('data_akademik*') ? 'active' : '' }}">
+                <i class="bi bi-collection-fill"></i> Data Akademik
             </a>
             <a href="{{ url('/kelompok') }}" class="{{ request()->is('kelompok') ? 'active' : '' }}">
                 <i class="bi bi-people"></i> Kelompok PBL

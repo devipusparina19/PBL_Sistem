@@ -27,6 +27,7 @@ use App\Http\Controllers\RangkingController;
 use App\Http\Controllers\ProgresController;
 use App\Http\Controllers\PenilaianSejawatController;
 use App\Http\Controllers\LaporanController; // ✅ Tambahan untuk laporan penilaian
+use App\Http\Controllers\DataAkademikController;
 
 /*
 |--------------------------------------------------------------------------
@@ -106,6 +107,9 @@ Route::middleware('auth')->group(function () {
     Route::get('mata_kuliah/{id}/detail', [MataKuliahController::class, 'showDetail'])->name('mata_kuliah.detail');
     Route::resource('mata_kuliah', MataKuliahController::class);
     Route::get('kelompok/by-kelas/{kelas}', [KelompokController::class, 'showByKelas'])->name('kelompok.byKelas');
+    
+    // Data Akademik (Unified View)
+    Route::get('/data_akademik', [DataAkademikController::class, 'index'])->name('data_akademik.index');
     Route::get('/kelompok/rangking', [RangkingController::class, 'kelompok'])->name('kelompok.rangking');
     Route::resource('kelompok', KelompokController::class);
     Route::resource('logbook', LogbookController::class);
