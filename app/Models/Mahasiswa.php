@@ -15,7 +15,6 @@ class Mahasiswa extends Model
         'kelas',
         'angkatan',
         'email',
-        'password',
         'foto',
         'kelompok_id', // ✅ kolom relasi ke tabel kelompok
     ];
