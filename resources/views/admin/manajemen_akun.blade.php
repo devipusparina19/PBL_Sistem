@@ -62,8 +62,8 @@
                                 <td class="text-center small">{{ $user->created_at->format('d M Y') }}</td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-1">
-                                        <a href="{{ url('/akun/edit/'.$user->id) }}" class="btn btn-sm btn-outline-warning">Edit</a>
-                                        <form action="{{ url('/akun/delete/'.$user->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus akun ini?')">
+                                        <a href="{{ route('akun.edit', $user->id) }}" class="btn btn-sm btn-outline-warning">Edit</a>
+                                        <form action="{{ route('akun.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus akun ini?')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-outline-danger">Hapus</button>
