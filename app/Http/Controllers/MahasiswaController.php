@@ -55,34 +55,26 @@ class MahasiswaController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $request->validate([
-            'nim' => 'required|unique:mahasiswas',
-            'nama' => 'required',
-            'kelas' => 'required', 
-            'angkatan' => 'required',
-            'email' => 'required|email|unique:mahasiswas',
-            'password' => 'required|min:6',
-        ]);
+{
+    $request->validate([
+        'nim' => 'required|unique:mahasiswas',
+        'nama' => 'required',
+        'kelas' => 'required', 
+        'angkatan' => 'required',
+        'email' => 'required|email|unique:mahasiswas',
+    ]);
 
-        $mahasiswa = Mahasiswa::create([
-            'nim' => $request->nim,
-            'nama' => $request->nama,
-            'kelas' => $request->kelas, 
-            'angkatan' => $request->angkatan,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
+    Mahasiswa::create([
+        'nim' => $request->nim,
+        'nama' => $request->nama,
+        'kelas' => $request->kelas, 
+        'angkatan' => $request->angkatan,
+        'email' => $request->email,
+    ]);
 
-        // Smart redirect ke halaman kelas jika ada parameter kelas
-        if ($request->has('kelas')) {
-            return redirect()->route('mahasiswa.kelas', $request->kelas)
-                ->with('success', 'Data mahasiswa berhasil ditambahkan.');
-        }
-
-        return redirect()->route('mahasiswa.index')
-            ->with('success', 'Data mahasiswa berhasil ditambahkan.');
-    }
+    return redirect()->route('mahasiswa.kelas', $request->kelas)
+        ->with('success', 'Data mahasiswa berhasil ditambahkan.');
+}
 
     /**
      * Display the specified resource.
@@ -104,37 +96,26 @@ class MahasiswaController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Mahasiswa $mahasiswa)
-    {
-        $request->validate([
-            'nama' => 'required',
-            'kelas' => 'required', 
-            'angkatan' => 'required',
-            'email' => 'required|email|unique:mahasiswas,email,' . $mahasiswa->id,
-            'password' => 'nullable|min:6',
-        ]);
+{
+    $request->validate([
+        'nama' => 'required',
+        'kelas' => 'required', 
+        'angkatan' => 'required',
+        'email' => 'required|email|unique:mahasiswas,email,' . $mahasiswa->id,
+    ]);
 
-        $data = [
-            'nama' => $request->nama,
-            'kelas' => $request->kelas, 
-            'angkatan' => $request->angkatan,
-            'email' => $request->email,
-        ];
+    $data = [
+        'nama' => $request->nama,
+        'kelas' => $request->kelas, 
+        'angkatan' => $request->angkatan,
+        'email' => $request->email,
+    ];
 
-        if ($request->password) {
-            $data['password'] = bcrypt($request->password);
-        }
+    $mahasiswa->update($data);
 
-        $mahasiswa->update($data);
-
-        // Smart redirect ke halaman kelas jika ada parameter kelas
-        if ($request->has('kelas')) {
-            return redirect()->route('mahasiswa.kelas', $request->kelas)
-                ->with('success', 'Data mahasiswa berhasil diperbarui.');
-        }
-
-        return redirect()->route('mahasiswa.index')
-            ->with('success', 'Data mahasiswa berhasil diperbarui.');
-    }
+    return redirect()->route('mahasiswa.kelas', $request->kelas)
+        ->with('success', 'Data mahasiswa berhasil diperbarui.');
+}
 
     /**
      * Remove the specified resource from storage.

@@ -32,6 +32,17 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    // Accessor untuk backward compatibility
+    public function getNimAttribute()
+    {
+        return $this->nim_nip;
+    }
+
+    public function getNamaAttribute()
+    {
+        return $this->name;
+    }
+
     public function milestones()
     {
         return $this->hasMany(Milestone::class, 'user_id');

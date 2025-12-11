@@ -71,6 +71,24 @@
             </div>
         </div>
 
+        <!-- Data Akademik -->
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-collection-fill text-primary" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h5 class="fw-semibold mb-2 text-dark">Data Akademik</h5>
+                    <p class="text-secondary mb-4" style="font-size: 0.95rem;">
+                        Lihat data dosen, mata kuliah, dan mahasiswa kelas Anda.
+                    </p>
+                    <a href="{{ route('data_akademik.index') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                        Lihat Data
+                    </a>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 

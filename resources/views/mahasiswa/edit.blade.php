@@ -70,16 +70,6 @@
             @enderror
         </div>
 
-        {{-- Password opsional, kosongkan jika tidak ingin diubah --}}
-        <div class="mb-3">
-            <label for="password" class="form-label">Password (kosongkan jika tidak diganti)</label>
-            <input type="password" class="form-control @error('password') is-invalid @enderror"
-                   id="password" name="password">
-            @error('password')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
         <button type="submit" class="btn btn-primary">Update</button>
         <a href="{{ route('mahasiswa.index') }}" class="btn btn-secondary">Kembali</a>
     </form>
