@@ -12,7 +12,7 @@ class NilaiKelompokController extends Controller
      */
     public function index()
     {
-        $kelompoks = Kelompok::with('mahasiswas')->orderBy('nama_kelompok', 'asc')->get();
+        $kelompoks = Kelompok::with('mahasiswa')->orderBy('nama_kelompok', 'asc')->get();
         return view('nilai_kelompok.index', compact('kelompoks'));
     }
 
@@ -61,7 +61,7 @@ class NilaiKelompokController extends Controller
             'hasil_akhir' => round($hasil_akhir, 2),
         ]);
 
-        return redirect()->route('nilai-kelompok.index')->with('success', 'Nilai kelompok berhasil disimpan!');
+        return redirect()->route('nilai_kelompok.index')->with('success', 'Nilai kelompok berhasil disimpan!');
     }
 
     /**
@@ -108,7 +108,7 @@ class NilaiKelompokController extends Controller
             'hasil_akhir' => round($hasil_akhir, 2),
         ]);
 
-        return redirect()->route('nilai-kelompok.index')->with('success', 'Nilai kelompok berhasil diperbarui!');
+        return redirect()->route('nilai_kelompok.index')->with('success', 'Nilai kelompok berhasil diperbarui!');
     }
 
     /**
@@ -127,6 +127,6 @@ class NilaiKelompokController extends Controller
             'hasil_akhir' => null,
         ]);
 
-        return redirect()->route('nilai-kelompok.index')->with('success', 'Nilai kelompok berhasil dihapus!');
+        return redirect()->route('nilai_kelompok.index')->with('success', 'Nilai kelompok berhasil dihapus!');
     }
 }

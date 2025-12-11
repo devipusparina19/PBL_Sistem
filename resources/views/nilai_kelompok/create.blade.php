@@ -13,7 +13,7 @@
     <!-- Form Card -->
     <div class="card shadow border-0 rounded-4">
         <div class="card-body px-5 py-4">
-            <form action="{{ route('nilai-kelompok.store') }}" method="POST">
+            <form action="{{ route('nilai_kelompok.store') }}" method="POST">
                 @csrf
 
                 <!-- Pilih Kelompok -->
@@ -131,7 +131,7 @@
 
                 <!-- Buttons -->
                 <div class="d-flex justify-content-end gap-2">
-                    <a href="{{ route('nilai-kelompok.index') }}" class="btn btn-secondary">
+                    <a href="{{ route('nilai_kelompok.index') }}" class="btn btn-secondary">
                         <i class="bi bi-x-circle me-2"></i>Batal
                     </a>
                     <button type="submit" class="btn btn-primary">
