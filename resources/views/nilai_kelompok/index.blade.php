@@ -21,7 +21,7 @@
     <!-- Button Tambah / Input Nilai Kelompok (Khusus Dosen) -->
     @if(Auth::user()->role === 'dosen')
         <div class="mb-4">
-            <a href="{{ route('nilai-kelompok.create') }}" class="btn btn-primary">
+            <a href="{{ route('nilai_kelompok.create') }}" class="btn btn-primary">
                 <i class="bi bi-plus-circle me-2"></i>Input Nilai Kelompok
             </a>
         </div>
@@ -57,7 +57,7 @@
                                 <td class="text-center">{{ $index + 1 }}</td>
                                 <td class="fw-semibold">{{ $kelompok->nama_kelompok }}</td>
                                 <td>{{ $kelompok->judul_proyek ?? '-' }}</td>
-                                <td class="text-center">{{ $kelompok->mahasiswas->count() }} orang</td>
+                                <td class="text-center">{{ $kelompok->mahasiswa->count() }} orang</td>
                                 <td class="text-center">
                                     {{ $kelompok->pemrograman_web !== null ? number_format($kelompok->pemrograman_web, 1) : '-' }}
                                 </td>
@@ -93,11 +93,11 @@
                                 @if(Auth::user()->role === 'dosen')
                                     <td class="text-center">
                                         @if($kelompok->hasil_akhir !== null)
-                                            <a href="{{ route('nilai-kelompok.edit', $kelompok->id_kelompok) }}" 
+                                            <a href="{{ route('nilai_kelompok.edit', $kelompok->id_kelompok) }}" 
                                                class="btn btn-warning btn-sm me-1">
                                                 <i class="bi bi-pencil-square"></i> Edit
                                             </a>
-                                            <form action="{{ route('nilai-kelompok.destroy', $kelompok->id_kelompok) }}" 
+                                            <form action="{{ route('nilai_kelompok.destroy', $kelompok->id_kelompok) }}" 
                                                   method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
@@ -107,7 +107,7 @@
                                                 </button>
                                             </form>
                                         @else
-                                            <a href="{{ route('nilai-kelompok.create') }}?kelompok_id={{ $kelompok->id_kelompok }}" 
+                                            <a href="{{ route('nilai_kelompok.create') }}?kelompok_id={{ $kelompok->id_kelompok }}" 
                                                class="btn btn-primary btn-sm">
                                                 <i class="bi bi-plus-circle"></i> Input Nilai
                                             </a>
