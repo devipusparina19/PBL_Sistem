@@ -109,6 +109,28 @@ public function sinkron()
     // ===============================
     public function index()
     {
+        // Auto-sync for Mahasiswa (Ensure their group exists and they are linked)
+        $user = auth()->user();
+        if ($user && $user->role === 'mahasiswa' && $user->role_kelompok && $user->kelas) {
+            $mahasiswa = Mahasiswa::where('email', $user->email)->first();
+            if ($mahasiswa) {
+                $namaKelompok = 'Kelompok ' . $user->role_kelompok . ' (' . $user->kelas . ')';
+                $kelompok = Kelompok::firstOrCreate(
+                    ['nama_kelompok' => $namaKelompok, 'kelas' => $user->kelas],
+                    ['kode_mk' => 'PBL-' . $user->kelas, 'judul_proyek' => 'Belum ada judul']
+                );
+
+                if ($mahasiswa->kelompok_id != $kelompok->id_kelompok) {
+                    $mahasiswa->kelompok_id = $kelompok->id_kelompok;
+                    $mahasiswa->save();
+                }
+                
+                if ($user->role_di_kelompok === 'Ketua' && !$kelompok->ketua_id) {
+                    $kelompok->update(['ketua_id' => $mahasiswa->id]);
+                }
+            }
+        }
+
         $kelasList = ['3A', '3B', '3C', '3D', '3E'];
         $kelompokByKelas = [];
 

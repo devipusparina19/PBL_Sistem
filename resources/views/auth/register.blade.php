@@ -99,17 +99,8 @@ footer {
   box-shadow: 0 -2px 8px rgba(0,0,0,0.25);
 }
 
-/* Field Mahasiswa animasi */
-#mahasiswa-fields {
-  opacity: 0;
-  max-height: 0;
-  overflow: hidden;
-  transition: opacity 0.3s ease, max-height 0.3s ease;
-}
-#mahasiswa-fields.show {
-  opacity: 1;
-  max-height: 300px; /* sesuaikan jumlah field */
-}
+/* Removed: Field animation styles no longer needed */
+
 
 /* Scrollbar kecil opsional */
 .register-card::-webkit-scrollbar { width:6px; }
@@ -174,51 +165,38 @@ footer {
   </div>
 
   <div class="form-group">
-    <label>Role</label>
-    <select name="role" id="role" required>
-      <option value="">-- Pilih Role --</option>
-      <option value="mahasiswa">Mahasiswa</option>
-      <option value="dosen">Dosen</option>
-      <option value="admin">Admin</option>
-      <option value="koordinator_pbl">Koordinator PBL</option>
-      <option value="koordinator_prodi">Koordinator Prodi</option>
+    <label>Kelas</label>
+    <select name="kelas" required>
+      <option value="">-- Pilih Kelas --</option>
+      @foreach($kelasList as $kelas)
+        <option value="{{ $kelas }}">{{ $kelas }}</option>
+      @endforeach
     </select>
+    <small style="color:#666;font-size:0.8rem;">Hanya untuk mahasiswa</small>
   </div>
 
-  <!-- Field Mahasiswa -->
-   <div class="form-group mt-3" id="kelasGroup" style="display: none;">
-    <label for="kelas">Kelas</label>
-    <select name="kelas" id="kelas" class="form-control">
-        <option value="">Pilih Kelas</option>
-        <option value="3A">3A</option>
-        <option value="3B">3B</option>
-        <option value="3C">3C</option>
-        <option value="3D">3D</option>
-        <option value="3E">3E</option>
+  <div class="form-group">
+    <label>Kelompok</label>
+    <select name="role_kelompok">
+      <option value="">-- Pilih Kelompok --</option>
+      <option value="1">Kelompok 1</option>
+      <option value="2">Kelompok 2</option>
+      <option value="3">Kelompok 3</option>
+      <option value="4">Kelompok 4</option>
+      <option value="5">Kelompok 5</option>
+      <option value="6">Kelompok 6</option>
     </select>
-</div>
+    <small style="color:#666;font-size:0.8rem;">Opsional - kelompok PBL</small>
+  </div>
 
-  <div id="mahasiswa-fields">
-    <div class="form-group">
-      <label>Kelompok</label>
-      <select name="role_kelompok">
-        <option value="">-- Pilih Kelompok --</option>
-        <option value="1">Kelompok 1</option>
-        <option value="2">Kelompok 2</option>
-        <option value="3">Kelompok 3</option>
-        <option value="4">Kelompok 4</option>
-        <option value="5">Kelompok 5</option>
-        <option value="6">Kelompok 6</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Role di Kelompok</label>
-      <select name="role_di_kelompok">
-        <option value="">-- Pilih Role --</option>
-        <option value="ketua">Ketua</option>
-        <option value="anggota">Anggota</option>
-      </select>
-    </div>
+  <div class="form-group">
+    <label>Role di Kelompok</label>
+    <select name="role_di_kelompok">
+      <option value="">-- Pilih Role --</option>
+      <option value="Ketua">Ketua</option>
+      <option value="Anggota">Anggota</option>
+    </select>
+    <small style="color:#666;font-size:0.8rem;">Opsional - posisi dalam kelompok</small>
   </div>
 
   <button type="submit">Daftar</button>
@@ -236,42 +214,8 @@ footer {
 </footer>
 
 <script>
-const roleSelect = document.getElementById('role');
-const mahasiswaFields = document.getElementById('mahasiswa-fields');
-
-roleSelect.addEventListener('change', function() {
-    if(this.value === 'mahasiswa') {
-        mahasiswaFields.classList.add('show');
-        mahasiswaFields.querySelectorAll('select').forEach(f => f.required = true);
-    } else {
-        mahasiswaFields.classList.remove('show');
-        mahasiswaFields.querySelectorAll('select').forEach(f => f.required = false);
-    }
-});
-
-// ✅ Tambahan khusus untuk menampilkan dropdown kelas
-const kelasGroup = document.getElementById('kelasGroup'); // pastikan id="kelasGroup" di div kelas kamu
-const kelasSelect = document.getElementById('kelas'); // pastikan id="kelas" di select kelas kamu
-
-roleSelect.addEventListener('change', function() {
-    if (this.value === 'mahasiswa') {
-        kelasGroup.style.display = 'block';
-        kelasSelect.required = true;
-    } else {
-        kelasGroup.style.display = 'none';
-        kelasSelect.required = false;
-        kelasSelect.value = ''; // reset kalau bukan mahasiswa
-    }
-});
-
-// Jalankan saat pertama kali halaman dimuat
-document.addEventListener('DOMContentLoaded', function() {
-    if (roleSelect.value === 'mahasiswa') {
-        kelasGroup.style.display = 'block';
-    } else {
-        kelasGroup.style.display = 'none';
-    }
-});
+// No JavaScript needed since all fields are now always visible
+// and group selection is simplified to match admin view
 </script>
 </body>
 </html>

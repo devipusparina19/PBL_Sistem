@@ -17,48 +17,63 @@
     </div>
 
     {{-- Tabel Akun --}}
-    <div class="card shadow-sm">
-        <div class="card-body">
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-body p-4">
             <div class="table-responsive">
-                <table class="table table-bordered table-striped align-middle">
+                <table class="table table-hover align-middle">
                     <thead class="table-dark text-center">
                         <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Tanggal Dibuat</th>
-                            <th width="180">Aksi</th>
+                            <th class="py-3">No</th>
+                            <th class="py-3">Nama</th>
+                            <th class="py-3">NIM/NIP</th>
+                            <th class="py-3">Kelompok</th>
+                            <th class="py-3">Email</th>
+                            <th class="py-3">Role</th>
+                            <th class="py-3">Tanggal Dibuat</th>
+                            <th class="py-3">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($users as $index => $user)
                             <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $user->name }}</td>
+                                <td class="text-center">{{ $index + 1 }}</td>
+                                <td class="fw-bold">{{ $user->name }}</td>
+                                <td class="text-center">{{ $user->nim_nip ?? '-' }}</td>
+                                <td class="text-center">
+                                    @if($user->role == 'mahasiswa' && $user->mahasiswa && $user->mahasiswa->kelompok)
+                                        <span class="badge bg-info text-dark">
+                                            {{ $user->mahasiswa->kelompok->nama_kelompok }}
+                                        </span>
+                                    @else
+                                        <span class="text-muted small">-</span>
+                                    @endif
+                                </td>
                                 <td>{{ $user->email }}</td>
-                                <td>
-                                    <span class="badge 
+                                <td class="text-center">
+                                    <span class="badge rounded-pill
                                         @if($user->role == 'admin') bg-danger 
                                         @elseif($user->role == 'dosen') bg-success 
-                                        @elseif($user->role == 'koordinator') bg-warning text-dark 
-                                        @else bg-primary @endif">
-                                        {{ ucfirst($user->role) }}
+                                        @elseif($user->role == 'koordinator_pbl') bg-warning text-dark 
+                                        @elseif($user->role == 'mahasiswa') bg-primary 
+                                        @else bg-secondary @endif">
+                                        {{ ucfirst(str_replace('_', ' ', $user->role)) }}
                                     </span>
                                 </td>
-                                <td>{{ $user->created_at->format('d M Y') }}</td>
-                                <td>
-                                    <a href="{{ url('/akun/edit/'.$user->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                    <form action="{{ url('/akun/delete/'.$user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus akun ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
-                                    </form>
+                                <td class="text-center small">{{ $user->created_at->format('d M Y') }}</td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center gap-1">
+                                        <a href="{{ url('/akun/edit/'.$user->id) }}" class="btn btn-sm btn-outline-warning">Edit</a>
+                                        <form action="{{ url('/akun/delete/'.$user->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus akun ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Hapus</button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center text-muted">Belum ada akun yang terdaftar.</td>
+                                <td colspan="8" class="text-center text-muted py-4">Belum ada akun yang terdaftar.</td>
                             </tr>
                         @endforelse
                     </tbody>

@@ -7,13 +7,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Kelompok;
+use App\Models\Mahasiswa;
 
 class RegisterController extends Controller
 {
     // ✅ Tampilkan halaman register
+    // ✅ Tampilkan halaman register
     public function showRegisterForm()
     {
-        return view('auth.register');
+        // Data Kelas hardcoded sesuai MahasiswaController
+        $kelasList = ['3A', '3B', '3C', '3D', '3E'];
+        
+        // Ambil data kelompok dari database
+        $kelompokList = Kelompok::all();
+
+        return view('auth.register', compact('kelasList', 'kelompokList'));
     }
 
     // ✅ Proses pendaftaran user baru
@@ -24,11 +33,10 @@ class RegisterController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
-            'role' => 'required|string',
-            'nim_nip' => 'required|string|max:50',
-            'kelas' => 'nullable|string|max:50',
-            'role_kelompok' => 'nullable|string|max:50',
-            'role_di_kelompok' => 'nullable|string|max:50',
+            'nim_nip' => 'required|string|max:50|unique:users',
+            'kelas' => 'required|string', // Wajib bagi mahasiswa
+            'role_kelompok' => 'nullable|string',
+            'role_di_kelompok' => 'nullable|string|in:Ketua,Anggota',
         ]);
 
         // Validasi domain email Politala
@@ -41,14 +49,8 @@ class RegisterController extends Controller
                 ->withInput();
         }
 
-        // ✅ Tentukan role otomatis berdasarkan domain
-        $role = $request->role;
-
-        if (str_ends_with($request->email, '@mhs.politala.ac.id')) {
-            $role = 'mahasiswa';
-        } elseif (str_ends_with($request->email, '@politala.ac.id')) {
-            $role = $role ?? 'dosen';
-        }
+        // ✅ Default role mahasiswa, sisanya null (diisi admin)
+        $role = 'mahasiswa';
 
         // ✅ Simpan user ke database
         $user = User::create([
@@ -58,12 +60,55 @@ class RegisterController extends Controller
             'role' => $role,
             'nim_nip' => $request->nim_nip,
             'kelas' => $request->kelas,
-            'role_kelompok' => $request->role_kelompok,
+            'role_kelompok' => $request->role_kelompok, // Save ID or Name to user? User table role_kelompok is string. Let's save ID or Name? The view now sends ID. Let's save ID to be consistent if possible, OR if User table expects name we might need to find name. BUT, the main request is to save to Data Kelompok.
+            // User table 'role_kelompok' seems to be a legacy/redundant string field based on previous conversations/code.
+            // We will save the ID here for reference or nullable.
             'role_di_kelompok' => $request->role_di_kelompok,
         ]);
 
         // ✅ Login langsung setelah register
         Auth::login($user);
+
+        // ✅ Create Mahasiswa Record
+        // ✅ Create Mahasiswa Record
+        if ($role === 'mahasiswa') {
+            $kelompokId = null;
+            if ($request->role_kelompok) {
+                // Construct specific name: Kelompok 1 (3A)
+                $namaKelompok = 'Kelompok ' . $request->role_kelompok . ' (' . $request->kelas . ')';
+                
+                // Auto-create group if not exists
+                $kelompok = Kelompok::firstOrCreate(
+                    ['nama_kelompok' => $namaKelompok, 'kelas' => $request->kelas],
+                    [
+                        'kode_mk' => 'PBL-' . $request->kelas, // Default code
+                        'judul_proyek' => 'Belum ada judul',
+                    ]
+                );
+                
+                $kelompokId = $kelompok->id_kelompok;
+            }
+
+            $mahasiswa = Mahasiswa::updateOrCreate(
+                ['nim' => $request->nim_nip],
+                [
+                    'nama' => $request->name,
+                    'kelas' => $request->kelas,
+                    'angkatan' => '2023',
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                    'kelompok_id' => $kelompokId,
+                ]
+            );
+
+            // ✅ Update Ketua Kelompok if selected
+            if ($kelompokId && $request->role_di_kelompok === 'Ketua') {
+                $kelompok = Kelompok::find($kelompokId);
+                if ($kelompok) {
+                    $kelompok->update(['ketua_id' => $mahasiswa->id]);
+                }
+            }
+        }
 
         // ✅ Redirect sesuai role
         switch ($role) {

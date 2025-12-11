@@ -15,6 +15,7 @@ class Mahasiswa extends Model
         'kelas',
         'angkatan',
         'email',
+        'password', // ✅ Added for auto-registration
         'foto',
         'kelompok_id', // ✅ kolom relasi ke tabel kelompok
     ];

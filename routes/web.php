@@ -112,6 +112,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/data_akademik', [DataAkademikController::class, 'index'])->name('data_akademik.index');
     Route::get('/kelompok/rangking', [RangkingController::class, 'kelompok'])->name('kelompok.rangking');
     Route::resource('kelompok', KelompokController::class);
+    // Route khusus manage anggota (fix error route missing)
+    Route::get('kelompok/{kelompok}/anggota', [KelompokController::class, 'manageAnggota'])->name('kelompok.anggota.manage');
+    Route::put('kelompok/{kelompok}/anggota', [KelompokController::class, 'updateAnggota'])->name('kelompok.anggota.update');
+    
     Route::resource('logbook', LogbookController::class);
 
     Route::middleware(['auth'])->group(function () {

@@ -24,16 +24,27 @@ class LogbookController extends Controller
     {
         $request->validate([
             'tanggal' => 'required|date',
-            'minggu_ke' => 'nullable|string', // ✅ ubah ke nullable biar bisa otomatis
+            'minggu_ke' => 'nullable|string', 
             'judul' => 'required|string|max:255',
-            'kelompok' => 'required|string|max:255',
             'rincian' => 'required|string',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $data = $request->all();
 
-        // ✅ Tambahan otomatis isi minggu_ke jika belum diisi dari form
+        // Otomatis isi nama kelompok dari data mahasiswa login
+        if (auth()->check() && auth()->user()->role === 'mahasiswa') {
+            $mahasiswa = auth()->user()->mahasiswa;
+            if ($mahasiswa && $mahasiswa->kelompok) {
+                $data['kelompok'] = $mahasiswa->kelompok->nama_kelompok;
+            } else {
+                $data['kelompok'] = 'Individu / Belum Ada Kelompok';
+            }
+        } else {
+             $data['kelompok'] = $request->kelompok ?? '-';
+        }
+
+        // Otomatis isi minggu_ke jika kosong
         if (empty($data['minggu_ke'])) {
             $today = Carbon::now();
             $data['minggu_ke'] = 'Minggu ke-' . ceil($today->day / 7);

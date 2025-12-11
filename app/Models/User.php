@@ -47,4 +47,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Milestone::class, 'user_id');
     }
+
+    public function mahasiswa()
+    {
+        return $this->hasOne(Mahasiswa::class, 'nim', 'nim_nip');
+    }
 }

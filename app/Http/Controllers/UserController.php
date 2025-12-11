@@ -31,8 +31,9 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'      => 'required|string|max:255',
-            'email'     => [
+            'name'              => 'required|string|max:255',
+            'nim_nip'           => 'required|string|unique:users,nim_nip',
+            'email'             => [
                 'required',
                 'string',
                 'email',
@@ -44,15 +45,18 @@ class UserController extends Controller
                     }
                 },
             ],
-            'password'  => 'required|string|min:8|confirmed',
-            'role'      => 'required|string|in:mahasiswa,dosen,admin,koordinator_pbl,koordinator_prodi',
+            'password'          => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::create([
-            'name'      => $request->name,
-            'email'     => $request->email,
-            'password'  => Hash::make($request->password),
-            'role'      => $request->role,
+            'name'              => $request->name,
+            'nim_nip'           => $request->nim_nip,
+            'email'             => $request->email,
+            'password'          => Hash::make($request->password),
+            'role'              => 'mahasiswa', // Always default to mahasiswa
+            'kelas'             => null, // Set by admin later
+            'role_kelompok'     => null, // Set by admin later
+            'role_di_kelompok'  => null, // Set by admin later
         ]);
 
         Auth::login($user);
