@@ -51,6 +51,25 @@ class ProfileController extends Controller
         // Update data user
         $user->update($data);
 
+        // ✅ SYNC KE TABEL MAHASISWA
+        if ($user->role == 'mahasiswa' && $user->nim_nip) {
+            $mhs = \App\Models\Mahasiswa::where('nim', $user->nim_nip)->first();
+            if ($mhs) {
+                 $mhsData = ['nama' => $request->name, 'email' => $request->email];
+                 if ($request->filled('password')) {
+                     $mhsData['password'] = Hash::make($request->password);
+                 }
+                 $mhs->update($mhsData);
+            }
+        }
+        // ✅ SYNC KE TABEL DOSEN
+        elseif ($user->role == 'dosen' && $user->nim_nip) {
+             $dsn = \App\Models\Dosen::where('nip', $user->nim_nip)->first();
+             if ($dsn) {
+                 $dsn->update(['nama' => $request->name, 'email' => $request->email]);
+             }
+        }
+
         return back()->with('success', 'Profil berhasil diperbarui!');
     }
 }

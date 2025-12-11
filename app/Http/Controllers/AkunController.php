@@ -169,6 +169,14 @@ class AkunController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
+        
+        // ✅ Hapus data terkait di tabel Mahasiswa / Dosen
+        if ($user->role == 'mahasiswa' && $user->nim_nip) {
+            \App\Models\Mahasiswa::where('nim', $user->nim_nip)->delete();
+        } elseif ($user->role == 'dosen' && $user->nim_nip) {
+            \App\Models\Dosen::where('nip', $user->nim_nip)->delete();
+        }
+
         $user->delete();
 
         return redirect()->route('akun.index')->with('success', 'Akun berhasil dihapus!');

@@ -70,7 +70,23 @@ class MahasiswaController extends Controller
         'kelas' => $request->kelas, 
         'angkatan' => $request->angkatan,
         'email' => $request->email,
+        // Password default untuk mahasiswa
+        'password' => \Illuminate\Support\Facades\Hash::make('123456'),
     ]);
+
+    // ✅ Auto Create User Login
+    \App\Models\User::firstOrCreate(
+        ['email' => $request->email],
+        [
+            'name' => $request->nama,
+            'password' => \Illuminate\Support\Facades\Hash::make('123456'),
+            'role' => 'mahasiswa',
+            'nim_nip' => $request->nim,
+            'kelas' => $request->kelas,
+            'role_kelompok' => null, 
+            'role_di_kelompok' => 'Anggota',
+        ]
+    );
 
     return redirect()->route('mahasiswa.kelas', $request->kelas)
         ->with('success', 'Data mahasiswa berhasil ditambahkan.');
@@ -113,6 +129,16 @@ class MahasiswaController extends Controller
 
     $mahasiswa->update($data);
 
+    // ✅ Sync ke User
+    $user = \App\Models\User::where('nim_nip', $mahasiswa->nim)->first();
+    if ($user) {
+        $user->update([
+            'name' => $request->nama,
+            'email' => $request->email,
+            'kelas' => $request->kelas, // user table also has kelas
+        ]);
+    }
+
     return redirect()->route('mahasiswa.kelas', $request->kelas)
         ->with('success', 'Data mahasiswa berhasil diperbarui.');
 }
@@ -123,6 +149,13 @@ class MahasiswaController extends Controller
     public function destroy(Mahasiswa $mahasiswa)
     {
         $kelas = $mahasiswa->kelas; // Simpan kelas sebelum dihapus
+        
+        // ✅ Hapus User terkait
+        $user = \App\Models\User::where('nim_nip', $mahasiswa->nim)->first();
+        if ($user) {
+            $user->delete();
+        }
+        
         $mahasiswa->delete();
 
         // Smart redirect ke halaman kelas jika dari halaman detail kelas

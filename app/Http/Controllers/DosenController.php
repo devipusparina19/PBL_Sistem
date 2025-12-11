@@ -125,6 +125,17 @@ class DosenController extends Controller
             'mata_kuliah' => $mataKuliahGabung,
         ]);
 
+        // ✅ Auto Create User Login
+        \App\Models\User::firstOrCreate(
+            ['email' => $request->email],
+            [
+                'name' => $request->nama,
+                'password' => \Illuminate\Support\Facades\Hash::make('123456'),
+                'role' => 'dosen',
+                'nim_nip' => $request->nip,
+            ]
+        );
+
         if ($request->filled('kelas')) {
             return redirect()->route('data_dosen.kelas', $request->kelas)
                 ->with('success', 'Data dosen berhasil ditambahkan!');
@@ -204,6 +215,8 @@ class DosenController extends Controller
             ])->withInput();
         }
 
+        $oldNip = $dosen->nip;
+
         $dosen->update([
             'nama'        => $request->nama,
             'nip'         => $request->nip,
@@ -212,6 +225,16 @@ class DosenController extends Controller
             'kelas'       => $request->kelas,
             'mata_kuliah' => $mataKuliahGabung,
         ]);
+
+        // ✅ Sync ke User
+        $user = \App\Models\User::where('nim_nip', $oldNip)->first();
+        if ($user) {
+            $user->update([
+                'name'    => $request->nama,
+                'email'   => $request->email,
+                'nim_nip' => $request->nip,
+            ]);
+        }
 
         if ($request->filled('kelas')) {
             return redirect()->route('data_dosen.kelas', $request->kelas)
