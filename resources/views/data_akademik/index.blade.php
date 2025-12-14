@@ -4,6 +4,7 @@
 @php
     $user = auth()->user();
     $isMahasiswa = $user->role === 'mahasiswa';
+    $isDosen = $user->role === 'dosen';
 @endphp
 
 <div class="container-fluid mt-4">
@@ -32,6 +33,8 @@
     <div class="row g-4">
         
         <!-- Card 1: Data Dosen -->
+        {{-- Sembunyikan Data Dosen jika user adalah Dosen --}}
+        @if(!$isDosen)
         <div class="col-12 col-xl-4">
             <div class="card shadow-sm h-100 border-0">
                 <div class="card-header bg-primary text-white">
@@ -80,7 +83,7 @@
                             </div>
                         @endif
                     @else
-                        <!-- View for Dosen/Admin: Show by class -->
+                        <!-- View for Admin: Show by class -->
                         @foreach($kelasList as $kelasItem)
                             <div class="mb-3">
                                 <h6 class="text-primary fw-bold border-bottom pb-2">
@@ -118,6 +121,7 @@
                 </div>
             </div>
         </div>
+        @endif
 
         <!-- Card 2: Data Mata Kuliah -->
         <div class="col-12 col-xl-4">

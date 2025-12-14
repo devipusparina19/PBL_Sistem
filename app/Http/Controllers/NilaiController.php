@@ -15,7 +15,21 @@ class NilaiController extends Controller
      */
     public function index(Request $request)
     {
-        $mahasiswas = Mahasiswa::orderBy('nama', 'asc')->get();
+        if (Auth::user()->role === 'dosen') {
+            $nip = Auth::user()->nim_nip;
+            // Ambil mata kuliah yang diampu dosen
+            $mataKuliahDosen = MataKuliah::all()->filter(function($mk) use ($nip) {
+                return in_array($nip, $mk->nip_dosen_array);
+            });
+            
+            // Ambil daftar kelas dari mata kuliah tersebut
+            $kelasDosen = $mataKuliahDosen->pluck('kelas')->unique();
+            
+            // Ambil mahasiswa yang berada di kelas tersebut
+            $mahasiswas = Mahasiswa::whereIn('kelas', $kelasDosen)->orderBy('nama', 'asc')->get();
+        } else {
+            $mahasiswas = Mahasiswa::orderBy('nama', 'asc')->get();
+        }
         
         // Ambil mahasiswa_id dari request (filter)
         $selectedMahasiswaId = $request->get('mahasiswa_id');
@@ -50,8 +64,23 @@ class NilaiController extends Controller
      */
     public function create()
     {
-        $mahasiswa = Mahasiswa::orderBy('nama', 'asc')->get();
-        $mataKuliah = MataKuliah::orderBy('nama_mk', 'asc')->get();
+        if (Auth::user()->role === 'dosen') {
+            $nip = Auth::user()->nim_nip;
+            // Filter mata kuliah sesuai NIP dosen
+            $mataKuliah = MataKuliah::all()->filter(function($mk) use ($nip) {
+                return in_array($nip, $mk->nip_dosen_array);
+            });
+            
+            // Ambil daftar kelas dari mata kuliah tersebut
+            $kelasDosen = $mataKuliah->pluck('kelas')->unique();
+            
+            // Filter mahasiswa sesuai kelas yang diampu
+            $mahasiswa = Mahasiswa::whereIn('kelas', $kelasDosen)->orderBy('nama', 'asc')->get();
+        } else {
+            $mahasiswa = Mahasiswa::orderBy('nama', 'asc')->get();
+            $mataKuliah = MataKuliah::orderBy('nama_mk', 'asc')->get();
+        }
+        
         return view('nilai.create', compact('mahasiswa', 'mataKuliah'));
     }
 
@@ -236,8 +265,23 @@ class NilaiController extends Controller
     public function edit($id)
     {
         $nilai = Nilai::findOrFail($id);
-        $mahasiswa = Mahasiswa::orderBy('nama', 'asc')->get();
-        $mataKuliah = MataKuliah::orderBy('nama_mk', 'asc')->get();
+        
+        if (Auth::user()->role === 'dosen') {
+            $nip = Auth::user()->nim_nip;
+            // Filter mata kuliah sesuai NIP dosen
+            $mataKuliah = MataKuliah::all()->filter(function($mk) use ($nip) {
+                return in_array($nip, $mk->nip_dosen_array);
+            });
+            
+            // Ambil daftar kelas dari mata kuliah tersebut
+            $kelasDosen = $mataKuliah->pluck('kelas')->unique();
+            
+            // Filter mahasiswa sesuai kelas yang diampu
+            $mahasiswa = Mahasiswa::whereIn('kelas', $kelasDosen)->orderBy('nama', 'asc')->get();
+        } else {
+            $mahasiswa = Mahasiswa::orderBy('nama', 'asc')->get();
+            $mataKuliah = MataKuliah::orderBy('nama_mk', 'asc')->get();
+        }
 
         return view('nilai.edit', compact('nilai', 'mahasiswa', 'mataKuliah'));
     }

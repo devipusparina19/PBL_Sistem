@@ -51,9 +51,29 @@ class DataAkademikController extends Controller
                 ->orderBy('nama', 'asc')
                 ->get();
             
-            $mataKuliahByKelas[$kelasItem] = MataKuliah::where('kelas', $kelasItem)
-                ->orderBy('nama_mk', 'asc')
-                ->get();
+            // Filter Mata Kuliah
+            $queryMataKuliah = MataKuliah::where('kelas', $kelasItem);
+            
+            // Jika dosen, hanya tampilkan mata kuliah yang diajar (NIP ada di kolom nip_dosen)
+            if ($user->role === 'dosen') {
+                $nip = $user->nim_nip;
+                // Menggunakan get() lalu filter collection karena nip_dosen menyimpan string CSV
+                // Atau bisa pakai whereRaw/LIKE tapi collection filter lebih aman untuk format yang tidak konsisten
+                // Namun untuk performa dan konsistensi dengan query builder di atas:
+                // Kita ambil dulu semua untuk kelas ini, lalu filter di PHP side untuk 'dosen' khusus ini
+                // Tapi variabel ini ($queryMataKuliah) adalah builder.
+                // Mari kita ambil datanya dulu.
+            }
+            
+            $mataKuliahByKelas[$kelasItem] = $queryMataKuliah->orderBy('nama_mk', 'asc')->get();
+
+            // Jika dosen, filter collection hasil query
+            if ($user->role === 'dosen') {
+                $nip = $user->nim_nip;
+                $mataKuliahByKelas[$kelasItem] = $mataKuliahByKelas[$kelasItem]->filter(function($mk) use ($nip) {
+                    return in_array($nip, $mk->nip_dosen_array);
+                });
+            }
             
             $mahasiswaByKelas[$kelasItem] = User::where('role', 'mahasiswa')
                 ->where('kelas', $kelasItem)
