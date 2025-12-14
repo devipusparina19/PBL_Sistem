@@ -32,22 +32,22 @@
         <div class="card-body px-5 py-4">
             <h5 class="fw-bold text-dark mb-4">Daftar Nilai Kelompok</h5>
             <div class="table-responsive">
-                <table class="table table-bordered table-hover align-middle">
-                    <thead class="table-light">
+                <table class="table table-bordered table-hover align-middle table-sm">
+                    <thead class="table-light text-center align-middle">
                         <tr>
-                            <th class="text-center">No</th>
+                            <th width="3%">No</th>
                             <th>Nama Kelompok</th>
                             <th>Judul Proyek</th>
-                            <th class="text-center">Jumlah Anggota</th>
-                            <th class="text-center">Pemrograman Web</th>
-                            <th class="text-center">Integrasi Sistem</th>
-                            <th class="text-center">Pengambilan Keputusan</th>
-                            <th class="text-center">IT Proyek</th>
-                            <th class="text-center">Kontribusi Kelompok</th>
-                            <th class="text-center">Penilaian Dosen</th>
-                            <th class="text-center">Hasil Akhir</th>
+                            <th width="8%">Anggota</th>
+                            <th width="8%">Pemrog. Web</th>
+                            <th width="8%">Integrasi</th>
+                            <th width="8%">Keputusan</th>
+                            <th width="8%">IT Proyek</th>
+                            <th width="8%">Kontribusi</th>
+                            <th width="8%">Nilai Dosen</th>
+                            <th width="8%">Hasil Akhir</th>
                             @if(Auth::user()->role === 'dosen')
-                                <th class="text-center">Aksi</th>
+                                <th width="10%">Aksi</th>
                             @endif
                         </tr>
                     </thead>
@@ -56,8 +56,8 @@
                             <tr>
                                 <td class="text-center">{{ $index + 1 }}</td>
                                 <td class="fw-semibold">{{ $kelompok->nama_kelompok }}</td>
-                                <td>{{ $kelompok->judul_proyek ?? '-' }}</td>
-                                <td class="text-center">{{ $kelompok->mahasiswa->count() }} orang</td>
+                                <td class="small">{{ $kelompok->judul_proyek ?? '-' }}</td>
+                                <td class="text-center small">{{ $kelompok->mahasiswa->count() }} orang</td>
                                 <td class="text-center">
                                     {{ $kelompok->pemrograman_web !== null ? number_format($kelompok->pemrograman_web, 1) : '-' }}
                                 </td>
@@ -87,29 +87,31 @@
                                             {{ number_format($kelompok->hasil_akhir, 2) }}
                                         </span>
                                     @else
-                                        <span class="text-muted">Belum dinilai</span>
+                                        <span class="badge bg-secondary">Belum</span>
                                     @endif
                                 </td>
                                 @if(Auth::user()->role === 'dosen')
                                     <td class="text-center">
                                         @if($kelompok->hasil_akhir !== null)
-                                            <a href="{{ route('nilai_kelompok.edit', $kelompok->id_kelompok) }}" 
-                                               class="btn btn-warning btn-sm me-1">
-                                                <i class="bi bi-pencil-square"></i> Edit
-                                            </a>
-                                            <form action="{{ route('nilai_kelompok.destroy', $kelompok->id_kelompok) }}" 
-                                                  method="POST" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-danger btn-sm" 
-                                                        onclick="return confirm('Yakin ingin menghapus nilai kelompok ini?')">
-                                                    <i class="bi bi-trash"></i> Hapus
-                                                </button>
-                                            </form>
+                                            <div class="d-flex gap-1 justify-content-center">
+                                                <a href="{{ route('nilai_kelompok.edit', $kelompok->id_kelompok) }}" 
+                                                   class="btn btn-warning btn-sm" title="Edit">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                                <form action="{{ route('nilai_kelompok.destroy', $kelompok->id_kelompok) }}" 
+                                                      method="POST" class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="btn btn-danger btn-sm" 
+                                                            onclick="return confirm('Yakin ingin menghapus nilai kelompok ini?')" title="Hapus">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         @else
                                             <a href="{{ route('nilai_kelompok.create') }}?kelompok_id={{ $kelompok->id_kelompok }}" 
-                                               class="btn btn-primary btn-sm">
-                                                <i class="bi bi-plus-circle"></i> Input Nilai
+                                               class="btn btn-primary btn-sm btn-block w-100">
+                                                <i class="bi bi-plus-circle me-1"></i> Input
                                             </a>
                                         @endif
                                     </td>

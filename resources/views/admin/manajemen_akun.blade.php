@@ -17,27 +17,28 @@
     </div>
 
     {{-- Tabel Akun --}}
-    <div class="card shadow-sm border-0 rounded-3">
-        <div class="card-body p-4">
+    <div class="card shadow border-0 rounded-4">
+        <div class="card-body px-5 py-4">
+            <h5 class="fw-bold text-dark mb-4">Daftar Akun Pengguna</h5>
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-dark text-center">
+                <table class="table table-bordered table-hover align-middle table-sm">
+                    <thead class="table-light text-center align-middle">
                         <tr>
-                            <th class="py-3">No</th>
-                            <th class="py-3">Nama</th>
-                            <th class="py-3">NIM/NIP</th>
-                            <th class="py-3">Kelompok</th>
-                            <th class="py-3">Email</th>
-                            <th class="py-3">Role</th>
-                            <th class="py-3">Tanggal Dibuat</th>
-                            <th class="py-3">Aksi</th>
+                            <th width="5%">No</th>
+                            <th class="text-start">Nama</th>
+                            <th width="15%">NIM/NIP</th>
+                            <th width="12%">Kelompok</th>
+                            <th class="text-start">Email</th>
+                            <th width="10%">Role</th>
+                            <th width="12%">Tanggal Dibuat</th>
+                            <th width="10%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($users as $index => $user)
                             <tr>
                                 <td class="text-center">{{ $index + 1 }}</td>
-                                <td class="fw-bold">{{ $user->name }}</td>
+                                <td class="fw-semibold text-start">{{ ucwords(strtolower($user->name)) }}</td>
                                 <td class="text-center">{{ $user->nim_nip ?? '-' }}</td>
                                 <td class="text-center">
                                     @if($user->role == 'mahasiswa' && $user->mahasiswa && $user->mahasiswa->kelompok)
@@ -48,7 +49,7 @@
                                         <span class="text-muted small">-</span>
                                     @endif
                                 </td>
-                                <td>{{ $user->email }}</td>
+                                <td class="text-start text-muted small">{{ $user->email }}</td>
                                 <td class="text-center">
                                     <span class="badge rounded-pill
                                         @if($user->role == 'admin') bg-danger 
@@ -59,14 +60,18 @@
                                         {{ ucfirst(str_replace('_', ' ', $user->role)) }}
                                     </span>
                                 </td>
-                                <td class="text-center small">{{ $user->created_at->format('d M Y') }}</td>
+                                <td class="text-center small text-muted">{{ $user->created_at->format('d M Y') }}</td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-1">
-                                        <a href="{{ route('akun.edit', $user->id) }}" class="btn btn-sm btn-outline-warning">Edit</a>
+                                        <a href="{{ route('akun.edit', $user->id) }}" class="btn btn-warning btn-sm" title="Edit">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
                                         <form action="{{ route('akun.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus akun ini?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">Hapus</button>
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Hapus">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
                                         </form>
                                     </div>
                                 </td>

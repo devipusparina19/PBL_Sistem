@@ -20,6 +20,14 @@ class Kelompok extends Model
         'judul_proyek',
         'kelas',
         'ketua_id',
+        // Kolom Nilai Kelompok
+        'pemrograman_web',
+        'integrasi_sistem',
+        'pengambilan_keputusan',
+        'it_proyek',
+        'kontribusi_kelompok',
+        'penilaian_dosen',
+        'hasil_akhir',
     ];
 
     public $timestamps = true;

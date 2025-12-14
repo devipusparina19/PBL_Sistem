@@ -66,7 +66,7 @@ class NilaiKelompokController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'kelompok_id' => 'required|exists:kelompoks,id_kelompok',
+            'kelompok_id' => 'required|exists:kelompok,id_kelompok',
             'penilaian_dosen' => 'required|numeric|min:0|max:100',
         ]);
 
