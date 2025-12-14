@@ -122,7 +122,7 @@ class MilestoneController extends Controller
             'minggu_ke'  => 'required|integer|min:1',
         ]);
 
-        Milestone::create([
+        $milestone = Milestone::create([
             'judul'        => $request->judul,
             'deskripsi'    => $request->deskripsi,
             'minggu_ke'    => $request->minggu_ke,
@@ -130,6 +130,19 @@ class MilestoneController extends Controller
             'user_id'      => $user->id,
             'status'       => 'menunggu',
         ]);
+
+        // ✅ Buat notifikasi untuk dosen dan koordinator
+        $recipientRoles = ['dosen', 'koordinator_pbl', 'koordinator_prodi'];
+        $recipients = \App\Models\User::whereIn('role', $recipientRoles)->get();
+
+        foreach ($recipients as $recipient) {
+            \App\Models\Notification::create([
+                'user_id'      => $recipient->id,
+                'milestone_id' => $milestone->id,
+                'type'         => 'milestone_submitted',
+                'message'      => "Milestone baru \"{$milestone->judul}\" (Minggu {$milestone->minggu_ke}) telah dikirim oleh {$kelompok->nama_kelompok} dan menunggu validasi.",
+            ]);
+        }
 
         return redirect()->route('milestone.view')
             ->with('success', 'Milestone berhasil ditambahkan.');

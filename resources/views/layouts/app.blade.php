@@ -214,11 +214,12 @@
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    {{-- Notifikasi Bell Icon --}}
+                    {{-- Notifikasi Bell Icon - hanya untuk mahasiswa, dosen, koordinator --}}
+                    @if(auth()->user() && in_array(auth()->user()->role, ['mahasiswa', 'dosen', 'koordinator_pbl', 'koordinator_prodi']))
                     <li class="nav-item dropdown">
                         <a class="nav-link text-white position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-bell-fill fs-5"></i>
-                            <span id="notification-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none; font-size: 0.65rem;">
+                            <span id="notification-badge" class="position-absolute badge rounded-pill bg-danger" style="display: none; font-size: 0.6rem; top: -2px; right: -5px; padding: 2px 5px; min-width: 18px; height: 18px; line-height: 14px;">
                                 0
                             </span>
                         </a>
@@ -236,6 +237,7 @@
                             </div>
                         </ul>
                     </li>
+                    @endif
                     
                     <li class="nav-item"><a class="nav-link text-white" href="{{ url('/about') }}">About</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="{{ url('/contact') }}">Contact</a></li>
@@ -328,8 +330,19 @@
                     } else {
                         notificationList.innerHTML = notifications.map(notif => {
                             const isUnread = !notif.is_read;
-                            const icon = notif.type === 'milestone_approved' ? 'check-circle-fill' : 'x-circle-fill';
-                            const iconColor = notif.type === 'milestone_approved' ? '#0d6efd' : '#dc3545';
+                            
+                            // Tentukan icon berdasarkan tipe notifikasi
+                            let icon, iconColor;
+                            if (notif.type === 'milestone_approved') {
+                                icon = 'check-circle-fill';
+                            } else if (notif.type === 'milestone_rejected') {
+                                icon = 'x-circle-fill';
+                            } else if (notif.type === 'milestone_submitted') {
+                                icon = 'bell-fill';
+                            } else {
+                                icon = 'info-circle-fill';
+                            }
+                            
                             const timeAgo = getTimeAgo(notif.created_at);
                             
                             return `

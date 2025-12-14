@@ -30,8 +30,12 @@
                         <div class="notification-icon-lg flex-shrink-0">
                             @if($notification->type === 'milestone_approved')
                                 <i class="bi bi-check-circle-fill text-success fs-2"></i>
-                            @else
+                            @elseif($notification->type === 'milestone_rejected')
                                 <i class="bi bi-x-circle-fill text-danger fs-2"></i>
+                            @elseif($notification->type === 'milestone_submitted')
+                                <i class="bi bi-bell-fill text-primary fs-2"></i>
+                            @else
+                                <i class="bi bi-info-circle-fill text-info fs-2"></i>
                             @endif
                         </div>
 
@@ -41,8 +45,12 @@
                                 <h6 class="fw-bold mb-0">
                                     @if($notification->type === 'milestone_approved')
                                         <span class="badge bg-success">Disetujui</span>
-                                    @else
+                                    @elseif($notification->type === 'milestone_rejected')
                                         <span class="badge bg-danger">Ditolak</span>
+                                    @elseif($notification->type === 'milestone_submitted')
+                                        <span class="badge bg-primary">Milestone Baru</span>
+                                    @else
+                                        <span class="badge bg-info">Notifikasi</span>
                                     @endif
                                 </h6>
                                 <small class="text-muted">
