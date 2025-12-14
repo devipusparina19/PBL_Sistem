@@ -28,6 +28,7 @@ use App\Http\Controllers\ProgresController;
 use App\Http\Controllers\PenilaianSejawatController;
 use App\Http\Controllers\LaporanController; // ✅ Tambahan untuk laporan penilaian
 use App\Http\Controllers\DataAkademikController;
+use App\Http\Controllers\NotificationController; // ✅ Tambahan untuk notifikasi
 
 /*
 |--------------------------------------------------------------------------
@@ -142,6 +143,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/milestone/validasi', [MilestoneController::class, 'indexForDosen'])->name('milestone.validasi');
         Route::post('/milestone/validasi/{id}', [MilestoneController::class, 'updateStatus'])->name('milestone.updateStatus');
     });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Notifikasi
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+    Route::get('/api/notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
+    Route::get('/api/notifications/recent', [NotificationController::class, 'recent'])->name('notifications.recent');
 
     /*
     |--------------------------------------------------------------------------

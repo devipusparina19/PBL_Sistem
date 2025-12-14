@@ -9,7 +9,7 @@ class AdminController extends Controller
 {
     public function manajemenAkun()
     {
-        $users = User::orderBy('role')->get();
+        $users = User::with('mahasiswa.kelompok')->orderBy('role')->get();
         return view('admin.manajemen_akun', compact('users'));
     }
 }

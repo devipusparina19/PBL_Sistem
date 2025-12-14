@@ -14,7 +14,7 @@ class AkunController extends Controller
     // Tampilkan daftar akun
     public function index()
     {
-        $users = User::orderBy('created_at', 'desc')->get();
+        $users = User::with('mahasiswa.kelompok')->orderBy('created_at', 'desc')->get();
         return view('admin.manajemen_akun', compact('users'));
     }
 

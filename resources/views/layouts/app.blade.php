@@ -153,6 +153,53 @@
     .table th, .table td {
         vertical-align: middle !important;
     }
+
+    /* Notification Dropdown Styling */
+    .notification-dropdown {
+        border: none;
+        border-radius: 12px;
+    }
+
+    .notification-dropdown .dropdown-header {
+        background: #f8f9fa;
+        padding: 12px 16px;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .notification-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid #e9ecef;
+        transition: background-color 0.2s;
+        cursor: pointer;
+    }
+
+    .notification-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .notification-item.unread {
+        background-color: #e7f3ff;
+    }
+
+    .notification-item .notification-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .notification-item.unread .notification-icon {
+        background-color: #0d6efd;
+        color: white;
+    }
+
+    .notification-item.read .notification-icon {
+        background-color: #6c757d;
+        color: white;
+    }
     </style>
 
     @stack('styles')
@@ -167,6 +214,29 @@
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    {{-- Notifikasi Bell Icon --}}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link text-white position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-bell-fill fs-5"></i>
+                            <span id="notification-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none; font-size: 0.65rem;">
+                                0
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end notification-dropdown shadow-lg" aria-labelledby="notificationDropdown" style="width: 350px; max-height: 400px; overflow-y: auto;">
+                            <li class="dropdown-header d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">Notifikasi</span>
+                                <a href="{{ route('notifications.index') }}" class="text-primary small">Lihat Semua</a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <div id="notification-list">
+                                <li class="text-center py-3 text-muted">
+                                    <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                    Memuat notifikasi...
+                                </li>
+                            </div>
+                        </ul>
+                    </li>
+                    
                     <li class="nav-item"><a class="nav-link text-white" href="{{ url('/about') }}">About</a></li>
                     <li class="nav-item"><a class="nav-link text-white" href="{{ url('/contact') }}">Contact</a></li>
                     <li class="nav-item">
@@ -238,6 +308,127 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {{-- Notification JavaScript --}}
+    <script>
+        // Function to load notifications
+        function loadNotifications() {
+            fetch('{{ route("notifications.recent") }}')
+                .then(response => response.json())
+                .then(notifications => {
+                    const notificationList = document.getElementById('notification-list');
+                    
+                    if (notifications.length === 0) {
+                        notificationList.innerHTML = `
+                            <li class="text-center py-3 text-muted">
+                                <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                Tidak ada notifikasi
+                            </li>
+                        `;
+                    } else {
+                        notificationList.innerHTML = notifications.map(notif => {
+                            const isUnread = !notif.is_read;
+                            const icon = notif.type === 'milestone_approved' ? 'check-circle-fill' : 'x-circle-fill';
+                            const iconColor = notif.type === 'milestone_approved' ? '#0d6efd' : '#dc3545';
+                            const timeAgo = getTimeAgo(notif.created_at);
+                            
+                            return `
+                                <li class="notification-item ${isUnread ? 'unread' : 'read'}" data-id="${notif.id}" onclick="markAsRead(${notif.id})">
+                                    <div class="d-flex gap-3">
+                                        <div class="notification-icon flex-shrink-0">
+                                            <i class="bi bi-${icon}"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <p class="mb-1 small fw-semibold">${notif.message}</p>
+                                            <small class="text-muted">${timeAgo}</small>
+                                        </div>
+                                    </div>
+                                </li>
+                            `;
+                        }).join('');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading notifications:', error);
+                });
+        }
+
+        // Function to update unread count badge
+        function updateUnreadCount() {
+            fetch('{{ route("notifications.unreadCount") }}')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('notification-badge');
+                    if (data.count > 0) {
+                        badge.textContent = data.count > 9 ? '9+' : data.count;
+                        badge.style.display = 'inline-block';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating unread count:', error);
+                });
+        }
+
+        // Function to mark notification as read
+        function markAsRead(notificationId) {
+            fetch(`/notifications/${notificationId}/read`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadNotifications();
+                    updateUnreadCount();
+                }
+            })
+            .catch(error => {
+                console.error('Error marking notification as read:', error);
+            });
+        }
+
+        // Helper function to format time ago
+        function getTimeAgo(datetime) {
+            const now = new Date();
+            const past = new Date(datetime);
+            const diffInSeconds = Math.floor((now - past) / 1000);
+            
+            if (diffInSeconds < 60) {
+                return 'Baru saja';
+            } else if (diffInSeconds < 3600) {
+                const minutes = Math.floor(diffInSeconds / 60);
+                return `${minutes} menit yang lalu`;
+            } else if (diffInSeconds < 86400) {
+                const hours = Math.floor(diffInSeconds / 3600);
+                return `${hours} jam yang lalu`;
+            } else {
+                const days = Math.floor(diffInSeconds / 86400);
+                return `${days} hari yang lalu`;
+            }
+        }
+
+        // Load notifications on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadNotifications();
+            updateUnreadCount();
+            
+            // Reload notifications when dropdown is opened
+            document.getElementById('notificationDropdown').addEventListener('click', function() {
+                loadNotifications();
+            });
+            
+            // Auto-refresh every 30 seconds
+            setInterval(function() {
+                updateUnreadCount();
+            }, 30000);
+        });
+    </script>
+    
     @stack('scripts')
 </body>
 </html>

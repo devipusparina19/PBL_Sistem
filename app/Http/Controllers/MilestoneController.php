@@ -213,6 +213,17 @@ class MilestoneController extends Controller
             'catatan_dosen' => $request->catatan_dosen,
         ]);
 
+        // ✅ Buat notifikasi untuk pembuat milestone
+        $messageType = $request->status === 'disetujui' ? 'milestone_approved' : 'milestone_rejected';
+        $statusText = $request->status === 'disetujui' ? 'disetujui' : 'ditolak';
+        
+        \App\Models\Notification::create([
+            'user_id'      => $milestone->user_id,
+            'milestone_id' => $milestone->id,
+            'type'         => $messageType,
+            'message'      => "Milestone \"{$milestone->judul}\" (Minggu {$milestone->minggu_ke}) telah {$statusText} oleh dosen.",
+        ]);
+
         return redirect()->route('milestone.validasi')
             ->with('success', 'Milestone berhasil divalidasi.');
     }
