@@ -28,7 +28,7 @@
                                 @if($klp->judul_proyek)
                                     - {{ $klp->judul_proyek }}
                                 @endif
-                                ({{ $klp->mahasiswas->count() }} anggota)
+                                ({{ $klp->mahasiswa->count() }} anggota)
                             </option>
                         @endforeach
                     </select>
@@ -42,84 +42,30 @@
                 <h5 class="fw-bold text-dark mb-4">Komponen Penilaian Kelompok</h5>
 
                 <div class="row">
-                    <!-- Pemrograman Web -->
-                    <div class="col-md-6 mb-3">
-                        <label for="pemrograman_web" class="form-label">Pemrograman Web <span class="text-danger">*</span></label>
-                        <input type="number" name="pemrograman_web" id="pemrograman_web" 
-                               class="form-control @error('pemrograman_web') is-invalid @enderror" 
-                               value="{{ old('pemrograman_web') }}" 
-                               min="0" max="100" step="0.01" required>
-                        <small class="text-muted">Kualitas implementasi web application</small>
-                        @error('pemrograman_web')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Integrasi Sistem -->
-                    <div class="col-md-6 mb-3">
-                        <label for="integrasi_sistem" class="form-label">Integrasi Sistem <span class="text-danger">*</span></label>
-                        <input type="number" name="integrasi_sistem" id="integrasi_sistem" 
-                               class="form-control @error('integrasi_sistem') is-invalid @enderror" 
-                               value="{{ old('integrasi_sistem') }}" 
-                               min="0" max="100" step="0.01" required>
-                        <small class="text-muted">Integrasi antar modul/komponen sistem</small>
-                        @error('integrasi_sistem')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Pengambilan Keputusan -->
-                    <div class="col-md-6 mb-3">
-                        <label for="pengambilan_keputusan" class="form-label">Pengambilan Keputusan <span class="text-danger">*</span></label>
-                        <input type="number" name="pengambilan_keputusan" id="pengambilan_keputusan" 
-                               class="form-control @error('pengambilan_keputusan') is-invalid @enderror" 
-                               value="{{ old('pengambilan_keputusan') }}" 
-                               min="0" max="100" step="0.01" required>
-                        <small class="text-muted">Kemampuan problem solving dan decision making</small>
-                        @error('pengambilan_keputusan')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- IT Proyek -->
-                    <div class="col-md-6 mb-3">
-                        <label for="it_proyek" class="form-label">IT Proyek <span class="text-danger">*</span></label>
-                        <input type="number" name="it_proyek" id="it_proyek" 
-                               class="form-control @error('it_proyek') is-invalid @enderror" 
-                               value="{{ old('it_proyek') }}" 
-                               min="0" max="100" step="0.01" required>
-                        <small class="text-muted">Manajemen proyek IT (timeline, task management)</small>
-                        @error('it_proyek')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Kontribusi Kelompok -->
-                    <div class="col-md-6 mb-3">
-                        <label for="kontribusi_kelompok" class="form-label">Kontribusi Kelompok <span class="text-danger">*</span></label>
-                        <input type="number" name="kontribusi_kelompok" id="kontribusi_kelompok" 
-                               class="form-control @error('kontribusi_kelompok') is-invalid @enderror" 
-                               value="{{ old('kontribusi_kelompok') }}" 
-                               min="0" max="100" step="0.01" required>
-                        <small class="text-muted">Kontribusi kelompok secara keseluruhan</small>
-                        @error('kontribusi_kelompok')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                    <!-- Note about automated values -->
+                    <div class="col-12 mb-3">
+                        <div class="alert alert-secondary">
+                            <i class="bi bi-gear-fill me-2"></i>
+                            Nilai untuk <strong>Pemrograman Web, Integrasi Sistem, Pengambilan Keputusan, IT Proyek, dan Kontribusi Kelompok</strong> 
+                            akan diambil secara <strong>otomatis</strong> dari rata-rata nilai mata kuliah anggota kelompok.
+                        </div>
                     </div>
 
                     <!-- Penilaian Dosen -->
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-12 mb-3">
                         <label for="penilaian_dosen" class="form-label">Penilaian Dosen <span class="text-danger">*</span></label>
                         <input type="number" name="penilaian_dosen" id="penilaian_dosen" 
                                class="form-control @error('penilaian_dosen') is-invalid @enderror" 
                                value="{{ old('penilaian_dosen') }}" 
                                min="0" max="100" step="0.01" required>
-                        <small class="text-muted">Penilaian subjektif dosen pembimbing</small>
+                        <small class="text-muted">Penilaian subjektif dosen pembimbing (0-100)</small>
                         @error('penilaian_dosen')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                 </div>
+
+
 
                 <hr class="my-4">
 

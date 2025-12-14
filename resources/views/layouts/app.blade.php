@@ -207,6 +207,9 @@
             <a href="{{ url('/kelompok') }}" class="{{ request()->is('kelompok') ? 'active' : '' }}">
                 <i class="bi bi-people"></i> Kelompok PBL
             </a>
+            <a href="{{ route('ranking.index') }}" class="{{ request()->is('ranking*') ? 'active' : '' }}">
+                <i class="bi bi-trophy-fill"></i> Perangkingan
+            </a>
             <a href="{{ url('/profile') }}" class="{{ request()->is('profile') ? 'active' : '' }}">
                 <i class="bi bi-person-circle"></i> Profile
             </a>

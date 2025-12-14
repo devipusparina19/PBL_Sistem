@@ -192,7 +192,7 @@
                                         </span>
                                     </td>
 
-                                    <td>{{ $n->dosen->nama ?? '-' }}</td>
+                                    <td>{{ $n->nama_dosen_pengampu }}</td>
 
                                     @if(Auth::user()->role === 'dosen')
                                         <td class="text-center">

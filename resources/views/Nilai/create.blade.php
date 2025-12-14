@@ -182,41 +182,47 @@
 
                 <!-- Form IT Project -->
                 <div id="form-it-project" style="display: none;">
-                    <h5 class="mb-3">🚀 Komponen Penilaian IT Project / PWL</h5>
+                    <h5 class="mb-3">🚀 Komponen Penilaian IT Project</h5>
                     
                     <div class="alert alert-info">
                         <strong>Komponen Penilaian IT Project:</strong><br>
-                        • Proposal (15%)<br>
-                        • Progress Report (15%)<br>
-                        • Final Project (40%)<br>
-                        • Presentasi (20%)<br>
-                        • Dokumentasi (10%)
+                        • Aktivitas Partisipatif (20%) - Dinamika, Kerjasama<br>
+                        • Presentasi (10%) - Keruntutan, Penguasaan Materi<br>
+                        • Objektivitas / Tanya Jawab (10%) - Ketepatan Jawaban<br>
+                        • Laporan Progres (10%) - Kerapian, Dokumen<br>
+                        • Laporan Akhir (10%) - Kerapian, Dokumen<br>
+                        • Produk Aplikasi (40%) - Hasil Proyek
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Proposal (15%)</label>
-                            <input type="number" class="form-control" name="it_proposal" id="it_proposal" 
+                            <label class="form-label">Aktivitas Partisipatif (20%)</label>
+                            <input type="number" class="form-control" name="kontribusi" id="it_kontribusi" 
                                    min="0" max="100" step="0.01" placeholder="0-100">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Progress Report (15%)</label>
-                            <input type="number" class="form-control" name="it_progress_report" id="it_progress_report" 
-                                   min="0" max="100" step="0.01" placeholder="0-100">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Final Project (40%)</label>
-                            <input type="number" class="form-control" name="it_final_project" id="it_final_project" 
-                                   min="0" max="100" step="0.01" placeholder="0-100">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Presentasi (20%)</label>
+                            <label class="form-label">Presentasi (10%)</label>
                             <input type="number" class="form-control" name="it_presentasi" id="it_presentasi" 
                                    min="0" max="100" step="0.01" placeholder="0-100">
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Dokumentasi (10%)</label>
+                            <label class="form-label">Objektivitas / Tanya Jawab (10%)</label>
+                            <input type="number" class="form-control" name="it_proposal" id="it_proposal" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Laporan Progres (10%)</label>
+                            <input type="number" class="form-control" name="it_progress_report" id="it_progress_report" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Laporan Akhir (10%)</label>
                             <input type="number" class="form-control" name="it_dokumentasi" id="it_dokumentasi" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Produk Aplikasi (40%)</label>
+                            <input type="number" class="form-control" name="it_final_project" id="it_final_project" 
                                    min="0" max="100" step="0.01" placeholder="0-100">
                         </div>
                     </div>
@@ -341,7 +347,7 @@ function calculateIntegrasiSistem() {
 
 // Kalkulasi IT Project
 function setupITProjectCalculation() {
-    ['it_proposal', 'it_progress_report', 'it_final_project', 'it_presentasi', 'it_dokumentasi']
+    ['it_kontribusi', 'it_presentasi', 'it_proposal', 'it_progress_report', 'it_dokumentasi', 'it_final_project']
         .forEach(id => {
             const el = document.getElementById(id);
             if (el) el.addEventListener('input', calculateITProject);
@@ -351,9 +357,18 @@ function setupITProjectCalculation() {
 function calculateITProject() {
     const val = id => parseFloat(document.getElementById(id)?.value) || 0;
     
-    const nilaiAkhir = (val('it_proposal') * 0.15) + (val('it_progress_report') * 0.15) + 
-                       (val('it_final_project') * 0.4) + (val('it_presentasi') * 0.2) + 
-                       (val('it_dokumentasi') * 0.1);
+    // Aktivitas 20%
+    // Presentasi 10%
+    // Objektivitas 10% (Map to proposal)
+    // Laporan Progres 10% (Map to progress_report)
+    // Laporan Akhir 10% (Map to dokumentasi)
+    // Produk 40% (Map to final_project)
+    const nilaiAkhir = (val('it_kontribusi') * 0.20) + 
+                       (val('it_presentasi') * 0.10) +
+                       (val('it_proposal') * 0.10) +
+                       (val('it_progress_report') * 0.10) +
+                       (val('it_dokumentasi') * 0.10) +
+                       (val('it_final_project') * 0.40);
     
     document.getElementById('preview_nilai_akhir_it').textContent = nilaiAkhir.toFixed(2);
     

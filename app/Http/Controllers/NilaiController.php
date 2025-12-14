@@ -175,32 +175,34 @@ class NilaiController extends Controller
             $request->validate([
                 'mahasiswa_id' => 'required|exists:mahasiswas,id',
                 'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
-                'it_proposal' => 'required|numeric|min:0|max:100',
-                'it_progress_report' => 'required|numeric|min:0|max:100',
-                'it_final_project' => 'required|numeric|min:0|max:100',
-                'it_presentasi' => 'required|numeric|min:0|max:100',
-                'it_dokumentasi' => 'required|numeric|min:0|max:100',
+                'kontribusi' => 'required|numeric|min:0|max:100', // Aktivitas Partisipatif (20%)
+                'it_presentasi' => 'required|numeric|min:0|max:100', // Presentasi (10%)
+                'it_proposal' => 'required|numeric|min:0|max:100', // Repurpose for Objektivitas (10%)
+                'it_progress_report' => 'required|numeric|min:0|max:100', // Laporan Progres (10%)
+                'it_dokumentasi' => 'required|numeric|min:0|max:100', // Laporan Akhir (10%)
+                'it_final_project' => 'required|numeric|min:0|max:100', // Produk Aplikasi (40%)
             ]);
 
-            $nilaiAkhir = ($request->it_proposal * 0.15) + 
-                          ($request->it_progress_report * 0.15) + 
-                          ($request->it_final_project * 0.4) + 
-                          ($request->it_presentasi * 0.2) + 
-                          ($request->it_dokumentasi * 0.1);
+            $nilaiAkhir = ($request->kontribusi * 0.20) + 
+                          ($request->it_presentasi * 0.10) +
+                          ($request->it_proposal * 0.10) +
+                          ($request->it_progress_report * 0.10) +
+                          ($request->it_dokumentasi * 0.10) +
+                          ($request->it_final_project * 0.40);
 
             Nilai::create([
                 'mahasiswa_id' => $request->mahasiswa_id,
                 'mata_kuliah_id' => $request->mata_kuliah_id,
                 'dosen_id' => $dosenId,
-                'it_proposal' => $request->it_proposal,
-                'it_progress_report' => $request->it_progress_report,
-                'it_final_project' => $request->it_final_project,
-                'it_presentasi' => $request->it_presentasi,
-                'it_dokumentasi' => $request->it_dokumentasi,
+                'kontribusi' => $request->kontribusi, // Aktivitas Partisipatif
+                'it_presentasi' => $request->it_presentasi, // Presentasi
+                'it_proposal' => $request->it_proposal, // Objektivitas
+                'it_progress_report' => $request->it_progress_report, // Laporan Progres
+                'it_dokumentasi' => $request->it_dokumentasi, // Laporan Akhir
+                'it_final_project' => $request->it_final_project, // Produk Aplikasi
+                'hasil_proyek' => round($nilaiAkhir, 2), // Simpan Total Nilai di sini juga untuk referensi cepat
                 'laporan' => 0,
                 'presentasi' => 0,
-                'kontribusi' => 0,
-                'hasil_proyek' => round($nilaiAkhir, 2),
                 'catatan' => 'Nilai Akhir IT Project: ' . round($nilaiAkhir, 2),
             ]);
 
@@ -396,32 +398,34 @@ class NilaiController extends Controller
             $request->validate([
                 'mahasiswa_id' => 'required|exists:mahasiswas,id',
                 'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
-                'it_proposal' => 'required|numeric|min:0|max:100',
-                'it_progress_report' => 'required|numeric|min:0|max:100',
-                'it_final_project' => 'required|numeric|min:0|max:100',
-                'it_presentasi' => 'required|numeric|min:0|max:100',
-                'it_dokumentasi' => 'required|numeric|min:0|max:100',
+                'kontribusi' => 'required|numeric|min:0|max:100', // Aktivitas Partisipatif (20%)
+                'it_presentasi' => 'required|numeric|min:0|max:100', // Presentasi (10%)
+                'it_proposal' => 'required|numeric|min:0|max:100', // Objektivitas (10%)
+                'it_progress_report' => 'required|numeric|min:0|max:100', // Laporan Progres (10%)
+                'it_dokumentasi' => 'required|numeric|min:0|max:100', // Laporan Akhir (10%)
+                'it_final_project' => 'required|numeric|min:0|max:100', // Produk Aplikasi (40%)
             ]);
 
-            $nilaiAkhir = ($request->it_proposal * 0.15) + 
-                          ($request->it_progress_report * 0.15) + 
-                          ($request->it_final_project * 0.4) + 
-                          ($request->it_presentasi * 0.2) + 
-                          ($request->it_dokumentasi * 0.1);
+            $nilaiAkhir = ($request->kontribusi * 0.20) + 
+                          ($request->it_presentasi * 0.10) +
+                          ($request->it_proposal * 0.10) +
+                          ($request->it_progress_report * 0.10) +
+                          ($request->it_dokumentasi * 0.10) +
+                          ($request->it_final_project * 0.40);
 
             $nilai->update([
                 'mahasiswa_id' => $request->mahasiswa_id,
                 'mata_kuliah_id' => $request->mata_kuliah_id,
                 'dosen_id' => $dosenId,
+                'kontribusi' => $request->kontribusi,
+                'it_presentasi' => $request->it_presentasi,
                 'it_proposal' => $request->it_proposal,
                 'it_progress_report' => $request->it_progress_report,
-                'it_final_project' => $request->it_final_project,
-                'it_presentasi' => $request->it_presentasi,
                 'it_dokumentasi' => $request->it_dokumentasi,
+                'it_final_project' => $request->it_final_project,
+                'hasil_proyek' => round($nilaiAkhir, 2),
                 'laporan' => 0,
                 'presentasi' => 0,
-                'kontribusi' => 0,
-                'hasil_proyek' => round($nilaiAkhir, 2),
                 'catatan' => 'Nilai Akhir IT Project: ' . round($nilaiAkhir, 2),
             ]);
 
