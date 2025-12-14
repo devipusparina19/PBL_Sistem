@@ -214,8 +214,8 @@
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    {{-- Notifikasi Bell Icon - hanya untuk mahasiswa, dosen, koordinator --}}
-                    @if(auth()->user() && in_array(auth()->user()->role, ['mahasiswa', 'dosen', 'koordinator_pbl', 'koordinator_prodi']))
+                    {{-- Notifikasi Bell Icon - hanya untuk mahasiswa dan dosen --}}
+                    @if(auth()->user() && in_array(auth()->user()->role, ['mahasiswa', 'dosen']))
                     <li class="nav-item dropdown">
                         <a class="nav-link text-white position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-bell-fill fs-5"></i>

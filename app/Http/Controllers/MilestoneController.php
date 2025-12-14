@@ -131,9 +131,8 @@ class MilestoneController extends Controller
             'status'       => 'menunggu',
         ]);
 
-        // ✅ Buat notifikasi untuk dosen dan koordinator
-        $recipientRoles = ['dosen', 'koordinator_pbl', 'koordinator_prodi'];
-        $recipients = \App\Models\User::whereIn('role', $recipientRoles)->get();
+        // ✅ Buat notifikasi untuk dosen saja
+        $recipients = \App\Models\User::where('role', 'dosen')->get();
 
         foreach ($recipients as $recipient) {
             \App\Models\Notification::create([
