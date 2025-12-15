@@ -273,8 +273,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function filterMataKuliah() {
         const selectedMhs = mahasiswaSelect.options[mahasiswaSelect.selectedIndex];
-        const mhsKelas = selectedMhs.getAttribute('data-kelas');
+        // Gunakan trim() untuk membersihkan spasi berlebih
+        const mhsKelas = (selectedMhs.getAttribute('data-kelas') || '').trim().toLowerCase();
         
+        // Hapus console.log di produksi, tapi berguna untuk debugging jika tersangkut
+        // console.log("Selected Student Class:", mhsKelas);
+
         if (!mhsKelas) {
             mkSelect.value = "";
             mkContainer.style.display = 'block';
@@ -288,15 +292,14 @@ document.addEventListener('DOMContentLoaded', () => {
         let lastMatchValue = "";
         let lastMatchText = "";
 
-        // Reset visibility first (optional: specific logic)
         for (let i = 0; i < options.length; i++) {
             const opt = options[i];
             if (opt.value === "") continue;
 
-            const mkKelas = opt.getAttribute('data-kelas');
+            const mkKelas = (opt.getAttribute('data-kelas') || '').trim().toLowerCase();
             
-            // Logika matching kelas
-            // Asumsi: kelas harus sama persis
+            // console.log("Comparing with Course Class:", mkKelas);
+
             if (mkKelas === mhsKelas) {
                 opt.style.display = ''; // Show
                 matchCount++;
@@ -323,9 +326,11 @@ document.addEventListener('DOMContentLoaded', () => {
             mkSelect.style.display = 'block';
             mkDisplay.style.display = 'none';
             
-            // If currently selected value is invalid for this class, reset
+            // Jika pilihan saat ini tidak cocok dengan kelas, reset selection
             const currentOpt = mkSelect.options[mkSelect.selectedIndex];
-            if (currentOpt && currentOpt.getAttribute('data-kelas') !== mhsKelas && mkSelect.value !== "") {
+            const currentKelas = (currentOpt?.getAttribute('data-kelas') || '').trim().toLowerCase();
+            
+            if (currentOpt && currentKelas !== mhsKelas && mkSelect.value !== "") {
                 mkSelect.value = "";
                 toggleNilaiForm();
             }
