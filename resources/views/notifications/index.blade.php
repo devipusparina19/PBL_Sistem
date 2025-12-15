@@ -62,7 +62,7 @@
                             
                             @if($notification->milestone)
                                 <div class="d-flex gap-2 align-items-center">
-                                    <a href="{{ route('milestone.view') }}" class="btn btn-sm btn-outline-primary">
+                                    <a href="{{ auth()->user()->role === 'dosen' ? route('milestone.validasi') : route('milestone.view') }}" class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-eye"></i> Lihat Milestone
                                     </a>
                                     

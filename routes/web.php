@@ -137,6 +137,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/milestone/input', [MilestoneController::class, 'store'])->name('milestone.store');
     Route::get('/milestone/edit/{id}', [MilestoneController::class, 'edit'])->name('milestone.edit');
     Route::post('/milestone/edit/{id}', [MilestoneController::class, 'update'])->name('milestone.update');
+    Route::delete('/milestone/delete/{id}', [MilestoneController::class, 'destroy'])->name('milestone.destroy');
 
     // Validasi Dosen
     Route::middleware('role:dosen')->group(function () {

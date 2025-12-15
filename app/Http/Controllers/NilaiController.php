@@ -89,10 +89,19 @@ class NilaiController extends Controller
      */
     public function store(Request $request)
     {
-        // Tambahan Debugging: Hapus baris ini setelah masalah teratasi
-        // dd($request->all());
-
         $mataKuliah = MataKuliah::find($request->mata_kuliah_id);
+        
+        // Tambahan Debugging: Hapus baris ini setelah masalah teratasi
+        // \Log::info('=== DEBUG NILAI STORE ===');
+        // \Log::info('Mata Kuliah ID: ' . $request->mata_kuliah_id);
+        // \Log::info('Mata Kuliah Nama: ' . ($mataKuliah ? $mataKuliah->nama_mk : 'NULL'));
+        // \Log::info('Request Data:', $request->all());
+        // dd([
+        //     'mata_kuliah_id' => $request->mata_kuliah_id,
+        //     'mata_kuliah_nama' => $mataKuliah ? $mataKuliah->nama_mk : 'NULL',
+        //     'request_data' => $request->all()
+        // ]);
+
         $dosenId = null;
         if (Auth::user()->role === 'dosen') {
             $dosen = \App\Models\Dosen::where('email', Auth::user()->email)->first();
@@ -137,7 +146,7 @@ class NilaiController extends Controller
     ]);
 
         // 🔹 Kasus khusus: PWL (Pemrograman Web Lanjut)
-        } elseif ($mataKuliah && (stripos($mataKuliah->nama_mk, 'pwl') !== false || stripos($mataKuliah->nama_mk, 'pemrograman web lanjut') !== false)) {
+        } elseif ($mataKuliah && (stripos($mataKuliah->nama_mk, 'pwl') !== false || stripos($mataKuliah->nama_mk, 'pemrograman web') !== false || stripos($mataKuliah->nama_mk, 'perograman web') !== false)) {
             $request->validate([
                 'mahasiswa_id' => 'required|exists:mahasiswas,id',
                 'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
@@ -207,7 +216,7 @@ class NilaiController extends Controller
             ]);
 
         // 🔹 Kasus khusus: Pengambilan Keputusan
-        } elseif ($mataKuliah && stripos($mataKuliah->nama_mk, 'pengambilan keputusan') !== false) {
+        } elseif ($mataKuliah && (stripos($mataKuliah->nama_mk, 'pengambilan keputusan') !== false || stripos($mataKuliah->nama_mk, 'teknik pengambilan') !== false)) {
             $request->validate([
                 'mahasiswa_id' => 'required|exists:mahasiswas,id',
                 'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
@@ -259,6 +268,18 @@ class NilaiController extends Controller
         }
 
         return redirect()->route('nilai.index')->with('success', 'Nilai berhasil ditambahkan!');
+    }
+
+    /**
+     * CATCH ALL ERROR
+     */
+    private function handleStoreError($e, $request) {
+        \Log::error('ERROR STORE NILAI: ' . $e->getMessage());
+        \Log::error('Stack Trace: ' . $e->getTraceAsString());
+        
+        return redirect()->back()
+            ->withInput()
+            ->with('error', 'Gagal menyimpan nilai: ' . $e->getMessage());
     }
 
     /**
@@ -360,7 +381,7 @@ class NilaiController extends Controller
             ]);
 
         // 🔹 Kasus khusus: PWL (Pemrograman Web Lanjut)
-        } elseif ($mataKuliah && (stripos($mataKuliah->nama_mk, 'pwl') !== false || stripos($mataKuliah->nama_mk, 'pemrograman web lanjut') !== false)) {
+        } elseif ($mataKuliah && (stripos($mataKuliah->nama_mk, 'pwl') !== false || stripos($mataKuliah->nama_mk, 'pemrograman web') !== false || stripos($mataKuliah->nama_mk, 'perograman web') !== false)) {
             $request->validate([
                 'mahasiswa_id' => 'required|exists:mahasiswas,id',
                 'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
@@ -427,6 +448,39 @@ class NilaiController extends Controller
                 'laporan' => 0,
                 'presentasi' => 0,
                 'catatan' => 'Nilai Akhir IT Project: ' . round($nilaiAkhir, 2),
+            ]);
+
+        // 🔹 Kasus khusus: Pengambilan Keputusan
+        } elseif ($mataKuliah && (stripos($mataKuliah->nama_mk, 'pengambilan keputusan') !== false || stripos($mataKuliah->nama_mk, 'teknik pengambilan') !== false)) {
+            $request->validate([
+                'mahasiswa_id' => 'required|exists:mahasiswas,id',
+                'mata_kuliah_id' => 'required|exists:mata_kuliah,id',
+                'uts' => 'required|numeric|min:0|max:100',
+                'uas' => 'required|numeric|min:0|max:100',
+                'aktivitas_partisipatif' => 'required|numeric|min:0|max:100',
+                'nilai_kerja' => 'required|numeric|min:0|max:100',
+                'penyajian_dokumentasi' => 'required|numeric|min:0|max:100',
+                'hasil_proyek' => 'required|numeric|min:0|max:100',
+            ]);
+
+            $nilaiAkhir = ($request->uts * 0.1) + 
+                          ($request->uas * 0.1) + 
+                          ($request->aktivitas_partisipatif * 0.1) + 
+                          ($request->nilai_kerja * 0.2) + 
+                          ($request->penyajian_dokumentasi * 0.2) + 
+                          ($request->hasil_proyek * 0.3);
+
+            $nilai->update([
+                'mahasiswa_id' => $request->mahasiswa_id,
+                'mata_kuliah_id' => $request->mata_kuliah_id,
+                'dosen_id' => $dosenId,
+                'uts' => $request->uts,
+                'uas' => $request->uas,
+                'presentasi' => $request->aktivitas_partisipatif,
+                'kontribusi' => $request->nilai_kerja,
+                'laporan' => $request->penyajian_dokumentasi,
+                'hasil_proyek' => $request->hasil_proyek,
+                'catatan' => 'Nilai Akhir: ' . round($nilaiAkhir, 2),
             ]);
 
         // 🔹 Default: mata kuliah standar

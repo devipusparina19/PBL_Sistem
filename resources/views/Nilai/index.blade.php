@@ -91,7 +91,7 @@
                                         {{ $n->mataKuliah->nama_mk ?? '-' }}
                                         
                                         {{-- Kondisi khusus Pengambilan Keputusan --}}
-                                        @if($n->mataKuliah && stripos($n->mataKuliah->nama_mk, 'pengambilan keputusan') !== false)
+                                        @if($n->mataKuliah && (stripos($n->mataKuliah->nama_mk, 'pengambilan keputusan') !== false || stripos($n->mataKuliah->nama_mk, 'teknik pengambilan') !== false))
                                             <br>
                                             <small class="text-muted">
                                                 <i class="bi bi-info-circle"></i> 
@@ -117,7 +117,7 @@
                                             </small>
                                         
                                         {{-- Kondisi khusus PWL --}}
-                                        @elseif($n->mataKuliah && (stripos($n->mataKuliah->nama_mk, 'pwl') !== false || stripos($n->mataKuliah->nama_mk, 'pemrograman web lanjut') !== false))
+                                        @elseif($n->mataKuliah && (stripos($n->mataKuliah->nama_mk, 'pwl') !== false || stripos($n->mataKuliah->nama_mk, 'pemrograman web') !== false || stripos($n->mataKuliah->nama_mk, 'perograman web') !== false))
                                             <br>
                                             <small class="text-muted">
                                                 <i class="bi bi-laptop"></i> 
@@ -147,7 +147,7 @@
                                             $nilaiAkhir = $n->laporan; // default mata kuliah biasa
 
                                             // Pengambilan Keputusan
-                                            if($n->mataKuliah && stripos($n->mataKuliah->nama_mk, 'pengambilan keputusan') !== false) {
+                                            if($n->mataKuliah && (stripos($n->mataKuliah->nama_mk, 'pengambilan keputusan') !== false || stripos($n->mataKuliah->nama_mk, 'teknik pengambilan') !== false)) {
                                                 $uts = $n->uts ?? 0;
                                                 $uas = $n->uas ?? 0;
                                                 $nilaiAkhir = ($uts * 0.1) + ($uas * 0.1) + 
@@ -164,7 +164,7 @@
                                             }
 
                                             // PWL (Pemrograman Web Lanjut)
-                                            elseif($n->mataKuliah && (stripos($n->mataKuliah->nama_mk, 'pwl') !== false || stripos($n->mataKuliah->nama_mk, 'pemrograman web lanjut') !== false)) {
+                                            elseif($n->mataKuliah && (stripos($n->mataKuliah->nama_mk, 'pwl') !== false || stripos($n->mataKuliah->nama_mk, 'pemrograman web') !== false || stripos($n->mataKuliah->nama_mk, 'perograman web') !== false)) {
                                                 $nilaiAkhir = (($n->it_proposal ?? 0) * 0.15) + 
                                                               (($n->it_progress_report ?? 0) * 0.15) + 
                                                               (($n->it_final_project ?? 0) * 0.4) + 

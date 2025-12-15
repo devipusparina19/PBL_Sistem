@@ -131,8 +131,20 @@ class MilestoneController extends Controller
             'status'       => 'menunggu',
         ]);
 
-        // ✅ Buat notifikasi untuk dosen saja
-        $recipients = \App\Models\User::where('role', 'dosen')->get();
+        // ✅ Buat notifikasi HANYA untuk dosen yang mengampu IT Proyek
+        $itProyekCourse = \App\Models\MataKuliah::where('nama_mk', 'LIKE', '%IT Proyek%')
+            ->orWhere('nama_mk', 'LIKE', '%IT Project%')
+            ->first();
+
+        $recipientNips = [];
+        if ($itProyekCourse && !empty($itProyekCourse->nip_dosen)) {
+            $recipientNips = array_map('trim', explode(',', $itProyekCourse->nip_dosen));
+        }
+
+        // Filter dosen berdasarkan NIP yang mengampu IT Proyek
+        $recipients = \App\Models\User::where('role', 'dosen')
+            ->whereIn('nim_nip', $recipientNips)
+            ->get();
 
         foreach ($recipients as $recipient) {
             \App\Models\Notification::create([
@@ -238,5 +250,26 @@ class MilestoneController extends Controller
 
         return redirect()->route('milestone.validasi')
             ->with('success', 'Milestone berhasil divalidasi.');
+    }
+
+    /**
+     * Hapus milestone
+     */
+    public function destroy($id)
+    {
+        $milestone = Milestone::findOrFail($id);
+        $user = auth()->user();
+
+        // Hanya pembuat milestone atau dosen yang boleh menghapus
+        if ($user->role !== 'dosen' && $user->id != $milestone->user_id) {
+            abort(403, 'Anda tidak berhak menghapus milestone ini.');
+        }
+
+        // Hapus notifikasi terkait milestone ini
+        \App\Models\Notification::where('milestone_id', $milestone->id)->delete();
+
+        $milestone->delete();
+
+        return redirect()->back()->with('success', 'Milestone berhasil dihapus.');
     }
 }

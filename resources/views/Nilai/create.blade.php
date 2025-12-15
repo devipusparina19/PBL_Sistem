@@ -91,10 +91,10 @@
                             ];
                         @endphp
 
-                        @foreach($fields as [$id, $label])
+                        @foreach($fields as [$name, $label])
                         <div class="col-md-6 mb-3">
-                            <label for="{{ $id }}" class="form-label">{{ $label }}</label>
-                            <input type="number" name="{{ $id }}" id="{{ $id }}"
+                            <label for="tpk_{{ $name }}" class="form-label">{{ $label }}</label>
+                            <input type="number" name="{{ $name }}" id="tpk_{{ $name }}"
                                    class="form-control" min="0" max="100" step="0.01" placeholder="0-100">
                         </div>
                         @endforeach
@@ -180,6 +180,53 @@
 
 
 
+                <!-- Form PWL -->
+                <div id="form-pwl" style="display: none;">
+                    <h5 class="mb-3">💻 Komponen Penilaian PWL</h5>
+                    
+                    <div class="alert alert-info">
+                        <strong>Komponen Penilaian Pemrograman Web Lanjut:</strong><br>
+                        • Proposal (15%)<br>
+                        • Progress Report (15%)<br>
+                        • Final Project (40%)<br>
+                        • Presentasi (20%)<br>
+                        • Dokumentasi (10%)
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Proposal (15%)</label>
+                            <input type="number" class="form-control" name="it_proposal" id="pwl_proposal" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Progress Report (15%)</label>
+                            <input type="number" class="form-control" name="it_progress_report" id="pwl_progress_report" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Presentasi (20%)</label>
+                            <input type="number" class="form-control" name="it_presentasi" id="pwl_presentasi" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Dokumentasi (10%)</label>
+                            <input type="number" class="form-control" name="it_dokumentasi" id="pwl_dokumentasi" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Final Project (40%)</label>
+                            <input type="number" class="form-control" name="it_final_project" id="pwl_final_project" 
+                                   min="0" max="100" step="0.01" placeholder="0-100">
+                        </div>
+                    </div>
+
+                    <div class="alert alert-primary mt-3">
+                        <h5>🎯 Nilai Akhir PWL: <span id="preview_nilai_akhir_pwl">0.00</span></h5>
+                        <small>Grade: <span id="grade_pwl">-</span></small>
+                    </div>
+                </div>
+
                 <!-- Form IT Project -->
                 <div id="form-it-project" style="display: none;">
                     <h5 class="mb-3">🚀 Komponen Penilaian IT Project</h5>
@@ -240,7 +287,7 @@
                     <a href="{{ route('nilai.index') }}" class="btn btn-secondary">
                         <i class="bi bi-x-circle me-2"></i>Batal
                     </a>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" onclick="prepareSubmit()">
                         <i class="bi bi-save me-2"></i>Simpan Nilai
                     </button>
                 </div>
@@ -357,23 +404,26 @@ function toggleNilaiForm() {
     const formStandar = document.getElementById('form-nilai-standar');
     const formPK = document.getElementById('form-nilai-pengambilan-keputusan');
     const formIntegrasi = document.getElementById('form-integrasi-sistem');
+    const formPWL = document.getElementById('form-pwl');
     const formIT = document.getElementById('form-it-project');
 
     formStandar.style.display = 'none';
     formPK.style.display = 'none';
     formIntegrasi.style.display = 'none';
+    if(formPWL) formPWL.style.display = 'none';
     formIT.style.display = 'none';
 
-    if (namaMK.includes('pengambilan keputusan')) {
+    // Cek untuk "Teknik Pengambilan Keputusan" (bukan hanya "pengambilan keputusan")
+    if (namaMK.includes('pengambilan keputusan') || namaMK.includes('teknik pengambilan')) {
         formPK.style.display = 'block';
         calculateNilaiAkhir();
     } else if (namaMK.includes('integrasi sistem')) {
         formIntegrasi.style.display = 'block';
         setupIntegrasiSistemCalculation();
-    } else if (namaMK.includes('pwl') || namaMK.includes('pemrograman web') || namaMK.includes('web lanjut')) {
-        // PWL menggunakan form yang sama dengan IT Project
-        formIT.style.display = 'block';
-        setupITProjectCalculation();
+    // Cek untuk "Perograman Web Lanjut" (ada typo di database: pero-G-raman)
+    } else if (namaMK.includes('pwl') || namaMK.includes('pemrograman web') || namaMK.includes('perograman web') || namaMK.includes('web lanjut')) {
+        formPWL.style.display = 'block';
+        setupPWLCalculation();
     } else if (namaMK.includes('it project') || namaMK.includes('it proyek')) {
         formIT.style.display = 'block';
         setupITProjectCalculation();
@@ -383,20 +433,18 @@ function toggleNilaiForm() {
     }
 }
 
-// ... rest of existing functions ...
 // Kalkulasi Pengambilan Keputusan
 function calculateNilaiAkhir() {
     const val = id => parseFloat(document.getElementById(id)?.value) || 0;
-    const nilaiAkhir = (val('uts') * 0.1) + (val('uas') * 0.1) + (val('aktivitas_partisipatif') * 0.1)
-                     + (val('nilai_kerja') * 0.2) + (val('penyajian_dokumentasi') * 0.2)
-                     + (val('hasil_proyek') * 0.3);
+    const nilaiAkhir = (val('tpk_uts') * 0.1) + (val('tpk_uas') * 0.1) + (val('tpk_aktivitas_partisipatif') * 0.1)
+                     + (val('tpk_nilai_kerja') * 0.2) + (val('tpk_penyajian_dokumentasi') * 0.2)
+                     + (val('tpk_hasil_proyek') * 0.3);
     const el = document.getElementById('preview-nilai-akhir');
     if(el) el.textContent = nilaiAkhir.toFixed(2);
 }
 
-// document.addEventListener('DOMContentLoaded') removed here to avoid duplication with top script
-// Instead, attach listeners:
-['uts', 'uas', 'aktivitas_partisipatif', 'nilai_kerja', 'penyajian_dokumentasi', 'hasil_proyek'].forEach(id => {
+// Setup listeners for TPK fields
+['tpk_uts', 'tpk_uas', 'tpk_aktivitas_partisipatif', 'tpk_nilai_kerja', 'tpk_penyajian_dokumentasi', 'tpk_hasil_proyek'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', calculateNilaiAkhir);
 });
@@ -436,6 +484,40 @@ function calculateIntegrasiSistem() {
     if(elGrade) elGrade.textContent = grade;
 }
 
+// Kalkulasi PWL
+function setupPWLCalculation() {
+    ['pwl_proposal', 'pwl_progress_report', 'pwl_presentasi', 'pwl_dokumentasi', 'pwl_final_project']
+        .forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('input', calculatePWL);
+        });
+}
+
+function calculatePWL() {
+    const val = id => parseFloat(document.getElementById(id)?.value) || 0;
+    
+    // Proposal 15%
+    // Progress Report 15%
+    // Final Project 40%
+    // Presentasi 20%
+    // Dokumentasi 10%
+    const nilaiAkhir = (val('pwl_proposal') * 0.15) + 
+                       (val('pwl_progress_report') * 0.15) + 
+                       (val('pwl_final_project') * 0.40) + 
+                       (val('pwl_presentasi') * 0.20) + 
+                       (val('pwl_dokumentasi') * 0.10);
+    
+    document.getElementById('preview_nilai_akhir_pwl').textContent = nilaiAkhir.toFixed(2);
+    
+    let grade = '-';
+    if (nilaiAkhir >= 85) grade = 'A';
+    else if (nilaiAkhir >= 75) grade = 'B';
+    else if (nilaiAkhir >= 65) grade = 'C';
+    else if (nilaiAkhir >= 50) grade = 'D';
+    else grade = 'E';
+    
+    document.getElementById('grade_pwl').textContent = grade;
+}
 
 // Kalkulasi IT Project
 function setupITProjectCalculation() {
@@ -456,8 +538,7 @@ function calculateITProject() {
                        (val('it_dokumentasi') * 0.10) +
                        (val('it_final_project') * 0.40);
     
-    const elAkhir = document.getElementById('preview_nilai_akhir_it');
-    if(elAkhir) elAkhir.textContent = nilaiAkhir.toFixed(2);
+    document.getElementById('preview_nilai_akhir_it').textContent = nilaiAkhir.toFixed(2);
     
     let grade = '-';
     if (nilaiAkhir >= 85) grade = 'A';
@@ -466,8 +547,31 @@ function calculateITProject() {
     else if (nilaiAkhir >= 50) grade = 'D';
     else grade = 'E';
     
-    const elGrade = document.getElementById('grade_it');
-    if(elGrade) elGrade.textContent = grade;
+    document.getElementById('grade_it').textContent = grade;
+}
+
+// Fungsi untuk disable fields yang tersembunyi sebelum submit
+function prepareSubmit() {
+    const formSections = [
+        'form-nilai-standar',
+        'form-nilai-pengambilan-keputusan', 
+        'form-integrasi-sistem',
+        'form-pwl',
+        'form-it-project'
+    ];
+    
+    formSections.forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+        if (section && section.style.display === 'none') {
+            // Disable all inputs in hidden sections so they don't get submitted
+            const inputs = section.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.disabled = true;
+            });
+        }
+    });
+    
+    console.log('Form prepared for submission - hidden fields disabled');
 }
 </script>
 @endsection

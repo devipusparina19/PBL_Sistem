@@ -68,6 +68,45 @@
                     </div>
                 </div>
 
+                <!-- Form Pengambilan Keputusan -->
+                <div id="form-nilai-pengambilan-keputusan" style="display: none;">
+                    <div class="alert alert-info">
+                        <strong>Komponen Penilaian Pengambilan Keputusan:</strong><br>
+                        • UTS (10%)<br>
+                        • UAS (10%)<br>
+                        • Keaktifan (10%)<br>
+                        • Nilai Kerja (20%)<br>
+                        • Penyajian & Dokumentasi (20%)<br>
+                        • Hasil Proyek (30%)
+                    </div>
+
+                    <div class="row">
+                        @php
+                            $fields = [
+                                ['uts', 'UTS - 10%', $nilai->uts],
+                                ['uas', 'UAS - 10%', $nilai->uas],
+                                ['aktivitas_partisipatif', 'Aktivitas Partisipatif (10%)', $nilai->presentasi],
+                                ['nilai_kerja', 'Nilai Kerja (20%)', $nilai->kontribusi],
+                                ['penyajian_dokumentasi', 'Penyajian & Dokumentasi (20%)', $nilai->laporan],
+                                ['hasil_proyek', 'Hasil Proyek (30%)', $nilai->hasil_proyek],
+                            ];
+                        @endphp
+
+                        @foreach($fields as [$id, $label, $val])
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ $id }}" class="form-label">{{ $label }}</label>
+                            <input type="number" name="{{ $id }}" id="{{ $id }}"
+                                   class="form-control" min="0" max="100" step="0.01" 
+                                   value="{{ old($id, $val) }}">
+                        </div>
+                        @endforeach
+                    </div>
+
+                    <div class="alert alert-success">
+                        <strong>Nilai Akhir:</strong> <span id="preview-nilai-akhir">0</span>
+                    </div>
+                </div>
+
                 <!-- Form Integrasi Sistem -->
                 <div id="form-integrasi-sistem" style="display: none;">
                     <h5 class="mb-3">📊 Komponen Penilaian Integrasi Sistem</h5>
@@ -133,6 +172,52 @@
                 </div>
 
 
+
+                <!-- Form PWL -->
+                <div id="form-pwl" style="display: none;">
+                    <h5 class="mb-3">💻 Komponen Penilaian PWL</h5>
+                    
+                    <div class="alert alert-info">
+                        <strong>Komponen Penilaian Pemrograman Web Lanjut:</strong><br>
+                        • Proposal (15%)<br>
+                        • Progress Report (15%)<br>
+                        • Final Project (40%)<br>
+                        • Presentasi (20%)<br>
+                        • Dokumentasi (10%)
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Proposal (15%)</label>
+                            <input type="number" class="form-control" name="it_proposal" id="pwl_proposal" 
+                                   min="0" max="100" step="0.01" value="{{ old('it_proposal', $nilai->it_proposal) }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Progress Report (15%)</label>
+                            <input type="number" class="form-control" name="it_progress_report" id="pwl_progress_report" 
+                                   min="0" max="100" step="0.01" value="{{ old('it_progress_report', $nilai->it_progress_report) }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Presentasi (20%)</label>
+                            <input type="number" class="form-control" name="it_presentasi" id="pwl_presentasi" 
+                                   min="0" max="100" step="0.01" value="{{ old('it_presentasi', $nilai->it_presentasi) }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Dokumentasi (10%)</label>
+                            <input type="number" class="form-control" name="it_dokumentasi" id="pwl_dokumentasi" 
+                                   min="0" max="100" step="0.01" value="{{ old('it_dokumentasi', $nilai->it_dokumentasi) }}">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Final Project (40%)</label>
+                            <input type="number" class="form-control" name="it_final_project" id="pwl_final_project" 
+                                   min="0" max="100" step="0.01" value="{{ old('it_final_project', $nilai->it_final_project) }}">
+                        </div>
+                    </div>
+
+                    <div class="alert alert-primary mt-3">
+                        <h5>🎯 Nilai Akhir PWL: <span id="preview_nilai_akhir_pwl">0.00</span></h5>
+                    </div>
+                </div>
 
                 <!-- Form IT Project -->
                 <div id="form-it-project" style="display: none;">
@@ -236,20 +321,26 @@ function toggleNilaiForm() {
     const namaMK = selectMK.options[selectMK.selectedIndex]?.getAttribute('data-nama')?.toLowerCase() || '';
 
     const formStandar = document.getElementById('form-nilai-standar');
+    const formPK = document.getElementById('form-nilai-pengambilan-keputusan');
     const formIntegrasi = document.getElementById('form-integrasi-sistem');
+    const formPWL = document.getElementById('form-pwl');
     const formIT = document.getElementById('form-it-project');
 
     formStandar.style.display = 'none';
+    if(formPK) formPK.style.display = 'none';
     formIntegrasi.style.display = 'none';
+    if(formPWL) formPWL.style.display = 'none';
     formIT.style.display = 'none';
 
-    if (namaMK.includes('integrasi sistem')) {
+    if (namaMK.includes('pengambilan keputusan') || namaMK.includes('teknik pengambilan')) {
+        formPK.style.display = 'block';
+        calculateNilaiAkhir();
+    } else if (namaMK.includes('integrasi sistem')) {
         formIntegrasi.style.display = 'block';
         setupIntegrasiSistemCalculation();
-    } else if (namaMK.includes('pwl') || namaMK.includes('pemrograman web') || namaMK.includes('web lanjut')) {
-        // PWL menggunakan form yang sama dengan IT Project
-        formIT.style.display = 'block';
-        setupITProjectCalculation();
+    } else if (namaMK.includes('pwl') || namaMK.includes('pemrograman web') || namaMK.includes('perograman web') || namaMK.includes('web lanjut')) {
+        formPWL.style.display = 'block';
+        setupPWLCalculation();
     } else if (namaMK.includes('it project') || namaMK.includes('it proyek')) {
         formIT.style.display = 'block';
         setupITProjectCalculation();
@@ -259,59 +350,51 @@ function toggleNilaiForm() {
     }
 }
 
-// Kalkulasi Integrasi Sistem
-function setupIntegrasiSistemCalculation() {
-    ['nilai_kerja', 'nilai_laporan', 'ujian_praktikum_1', 'ujian_praktikum_2', 'integrasi_uts', 'integrasi_uas']
+// Kalkulasi PWL
+function setupPWLCalculation() {
+    ['pwl_proposal', 'pwl_progress_report', 'pwl_presentasi', 'pwl_dokumentasi', 'pwl_final_project']
         .forEach(id => {
             const el = document.getElementById(id);
-            if (el) el.addEventListener('input', calculateIntegrasiSistem);
+            if (el) el.addEventListener('input', calculatePWL);
         });
+    // Trigger on load
+    calculatePWL();
 }
 
-function calculateIntegrasiSistem() {
+function calculatePWL() {
     const val = id => parseFloat(document.getElementById(id)?.value) || 0;
     
-    const aktivitas = (val('nilai_kerja') * 0.6) + (val('nilai_laporan') * 0.4);
-    const project = (val('ujian_praktikum_1') * 0.5) + (val('ujian_praktikum_2') * 0.5);
-    const nilaiAkhir = (aktivitas * 0.45) + (project * 0.25) + (val('integrasi_uts') * 0.15) + (val('integrasi_uas') * 0.15);
+    // Proposal 15%
+    // Progress Report 15%
+    // Final Project 40%
+    // Presentasi 20%
+    // Dokumentasi 10%
+    const nilaiAkhir = (val('pwl_proposal') * 0.15) + 
+                       (val('pwl_progress_report') * 0.15) + 
+                       (val('pwl_final_project') * 0.40) + 
+                       (val('pwl_presentasi') * 0.20) + 
+                       (val('pwl_dokumentasi') * 0.10);
     
-    console.log('Nilai Akhir Integrasi Sistem:', nilaiAkhir.toFixed(2));
+    document.getElementById('preview_nilai_akhir_pwl').textContent = nilaiAkhir.toFixed(2);
 }
 
-// Kalkulasi IT Project
-function setupITProjectCalculation() {
-    ['it_kontribusi', 'it_presentasi', 'it_proposal', 'it_progress_report', 'it_dokumentasi', 'it_final_project']
-        .forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.addEventListener('input', calculateITProject);
-        });
-    // Trigger calculation on load
-    calculateITProject();
-}
-
-function calculateITProject() {
+// Kalkulasi Pengambilan Keputusan
+function calculateNilaiAkhir() {
     const val = id => parseFloat(document.getElementById(id)?.value) || 0;
-    
-    // Aktivitas 20%
-    // Presentasi 10%
-    // Objektivitas 10% (Map to proposal)
-    // Laporan Progres 10% (Map to progress_report)
-    // Laporan Akhir 10% (Map to dokumentasi)
-    // Produk 40% (Map to final_project)
-    const nilaiAkhir = (val('it_kontribusi') * 0.20) + 
-                       (val('it_presentasi') * 0.10) +
-                       (val('it_proposal') * 0.10) +
-                       (val('it_progress_report') * 0.10) +
-                       (val('it_dokumentasi') * 0.10) +
-                       (val('it_final_project') * 0.40);
-    
-    console.log('Nilai Akhir IT Project:', nilaiAkhir.toFixed(2));
-    const preview = document.getElementById('preview_nilai_akhir_it');
-    if (preview) preview.textContent = nilaiAkhir.toFixed(2);
+    const nilaiAkhir = (val('uts') * 0.1) + (val('uas') * 0.1) + (val('aktivitas_partisipatif') * 0.1)
+                     + (val('nilai_kerja') * 0.2) + (val('penyajian_dokumentasi') * 0.2)
+                     + (val('hasil_proyek') * 0.3);
+    const el = document.getElementById('preview-nilai-akhir');
+    if(el) el.textContent = nilaiAkhir.toFixed(2);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     toggleNilaiForm();
+    ['uts', 'uas', 'aktivitas_partisipatif', 'nilai_kerja', 'penyajian_dokumentasi', 'hasil_proyek'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', calculateNilaiAkhir);
+    });
 });
+
 </script>
 @endsection

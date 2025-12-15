@@ -62,10 +62,20 @@
 
                                         {{-- Aksi: edit oleh pembuat (selama belum disetujui) atau validasi oleh dosen --}}
                                         @if(auth()->id() === $m->user_id && $m->status !== 'disetujui')
-                                            <a href="{{ route('milestone.edit', $m->id) }}"
-                                               class="btn btn-sm btn-warning">
-                                                Edit
-                                            </a>
+                                            <div class="d-flex gap-1">
+                                                <a href="{{ route('milestone.edit', $m->id) }}"
+                                                   class="btn btn-sm btn-warning">
+                                                    Edit
+                                                </a>
+                                                <form action="{{ route('milestone.destroy', $m->id) }}" method="POST" 
+                                                      onsubmit="return confirm('Yakin ingin menghapus milestone ini?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                                        Hapus
+                                                    </button>
+                                                </form>
+                                            </div>
                                         @elseif(auth()->user()->role === 'dosen')
                                             <a href="{{ route('milestone.edit', $m->id) }}"
                                                class="btn btn-sm btn-success">
