@@ -22,7 +22,7 @@
                     <select name="mahasiswa_id" id="mahasiswa_id" class="form-select @error('mahasiswa_id') is-invalid @enderror" required>
                         <option value="">-- Pilih Mahasiswa --</option>
                         @foreach($mahasiswa as $mhs)
-                            <option value="{{ $mhs->id }}" {{ old('mahasiswa_id') == $mhs->id ? 'selected' : '' }}>
+                            <option value="{{ $mhs->id }}" data-kelas="{{ $mhs->kelas }}" {{ old('mahasiswa_id') == $mhs->id ? 'selected' : '' }}>
                                 {{ $mhs->nim }} - {{ $mhs->nama }} ({{ $mhs->kelas ?? 'Kelas tidak ada' }})
                             </option>
                         @endforeach
@@ -42,7 +42,7 @@
                     <select name="mata_kuliah_id" id="mata_kuliah_id" class="form-select @error('mata_kuliah_id') is-invalid @enderror" required onchange="toggleNilaiForm()">
                         <option value="">-- Pilih Mata Kuliah --</option>
                         @foreach($mataKuliah as $mk)
-                            <option value="{{ $mk->id }}" data-nama="{{ $mk->nama_mk }}" {{ old('mata_kuliah_id') == $mk->id ? 'selected' : '' }}>
+                            <option value="{{ $mk->id }}" data-kelas="{{ $mk->kelas }}" data-nama="{{ $mk->nama_mk }}" {{ old('mata_kuliah_id') == $mk->id ? 'selected' : '' }}>
                                 {{ $mk->nama_mk }}
                             </option>
                         @endforeach
@@ -259,6 +259,92 @@
 
 {{-- ================= SCRIPT ================= --}}
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const mahasiswaSelect = document.getElementById('mahasiswa_id');
+    const mkSelect = document.getElementById('mata_kuliah_id');
+    const mkContainer = mkSelect.closest('.mb-4');
+    
+    // Buat elemen untuk menampilkan nama mata kuliah jika dropdown di-hide
+    const mkDisplay = document.createElement('div');
+    mkDisplay.className = 'form-control bg-light';
+    mkDisplay.style.display = 'none';
+    mkDisplay.readOnly = true;
+    mkContainer.appendChild(mkDisplay);
+
+    function filterMataKuliah() {
+        const selectedMhs = mahasiswaSelect.options[mahasiswaSelect.selectedIndex];
+        const mhsKelas = selectedMhs.getAttribute('data-kelas');
+        
+        if (!mhsKelas) {
+            mkSelect.value = "";
+            mkContainer.style.display = 'block';
+            mkDisplay.style.display = 'none';
+            toggleNilaiForm();
+            return;
+        }
+
+        const options = mkSelect.options;
+        let matchCount = 0;
+        let lastMatchValue = "";
+        let lastMatchText = "";
+
+        // Reset visibility first (optional: specific logic)
+        for (let i = 0; i < options.length; i++) {
+            const opt = options[i];
+            if (opt.value === "") continue;
+
+            const mkKelas = opt.getAttribute('data-kelas');
+            
+            // Logika matching kelas
+            // Asumsi: kelas harus sama persis
+            if (mkKelas === mhsKelas) {
+                opt.style.display = ''; // Show
+                matchCount++;
+                lastMatchValue = opt.value;
+                lastMatchText = opt.text.trim();
+            } else {
+                opt.style.display = 'none'; // Hide
+            }
+        }
+
+        if (matchCount === 1) {
+            // Auto Select
+            mkSelect.value = lastMatchValue;
+            
+            // Hide Select, Show Text
+            mkSelect.style.display = 'none';
+            mkDisplay.textContent = lastMatchText;
+            mkDisplay.style.display = 'block';
+
+            // Trigger Update Form
+            toggleNilaiForm();
+        } else {
+            // Show Select if 0 or >1 matches
+            mkSelect.style.display = 'block';
+            mkDisplay.style.display = 'none';
+            
+            // If currently selected value is invalid for this class, reset
+            const currentOpt = mkSelect.options[mkSelect.selectedIndex];
+            if (currentOpt && currentOpt.getAttribute('data-kelas') !== mhsKelas && mkSelect.value !== "") {
+                mkSelect.value = "";
+                toggleNilaiForm();
+            }
+        }
+    }
+
+    mahasiswaSelect.addEventListener('change', filterMataKuliah);
+
+    // Run on load if mahasiswa selected (e.g. old input)
+    if (mahasiswaSelect.value) {
+        filterMataKuliah();
+        // Ensure form is correct after auto-select might handle it, 
+        // but toggleNilaiForm needs to run. 
+        // filterMataKuliah calls toggleNilaiForm if matchCount === 1.
+        // If matchCount > 1, we might need to manually call it if old value exists.
+        toggleNilaiForm();
+    }
+});
+
 function toggleNilaiForm() {
     const selectMK = document.getElementById('mata_kuliah_id');
     const namaMK = selectMK.options[selectMK.selectedIndex]?.getAttribute('data-nama')?.toLowerCase() || '';
@@ -292,26 +378,26 @@ function toggleNilaiForm() {
     }
 }
 
+// ... rest of existing functions ...
 // Kalkulasi Pengambilan Keputusan
 function calculateNilaiAkhir() {
     const val = id => parseFloat(document.getElementById(id)?.value) || 0;
     const nilaiAkhir = (val('uts') * 0.1) + (val('uas') * 0.1) + (val('aktivitas_partisipatif') * 0.1)
                      + (val('nilai_kerja') * 0.2) + (val('penyajian_dokumentasi') * 0.2)
                      + (val('hasil_proyek') * 0.3);
-    document.getElementById('preview-nilai-akhir').textContent = nilaiAkhir.toFixed(2);
+    const el = document.getElementById('preview-nilai-akhir');
+    if(el) el.textContent = nilaiAkhir.toFixed(2);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    toggleNilaiForm();
-    ['uts', 'uas', 'aktivitas_partisipatif', 'nilai_kerja', 'penyajian_dokumentasi', 'hasil_proyek'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('input', calculateNilaiAkhir);
-    });
+// document.addEventListener('DOMContentLoaded') removed here to avoid duplication with top script
+// Instead, attach listeners:
+['uts', 'uas', 'aktivitas_partisipatif', 'nilai_kerja', 'penyajian_dokumentasi', 'hasil_proyek'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', calculateNilaiAkhir);
 });
 
 // Kalkulasi Integrasi Sistem
 function setupIntegrasiSistemCalculation() {
-    // UBAH array id ini
     ['nilai_kerja', 'nilai_laporan', 'ujian_praktikum_1', 'ujian_praktikum_2', 'integrasi_uts', 'integrasi_uas']
         .forEach(id => {
             const el = document.getElementById(id);
@@ -322,16 +408,17 @@ function setupIntegrasiSistemCalculation() {
 function calculateIntegrasiSistem() {
     const val = id => parseFloat(document.getElementById(id)?.value) || 0;
 
-    // UBAH pemanggilan val() di sini
     const aktivitas = (val('nilai_kerja') * 0.6) + (val('nilai_laporan') * 0.4);
-    document.getElementById('preview_aktivitas').textContent = aktivitas.toFixed(2);
+    const elAkt = document.getElementById('preview_aktivitas');
+    if(elAkt) elAkt.textContent = aktivitas.toFixed(2);
 
     const project = (val('ujian_praktikum_1') * 0.5) + (val('ujian_praktikum_2') * 0.5);
-    document.getElementById('preview_project').textContent = project.toFixed(2);
+    const elProj = document.getElementById('preview_project');
+    if(elProj) elProj.textContent = project.toFixed(2);
 
-    // UBAH pemanggilan val() di sini juga - gunakan ID yang baru
     const nilaiAkhir = (aktivitas * 0.45) + (project * 0.25) + (val('integrasi_uts') * 0.15) + (val('integrasi_uas') * 0.15);
-    document.getElementById('preview_nilai_akhir_integrasi').textContent = nilaiAkhir.toFixed(2);
+    const elAkhir = document.getElementById('preview_nilai_akhir_integrasi');
+    if(elAkhir) elAkhir.textContent = nilaiAkhir.toFixed(2);
 
     let grade = '-';
     if (nilaiAkhir >= 85) grade = 'A';
@@ -340,9 +427,9 @@ function calculateIntegrasiSistem() {
     else if (nilaiAkhir >= 50) grade = 'D';
     else grade = 'E';
 
-    document.getElementById('grade_integrasi').textContent = grade;
+    const elGrade = document.getElementById('grade_integrasi');
+    if(elGrade) elGrade.textContent = grade;
 }
-
 
 
 // Kalkulasi IT Project
@@ -357,12 +444,6 @@ function setupITProjectCalculation() {
 function calculateITProject() {
     const val = id => parseFloat(document.getElementById(id)?.value) || 0;
     
-    // Aktivitas 20%
-    // Presentasi 10%
-    // Objektivitas 10% (Map to proposal)
-    // Laporan Progres 10% (Map to progress_report)
-    // Laporan Akhir 10% (Map to dokumentasi)
-    // Produk 40% (Map to final_project)
     const nilaiAkhir = (val('it_kontribusi') * 0.20) + 
                        (val('it_presentasi') * 0.10) +
                        (val('it_proposal') * 0.10) +
@@ -370,7 +451,8 @@ function calculateITProject() {
                        (val('it_dokumentasi') * 0.10) +
                        (val('it_final_project') * 0.40);
     
-    document.getElementById('preview_nilai_akhir_it').textContent = nilaiAkhir.toFixed(2);
+    const elAkhir = document.getElementById('preview_nilai_akhir_it');
+    if(elAkhir) elAkhir.textContent = nilaiAkhir.toFixed(2);
     
     let grade = '-';
     if (nilaiAkhir >= 85) grade = 'A';
@@ -379,7 +461,8 @@ function calculateITProject() {
     else if (nilaiAkhir >= 50) grade = 'D';
     else grade = 'E';
     
-    document.getElementById('grade_it').textContent = grade;
+    const elGrade = document.getElementById('grade_it');
+    if(elGrade) elGrade.textContent = grade;
 }
 </script>
 @endsection
