@@ -71,7 +71,7 @@
                 <div id="form-nilai-pengambilan-keputusan" style="display: none;">
                     <h5 class="mb-3">📈 Komponen Penilaian Pengambilan Keputusan</h5>
                     
-                    <div class="alert alert-info mb-3">
+                    <div id="tpk-weight-alert" class="alert alert-info mb-3">
                         <i class="bi bi-info-circle me-2"></i>
                         <strong>Tip:</strong> Anda dapat mengubah bobot (%) setiap komponen. Pastikan total = 100%
                     </div>
@@ -149,7 +149,7 @@
                 <div id="form-integrasi-sistem" style="display: none;">
                     <h5 class="mb-3">📊 Komponen Penilaian Integrasi Sistem</h5>
                     
-                    <div class="alert alert-info mb-3">
+                    <div id="integrasi-weight-alert" class="alert alert-info mb-3">
                         <i class="bi bi-info-circle me-2"></i>
                         <strong>Tip:</strong> Anda dapat mengubah bobot (%) setiap komponen. Pastikan total = 100%
                     </div>
@@ -229,7 +229,7 @@
                 <div id="form-pwl" style="display: none;">
                     <h5 class="mb-3">💻 Komponen Penilaian PWL</h5>
                     
-                    <div class="alert alert-info mb-3">
+                    <div id="pwl-weight-alert" class="alert alert-info mb-3">
                         <i class="bi bi-info-circle me-2"></i>
                         <strong>Tip:</strong> Anda dapat mengubah bobot (%) setiap komponen. Pastikan total = 100%
                     </div>
@@ -297,7 +297,7 @@
                 <div id="form-it-project" style="display: none;">
                     <h5 class="mb-3">🚀 Komponen Penilaian IT Project</h5>
                     
-                    <div class="alert alert-info mb-3">
+                    <div id="it-weight-alert" class="alert alert-info mb-3">
                         <i class="bi bi-info-circle me-2"></i>
                         <strong>Tip:</strong> Anda dapat mengubah bobot (%) setiap komponen. Pastikan total = 100%
                     </div>
@@ -664,5 +664,64 @@ function prepareSubmit() {
     
     console.log('Form prepared for submission - hidden fields disabled');
 }
+
+// ===== WEIGHT VALIDATION FOR ALL COURSES =====
+function validateWeights(formId, weightInputNames, alertId) {
+    const weightInputs = weightInputNames.map(name => document.querySelector(`#${formId} input[name="${name}"]`));
+    const alertDiv = document.getElementById(alertId);
+    
+    if (!alertDiv || weightInputs.some(input => !input)) return;
+    
+    const total = weightInputs.reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
+    
+    if (total > 100) {
+        alertDiv.className = 'alert alert-danger mb-3';
+        alertDiv.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-1"></i> <strong>Peringatan:</strong> Total bobot melebihi 100%! (${total}%)`;
+    } else if (total < 100) {
+        alertDiv.className = 'alert alert-warning mb-3';
+        alertDiv.innerHTML = `<i class="bi bi-exclamation-triangle me-1"></i> Total bobot kurang dari 100% (${total}%)`;
+    } else {
+        alertDiv.className = 'alert alert-success mb-3';
+        alertDiv.innerHTML = `<i class="bi bi-check-circle-fill me-1"></i> Total bobot sudah tepat 100%`;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // IT Project validation
+    const itWeightInputs = ['w_it_aktivitas', 'w_it_presentasi', 'w_it_objektivitas', 'w_it_laporan_progres', 'w_it_laporan_akhir', 'w_it_produk'];
+    itWeightInputs.forEach(name => {
+        const input = document.querySelector(`input[name="${name}"]`);
+        if (input) {
+            input.addEventListener('input', () => validateWeights('form-it-project', itWeightInputs, 'it-weight-alert'));
+        }
+    });
+    
+    // PWL validation  
+    const pwlWeightInputs = ['w_pwl_proposal', 'w_pwl_progress_report', 'w_pwl_presentasi', 'w_pwl_dokumentasi', 'w_pwl_final_project'];
+    pwlWeightInputs.forEach(name => {
+        const input = document.querySelector(`input[name="${name}"]`);
+        if (input) {
+            input.addEventListener('input', () => validateWeights('form-pwl', pwlWeightInputs, 'pwl-weight-alert'));
+        }
+    });
+    
+    // Integrasi Sistem validation
+    const integrasiWeightInputs = ['w_integrasi_nilai_kerja', 'w_integrasi_nilai_laporan', 'w_integrasi_up1', 'w_integrasi_up2', 'w_integrasi_uts', 'w_integrasi_uas'];
+    integrasiWeightInputs.forEach(name => {
+        const input = document.querySelector(`input[name="${name}"]`);
+        if (input) {
+            input.addEventListener('input', () => validateWeights('form-integrasi-sistem', integrasiWeightInputs, 'integrasi-weight-alert'));
+        }
+    });
+    
+    // TPK validation
+    const tpkWeightInputs = ['w_tpk_uts', 'w_tpk_uas', 'w_tpk_keaktifan', 'w_tpk_nilai_kerja', 'w_tpk_penyajian', 'w_tpk_hasil_proyek'];
+    tpkWeightInputs.forEach(name => {
+        const input = document.querySelector(`input[name="${name}"]`);
+        if (input) {
+            input.addEventListener('input', () => validateWeights('form-nilai-pengambilan-keputusan', tpkWeightInputs, 'tpk-weight-alert'));
+        }
+    });
+});
 </script>
 @endsection

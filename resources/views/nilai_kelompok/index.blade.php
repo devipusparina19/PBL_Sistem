@@ -36,26 +36,29 @@
                     <h5 class="mb-0"><i class="bi bi-sliders me-2"></i>Pengaturan Penilaian Kelompok</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('nilai_kelompok.updateSettings') }}" method="POST">
+                    <form action="{{ route('nilai_kelompok.updateSettings') }}" method="POST" id="settingsForm">
                         @csrf
                         <div class="row">
                             <!-- Bobot Milestone & Anggota -->
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-semibold">Bobot Nilai Milestone (%)</label>
-                                <input type="number" name="bobot_milestone" class="form-control" 
+                                <input type="number" name="bobot_milestone" id="bobot_milestone" class="form-control bobot-input" 
                                        value="{{ $settings['bobot_milestone']->value ?? 50 }}" min="0" max="100">
                                 <small class="text-muted">Persentase nilai dari milestone</small>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-semibold">Bobot Nilai Rata-rata Anggota (%)</label>
-                                <input type="number" name="bobot_nilai_anggota" class="form-control" 
+                                <input type="number" name="bobot_nilai_anggota" id="bobot_anggota" class="form-control bobot-input" 
                                        value="{{ $settings['bobot_nilai_anggota']->value ?? 50 }}" min="0" max="100">
                                 <small class="text-muted">Persentase nilai dari mahasiswa</small>
                             </div>
                         </div>
                         
-                        <div class="alert alert-info py-2 mb-3">
-                            <i class="bi bi-info-circle me-1"></i>Total bobot harus = 100% (Milestone + Nilai Anggota)
+                        <!-- Dynamic Warning/Info Alert -->
+                        <div id="bobotAlert" class="alert alert-info py-2 mb-3">
+                            <i class="bi bi-info-circle me-1"></i>
+                            <span id="bobotAlertText">Total bobot harus = 100% (Milestone + Nilai Anggota)</span>
+                            <span id="bobotTotal" class="fw-bold ms-2">100%</span>
                         </div>
                         
                         <!-- Minimum Milestone -->
@@ -87,7 +90,7 @@
                         </div>
                         
                         <div class="text-end">
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" id="btnSaveSettings">
                                 <i class="bi bi-check-circle me-1"></i>Simpan Pengaturan
                             </button>
                         </div>
@@ -95,6 +98,43 @@
                 </div>
             </div>
         </div>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const bobotMilestone = document.getElementById('bobot_milestone');
+            const bobotAnggota = document.getElementById('bobot_anggota');
+            const alertDiv = document.getElementById('bobotAlert');
+            const alertText = document.getElementById('bobotAlertText');
+            const totalSpan = document.getElementById('bobotTotal');
+            const btnSave = document.getElementById('btnSaveSettings');
+            
+            function validateBobot() {
+                const milestone = parseFloat(bobotMilestone.value) || 0;
+                const anggota = parseFloat(bobotAnggota.value) || 0;
+                const total = milestone + anggota;
+                
+                totalSpan.textContent = total + '%';
+                
+                if (total > 100) {
+                    alertDiv.className = 'alert alert-danger py-2 mb-3';
+                    alertText.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-1"></i> Total bobot melebihi 100%! ';
+                    btnSave.disabled = true;
+                } else if (total < 100) {
+                    alertDiv.className = 'alert alert-warning py-2 mb-3';
+                    alertText.innerHTML = '<i class="bi bi-exclamation-triangle me-1"></i> Total bobot kurang dari 100%! ';
+                    btnSave.disabled = false;
+                } else {
+                    alertDiv.className = 'alert alert-success py-2 mb-3';
+                    alertText.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Total bobot sudah tepat ';
+                    btnSave.disabled = false;
+                }
+            }
+            
+            bobotMilestone.addEventListener('input', validateBobot);
+            bobotAnggota.addEventListener('input', validateBobot);
+            validateBobot(); // Initial check
+        });
+        </script>
     @endif
 
     <!-- Tabel Nilai Kelompok -->

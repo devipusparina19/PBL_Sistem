@@ -285,13 +285,6 @@
             <a href="{{ url('/profile') }}" class="{{ request()->is('profile') ? 'active' : '' }}">
                 <i class="bi bi-person-circle"></i> Profile
             </a>
-
-            {{-- Menu Pengaturan - khusus dosen --}}
-            @if(auth()->user() && auth()->user()->role === 'dosen')
-                <a href="{{ route('settings.index') }}" class="{{ request()->is('settings*') ? 'active' : '' }}">
-                    <i class="bi bi-gear-fill"></i> Pengaturan Bobot
-                </a>
-            @endif
         </div>
 
         <!-- Konten -->
