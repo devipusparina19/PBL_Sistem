@@ -38,11 +38,16 @@
                         @endif
                     </td>
                     <td>
-                        <form action="{{ route('logbook.destroy', $logbook->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin untuk menghapus data ini?')" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                        </form>
+                        <div class="d-flex gap-1">
+                            <a href="{{ route('logbook.edit', $logbook->id) }}" class="btn btn-warning btn-sm">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                            <form action="{{ route('logbook.destroy', $logbook->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin untuk menghapus data ini?')" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Hapus</button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             @empty

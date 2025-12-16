@@ -24,39 +24,76 @@ class LogbookController extends Controller
     {
         $request->validate([
             'tanggal' => 'required|date',
-            'minggu_ke' => 'nullable|string', 
+            'minggu_ke' => 'required|string', 
             'judul' => 'required|string|max:255',
+            'kelompok' => 'required|string|max:255',
             'rincian' => 'required|string',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $data = $request->all();
-
-        // Otomatis isi nama kelompok dari data mahasiswa login
-        if (auth()->check() && auth()->user()->role === 'mahasiswa') {
-            $mahasiswa = auth()->user()->mahasiswa;
-            if ($mahasiswa && $mahasiswa->kelompok) {
-                $data['kelompok'] = $mahasiswa->kelompok->nama_kelompok;
-            } else {
-                $data['kelompok'] = 'Individu / Belum Ada Kelompok';
-            }
-        } else {
-             $data['kelompok'] = $request->kelompok ?? '-';
-        }
-
-        // Otomatis isi minggu_ke jika kosong
-        if (empty($data['minggu_ke'])) {
-            $today = Carbon::now();
-            $data['minggu_ke'] = 'Minggu ke-' . ceil($today->day / 7);
-        }
+        $data = [
+            'tanggal' => $request->tanggal,
+            'minggu_ke' => $request->minggu_ke,
+            'judul' => $request->judul,
+            'kelompok' => $request->kelompok,
+            'rincian' => $request->rincian,
+        ];
 
         if ($request->hasFile('foto')) {
             $data['foto'] = $request->file('foto')->store('logbook_fotos', 'public');
         }
 
-        Logbook::create($data);
+        try {
+            Logbook::create($data);
+            return redirect()->route('logbook.index')->with('success', 'Data logbook berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            \Log::error('Error menyimpan logbook: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Gagal menyimpan logbook: ' . $e->getMessage());
+        }
+    }
 
-        return redirect()->route('logbook.index')->with('success', 'Data logbook berhasil ditambahkan!');
+    public function edit($id)
+    {
+        $logbook = Logbook::findOrFail($id);
+        return view('logbook.edit', compact('logbook'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'tanggal' => 'required|date',
+            'minggu_ke' => 'required|string', 
+            'judul' => 'required|string|max:255',
+            'kelompok' => 'required|string|max:255',
+            'rincian' => 'required|string',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $logbook = Logbook::findOrFail($id);
+        
+        $data = [
+            'tanggal' => $request->tanggal,
+            'minggu_ke' => $request->minggu_ke,
+            'judul' => $request->judul,
+            'kelompok' => $request->kelompok,
+            'rincian' => $request->rincian,
+        ];
+
+        if ($request->hasFile('foto')) {
+            // Hapus foto lama jika ada
+            if ($logbook->foto) {
+                Storage::disk('public')->delete($logbook->foto);
+            }
+            $data['foto'] = $request->file('foto')->store('logbook_fotos', 'public');
+        }
+
+        try {
+            $logbook->update($data);
+            return redirect()->route('logbook.index')->with('success', 'Data logbook berhasil diperbarui!');
+        } catch (\Exception $e) {
+            \Log::error('Error update logbook: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Gagal update logbook: ' . $e->getMessage());
+        }
     }
 
     public function destroy($id)
