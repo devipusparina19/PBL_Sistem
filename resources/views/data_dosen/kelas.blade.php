@@ -73,10 +73,25 @@
                                     </td>
                                     <td><span class="badge bg-info">{{ $item->kelas }}</span></td>
                                     <td>
-                                        @if($item->mata_kuliah)
-                                            <small>{{ $item->mata_kuliah }}</small>
+                                        @php
+                                            // Prioritas: ambil dari tabel mata_kuliah (NIP match)
+                                            $mkFromTable = $item->nama_mata_kuliah;
+                                            
+                                            // Fallback ke kolom mata_kuliah di tabel dosen jika tidak ada di MK table
+                                            if (empty($mkFromTable)) {
+                                                $mkFromTable = collect(preg_split('/[,;\\n]+/', $item->mata_kuliah ?? ''))
+                                                    ->map(fn($mk) => trim($mk))
+                                                    ->filter(fn($mk) => $mk && $mk !== '-')
+                                                    ->unique()
+                                                    ->toArray();
+                                            }
+                                        @endphp
+                                        @if(!empty($mkFromTable))
+                                            @foreach($mkFromTable as $mk)
+                                                <span class="badge bg-info text-dark mb-1">{{ $mk }}</span><br>
+                                            @endforeach
                                         @else
-                                            <span class="text-muted">-</span>
+                                            <span class="text-muted fst-italic">Belum diatur</span>
                                         @endif
                                     </td>
                                     @unless($isRestricted)

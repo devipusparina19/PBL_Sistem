@@ -62,14 +62,25 @@
                                                 <td>{{ $dosen->nip }}</td>
                                                 <td>
                                                     @php
-                                                        $mkList = collect(preg_split('/[,;\n]+/', $dosen->mata_kuliah))
-                                                            ->map(fn($mk) => trim($mk))
-                                                            ->filter()
-                                                            ->unique();
+                                                        // Prioritas: ambil dari tabel mata_kuliah (NIP match)
+                                                        $mkFromTable = $dosen->nama_mata_kuliah;
+                                                        
+                                                        // Fallback ke kolom mata_kuliah di tabel dosen
+                                                        if (empty($mkFromTable)) {
+                                                            $mkFromTable = collect(preg_split('/[,;\n]+/', $dosen->mata_kuliah ?? ''))
+                                                                ->map(fn($mk) => trim($mk))
+                                                                ->filter(fn($mk) => $mk && $mk !== '-')
+                                                                ->unique()
+                                                                ->toArray();
+                                                        }
                                                     @endphp
-                                                    @foreach($mkList as $mk)
-                                                        <span class="badge bg-info text-dark mb-1">{{ $mk }}</span><br>
-                                                    @endforeach
+                                                    @if(!empty($mkFromTable))
+                                                        @foreach($mkFromTable as $mk)
+                                                            <span class="badge bg-info text-dark mb-1">{{ $mk }}</span><br>
+                                                        @endforeach
+                                                    @else
+                                                        <span class="text-muted fst-italic">Belum diatur</span>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach

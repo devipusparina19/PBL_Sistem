@@ -53,4 +53,41 @@ class Dosen extends Model
             $this->attributes['mata_kuliah'] = $value;
         }
     }
+
+    /**
+     * Ambil mata kuliah dari tabel mata_kuliah berdasarkan NIP dosen
+     * Return: Collection of MataKuliah
+     */
+    public function getMataKuliahDariTabelAttribute()
+    {
+        return MataKuliah::where('nip_dosen', 'LIKE', '%' . $this->nip . '%')->get();
+    }
+
+    /**
+     * Ambil nama mata kuliah dari tabel mata_kuliah (array)
+     */
+    public function getNamaMataKuliahAttribute()
+    {
+        $mataKuliah = $this->mata_kuliah_dari_tabel;
+        
+        if ($mataKuliah->isEmpty()) {
+            return [];
+        }
+
+        return $mataKuliah->pluck('nama_mk')->unique()->toArray();
+    }
+
+    /**
+     * Ambil nama mata kuliah dalam format string
+     */
+    public function getNamaMataKuliahStringAttribute()
+    {
+        $names = $this->nama_mata_kuliah;
+        
+        if (empty($names)) {
+            return '';
+        }
+
+        return implode(', ', $names);
+    }
 }

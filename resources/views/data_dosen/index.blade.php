@@ -49,14 +49,25 @@
                                         <td>{{ $dosen->no_telp ?? '-' }}</td>
                                         <td>
                                             @php
-                                                $mkList = collect(preg_split('/[,;\n]+/', $dosen->mata_kuliah))
-                                                    ->map(fn($mk) => trim($mk))
-                                                    ->filter()
-                                                    ->unique();
+                                                // Prioritas: ambil dari tabel mata_kuliah (NIP match)
+                                                $mkFromTable = $dosen->nama_mata_kuliah;
+                                                
+                                                // Fallback ke kolom mata_kuliah di tabel dosen jika tidak ada di MK table
+                                                if (empty($mkFromTable)) {
+                                                    $mkFromTable = collect(preg_split('/[,;\\n]+/', $dosen->mata_kuliah ?? ''))
+                                                        ->map(fn($mk) => trim($mk))
+                                                        ->filter(fn($mk) => $mk && $mk !== '-')
+                                                        ->unique()
+                                                        ->toArray();
+                                                }
                                             @endphp
-                                            @foreach($mkList as $mk)
-                                                <span class="badge bg-info text-dark mb-1">{{ $mk }}</span><br>
-                                            @endforeach
+                                            @if(!empty($mkFromTable))
+                                                @foreach($mkFromTable as $mk)
+                                                    <span class="badge bg-info text-dark mb-1">{{ $mk }}</span><br>
+                                                @endforeach
+                                            @else
+                                                <span class="text-muted fst-italic">Belum diatur</span>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
@@ -101,22 +112,29 @@
                                                 </p>
 
                                                 @php
-                                                    // Pastikan bisa memuat banyak matkul
-                                                    $mataKuliahList = collect(
-                                                        preg_split('/[,;\n]+/', $item->mata_kuliah)
-                                                    )->map(fn($mk) => trim($mk))
-                                                     ->filter()
-                                                     ->unique(); // hindari duplikat matkul
+                                                    // Prioritas: ambil dari tabel mata_kuliah (NIP match)
+                                                    $mkFromTable = $item->nama_mata_kuliah;
+                                                    
+                                                    // Fallback ke kolom mata_kuliah di tabel dosen
+                                                    if (empty($mkFromTable)) {
+                                                        $mkFromTable = collect(preg_split('/[,;\\n]+/', $item->mata_kuliah ?? ''))
+                                                            ->map(fn($mk) => trim($mk))
+                                                            ->filter(fn($mk) => $mk && $mk !== '-')
+                                                            ->unique()
+                                                            ->toArray();
+                                                    }
                                                 @endphp
 
-                                                @if($mataKuliahList->isNotEmpty())
+                                                @if(!empty($mkFromTable))
                                                     <ul class="mb-0 small ps-3">
-                                                        @foreach($mataKuliahList as $mk)
+                                                        @foreach($mkFromTable as $mk)
                                                             <li class="text-truncate" style="max-width: 300px;">
                                                                 <i class="bi bi-book"></i> {{ $mk }}
                                                             </li>
                                                         @endforeach
                                                     </ul>
+                                                @else
+                                                    <p class="text-muted small fst-italic mb-0">Belum ada mata kuliah</p>
                                                 @endif
                                             </div>
                                         @endforeach
