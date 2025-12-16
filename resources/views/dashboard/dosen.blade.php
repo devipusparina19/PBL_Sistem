@@ -4,7 +4,7 @@
 <div class="container py-5">
     <!-- Header -->
     <div class="text-center mb-5">
-        <h2 class="fw-semibold text-primary mb-2" style="font-size: 1.9rem;">
+        <h2 class="fw-semibold text-dark mb-2" style="font-size: 1.9rem;">
             Sistem Penilaian Kinerja Mahasiswa dan Kelompok PBL
         </h2>
         <p class="text-muted" style="font-size: 1rem;">
@@ -56,30 +56,6 @@
                 </div>
             </div>
 
-            <!-- Monitoring Progres -->
-            <div class="col-md-4 col-lg-3">
-                <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
-                    <div class="card-body text-center p-4">
-                        <div class="mb-3">
-                            <i class="bi bi-graph-up text-primary" style="font-size: 2.5rem;"></i>
-                        </div>
-                        <h5 class="fw-semibold mb-2 text-dark">Monitoring Progres</h5>
-                        <p class="text-secondary mb-4" style="font-size: 0.95rem;">
-                            Pantau logbook mahasiswa dan progres kelompok.
-                        </p>
-
-                        @if(Auth::user()->role == 'admin')
-                            <a href="{{ url('/monitoring') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
-                                Lihat / Edit / Hapus
-                            </a>
-                        @else
-                            <a href="{{ url('/monitoring') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
-                                Pantau
-                            </a>
-                        @endif
-                    </div>
-                </div>
-            </div>
 
         </div>
 
@@ -104,19 +80,19 @@
                 </div>
             </div>
 
-            <!-- Perangkingan -->
+            <!-- Perangkingan Kelompok -->
             <div class="col-md-4 col-lg-3">
                 <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
                     <div class="card-body text-center p-4">
                         <div class="mb-3">
                             <i class="bi bi-trophy-fill text-primary" style="font-size: 2.5rem;"></i>
                         </div>
-                        <h5 class="fw-semibold mb-2 text-dark">Perangkingan</h5>
+                        <h5 class="fw-semibold mb-2 text-dark">Perangkingan Kelompok</h5>
                         <p class="text-secondary mb-4" style="font-size: 0.95rem;">
-                            Lihat peringkat kelompok dan mahasiswa.
+                            Lihat peringkat kelompok berdasarkan kriteria.
                         </p>
-                        <a href="{{ url('/perangkingan') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
-                            Buat Perangkingan
+                        <a href="{{ route('kelompok.ranking') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                            Lihat Ranking
                         </a>
                     </div>
                 </div>

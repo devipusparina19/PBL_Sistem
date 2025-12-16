@@ -253,4 +253,119 @@ class RankingController extends Controller
             'Bobot AHP berhasil dihitung dan disimpan! CR = ' . ($result['cr'] * 100) . '% (Konsisten)'
         )->with('ahp_result', $result);
     }
+
+    /**
+     * Export ranking data to Excel (CSV format)
+     */
+    public function exportExcel()
+    {
+        $mahasiswas = Mahasiswa::with('kelompok')->get();
+        $weights = $this->getWeights();
+        
+        $data = $mahasiswas->map(fn($mhs) => $this->getMahasiswaScores($mhs))->filter(fn($item) => $item['nama'] !== null);
+        
+        $rankings = AhpSawCalculator::calculateSawScores($data->toArray(), $weights);
+        usort($rankings, fn($a, $b) => $b['saw_score'] <=> $a['saw_score']);
+        
+        $filename = 'ranking_mahasiswa_' . date('Y-m-d_His') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+        
+        $callback = function() use ($rankings) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF)); // UTF-8 BOM
+            
+            // Header
+            fputcsv($file, ['Peringkat', 'NIM', 'Nama', 'Kelas', 'Kelompok', 'PWL', 'Integrasi', 'TPK', 'IT Projek', 'Kontribusi', 'Sejawat', 'Proyek', 'Skor Akhir']);
+            
+            // Data
+            $rank = 1;
+            foreach ($rankings as $row) {
+                fputcsv($file, [
+                    $rank++,
+                    $row['nim'],
+                    $row['nama'],
+                    $row['kelas'],
+                    $row['kelompok'],
+                    $row['pwl'],
+                    $row['integrasi'],
+                    $row['tpk'],
+                    $row['it_project'],
+                    $row['kontribusi'],
+                    $row['sejawat'],
+                    $row['proyek'],
+                    number_format($row['saw_score'], 2)
+                ]);
+            }
+            fclose($file);
+        };
+        
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export ranking data to PDF
+     */
+    public function exportPdf()
+    {
+        $mahasiswas = Mahasiswa::with('kelompok')->get();
+        $weights = $this->getWeights();
+        
+        $data = $mahasiswas->map(fn($mhs) => $this->getMahasiswaScores($mhs))->filter(fn($item) => $item['nama'] !== null);
+        
+        $rankings = AhpSawCalculator::calculateSawScores($data->toArray(), $weights);
+        usort($rankings, fn($a, $b) => $b['saw_score'] <=> $a['saw_score']);
+        
+        // Generate HTML for PDF
+        $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Ranking Mahasiswa</title>
+        <style>
+            body { font-family: Arial, sans-serif; font-size: 12px; }
+            h1 { text-align: center; color: #333; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+            th { background-color: #4CAF50; color: white; }
+            tr:nth-child(even) { background-color: #f2f2f2; }
+            .date { text-align: right; color: #666; margin-bottom: 10px; }
+        </style>
+        </head><body>
+        <h1>Ranking Mahasiswa</h1>
+        <p class="date">Dicetak: ' . date('d/m/Y H:i:s') . '</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th><th>NIM</th><th>Nama</th><th>Kelas</th><th>Kelompok</th>
+                    <th>PWL</th><th>Integrasi</th><th>TPK</th><th>IT Projek</th>
+                    <th>Kontribusi</th><th>Sejawat</th><th>Proyek</th><th>Skor</th>
+                </tr>
+            </thead>
+            <tbody>';
+        
+        $rank = 1;
+        foreach ($rankings as $row) {
+            $html .= '<tr>
+                <td>' . $rank++ . '</td>
+                <td>' . $row['nim'] . '</td>
+                <td>' . $row['nama'] . '</td>
+                <td>' . $row['kelas'] . '</td>
+                <td>' . $row['kelompok'] . '</td>
+                <td>' . $row['pwl'] . '</td>
+                <td>' . $row['integrasi'] . '</td>
+                <td>' . $row['tpk'] . '</td>
+                <td>' . $row['it_project'] . '</td>
+                <td>' . $row['kontribusi'] . '</td>
+                <td>' . $row['sejawat'] . '</td>
+                <td>' . $row['proyek'] . '</td>
+                <td><strong>' . number_format($row['saw_score'], 2) . '</strong></td>
+            </tr>';
+        }
+        
+        $html .= '</tbody></table></body></html>';
+        
+        return response($html)
+            ->header('Content-Type', 'text/html')
+            ->header('Content-Disposition', 'attachment; filename="ranking_mahasiswa_' . date('Y-m-d') . '.html"');
+    }
 }

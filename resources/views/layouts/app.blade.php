@@ -97,10 +97,10 @@
     }
 
     .sidebar a.active {
-        background: #1d4ed8;
+        background: #4b5563;
         color: #fff;
         font-weight: 600;
-        border-left: 5px solid #60a5fa;
+        border-left: 5px solid #9ca3af;
     }
 
     .sidebar a.active i {

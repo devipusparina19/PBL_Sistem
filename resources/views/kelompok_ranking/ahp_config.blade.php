@@ -5,11 +5,11 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="mb-0">
-                <i class="bi bi-calculator text-primary"></i> Konfigurasi AHP
+                <i class="bi bi-calculator text-primary"></i> Konfigurasi AHP Kelompok
             </h1>
-            <p class="text-muted mb-0">Analytic Hierarchy Process - Penentuan Bobot Kriteria</p>
+            <p class="text-muted mb-0">Analytic Hierarchy Process - Penentuan Bobot Kriteria Kelompok</p>
         </div>
-        <a href="{{ route('ranking.index') }}" class="btn btn-secondary">
+        <a href="{{ route('kelompok.ranking') }}" class="btn btn-secondary">
             <i class="bi bi-arrow-left"></i> Kembali ke Ranking
         </a>
     </div>
@@ -36,7 +36,7 @@
         <div class="card-body">
             <div class="row g-3">
                 @foreach($criteria as $key => $label)
-                <div class="col-md-4 col-lg-2">
+                <div class="col-md-3">
                     <div class="card text-center h-100">
                         <div class="card-body">
                             <h6 class="card-title">{{ $label }}</h6>
@@ -55,6 +55,7 @@
             <h5 class="mb-0"><i class="bi bi-grid-3x3"></i> Matriks Perbandingan Berpasangan</h5>
         </div>
         <div class="card-body">
+            <div class="alert alert-info">
                 <h6><i class="bi bi-info-circle"></i> Petunjuk Pengisian:</h6>
                 <p class="mb-2">Pilih seberapa penting kriteria <strong>BARIS</strong> dibandingkan <strong>KOLOM</strong>.</p>
                 <ul class="mb-0">
@@ -67,7 +68,7 @@
                 </ul>
             </div>
 
-            <form action="{{ route('ranking.calculateAhp') }}" method="POST">
+            <form action="{{ route('kelompok.ranking.calculateAhp') }}" method="POST">
                 @csrf
                 
                 <div class="table-responsive">
@@ -135,8 +136,6 @@
             </form>
         </div>
     </div>
-
-
 </div>
 
 <script>
@@ -168,11 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <style>
-.form-select-sm {
-    font-size: 0.85rem;
-}
-.table td, .table th {
-    vertical-align: middle;
-}
+.form-select-sm { font-size: 0.85rem; }
+.table td, .table th { vertical-align: middle; }
 </style>
 @endsection

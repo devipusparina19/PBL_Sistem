@@ -22,7 +22,7 @@
                     <h6 class="fw-bold mb-2">Informasi Kelompok</h6>
                     <p class="mb-1"><strong>Nama Kelompok:</strong> {{ $kelompok->nama_kelompok }}</p>
                     <p class="mb-1"><strong>Judul Proyek:</strong> {{ $kelompok->judul_proyek ?? '-' }}</p>
-                    <p class="mb-0"><strong>Jumlah Anggota:</strong> {{ $kelompok->mahasiswas->count() }} orang</p>
+                    <p class="mb-0"><strong>Jumlah Anggota:</strong> {{ $kelompok->mahasiswa->count() }} orang</p>
                 </div>
 
                 <hr class="my-4">
@@ -39,8 +39,21 @@
                         </div>
                     </div>
 
+                    <!-- Kontribusi Kelompok -->
+                    <div class="col-md-6 mb-3">
+                        <label for="kontribusi_kelompok" class="form-label">Kontribusi Kelompok <span class="text-danger">*</span></label>
+                        <input type="number" name="kontribusi_kelompok" id="kontribusi_kelompok" 
+                               class="form-control @error('kontribusi_kelompok') is-invalid @enderror" 
+                               value="{{ old('kontribusi_kelompok', $kelompok->kontribusi_kelompok) }}" 
+                               min="0" max="100" step="0.01" required>
+                        <small class="text-muted">Nilai kontribusi kelompok secara keseluruhan (0-100)</small>
+                        @error('kontribusi_kelompok')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <!-- Penilaian Dosen -->
-                    <div class="col-md-12 mb-3">
+                    <div class="col-md-6 mb-3">
                         <label for="penilaian_dosen" class="form-label">Penilaian Dosen <span class="text-danger">*</span></label>
                         <input type="number" name="penilaian_dosen" id="penilaian_dosen" 
                                class="form-control @error('penilaian_dosen') is-invalid @enderror" 
@@ -48,6 +61,19 @@
                                min="0" max="100" step="0.01" required>
                         <small class="text-muted">Penilaian subjektif dosen pembimbing (0-100)</small>
                         @error('penilaian_dosen')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Hasil Akhir Proyek -->
+                    <div class="col-md-12 mb-3">
+                        <label for="hasil_akhir" class="form-label">Hasil Akhir Proyek <span class="text-danger">*</span></label>
+                        <input type="number" name="hasil_akhir" id="hasil_akhir" 
+                               class="form-control @error('hasil_akhir') is-invalid @enderror" 
+                               value="{{ old('hasil_akhir', $kelompok->hasil_akhir) }}" 
+                               min="0" max="100" step="0.01" required>
+                        <small class="text-muted">Nilai akhir proyek secara keseluruhan (0-100)</small>
+                        @error('hasil_akhir')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>

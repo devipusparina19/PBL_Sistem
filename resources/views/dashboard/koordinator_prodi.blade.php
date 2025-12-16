@@ -4,7 +4,7 @@
 <div class="container mt-5">
     <!-- Header -->
     <div class="text-center mb-5">
-        <h2 class="fw-bold text-primary">Sistem Penilaian Kinerja Mahasiswa dan Kelompok PBL</h2>
+        <h2 class="fw-bold text-dark">Sistem Penilaian Kinerja Mahasiswa dan Kelompok PBL</h2>
         <p class="text-muted">Selamat datang, {{ Auth::user()->name }} (Koordinator Prodi)</p>
     </div>
 
@@ -38,6 +38,20 @@
                     <h5 class="fw-bold text-dark">Laporan Penilaian</h5>
                     <p class="text-muted">Akses rekap penilaian akhir untuk keperluan evaluasi</p>
                     <a href="{{ url('/laporan/akhir') }}" class="btn btn-primary w-100 text-white">Lihat</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Perangkingan Kelompok -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-lg h-100 rounded-4 hover-card">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-primary fs-1">
+                        <i class="bi bi-trophy"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Perangkingan Kelompok</h5>
+                    <p class="text-muted">Lihat peringkat kelompok berdasarkan kriteria</p>
+                    <a href="{{ route('kelompok.ranking') }}" class="btn btn-primary w-100 text-white">Lihat Ranking</a>
                 </div>
             </div>
         </div>

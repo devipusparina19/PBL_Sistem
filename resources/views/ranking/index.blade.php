@@ -7,20 +7,31 @@
             <h1 class="mb-0">
                 <i class="bi bi-trophy-fill text-warning"></i> Perankingan Mahasiswa
             </h1>
-            @if(auth()->user()->role !== 'mahasiswa')
-            <p class="text-muted mb-0">Metode: <strong>{{ $method === 'saw' ? 'SAW (Simple Additive Weighting)' : 'Rata-rata' }}</strong></p>
-            @endif
         </div>
-        @if(auth()->user()->role !== 'mahasiswa')
+        @if(in_array(auth()->user()->role, ['admin', 'dosen']))
         <div>
             <a href="{{ route('ranking.ahpConfig') }}" class="btn btn-outline-primary">
                 <i class="bi bi-sliders"></i> Konfigurasi AHP
             </a>
+            @if(auth()->user()->role === 'admin')
             <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#weightSettings">
                 <i class="bi bi-gear"></i> Pengaturan Bobot
             </button>
+            @endif
         </div>
         @endif
+        
+        <!-- Export Buttons - Available for all roles -->
+        <div class="ms-2">
+            <div class="btn-group">
+                <a href="{{ route('ranking.exportExcel') }}" class="btn btn-success">
+                    <i class="bi bi-file-earmark-excel"></i> Excel
+                </a>
+                <a href="{{ route('ranking.exportPdf') }}" class="btn btn-danger">
+                    <i class="bi bi-file-earmark-pdf"></i> PDF
+                </a>
+            </div>
+        </div>
     </div>
 
     @if(session('success'))
@@ -37,7 +48,7 @@
         </div>
     @endif
 
-    @if(auth()->user()->role !== 'mahasiswa')
+    @if(auth()->user()->role === 'admin')
     <!-- Weight Settings Panel -->
     <div class="collapse mb-4" id="weightSettings">
         <div class="card shadow-sm">
@@ -136,7 +147,7 @@
     </div>
     @endif
 
-    @if(auth()->user()->role !== 'mahasiswa')
+    @if(in_array(auth()->user()->role, ['admin', 'dosen']))
     <!-- SAW Ranking Table with Normalized Values (Hidden from Mahasiswa) -->
     <div class="card shadow-sm">
         <div class="card-header bg-dark text-white">
@@ -195,7 +206,7 @@
     @endif
 
     <!-- Final Ranking Table - Premium Design -->
-    <div class="card shadow-lg border-0 ranking-card">
+    <div class="card shadow-lg border-0 ranking-card mt-4">
         <div class="card-header ranking-header text-white py-3">
             <div class="d-flex align-items-center justify-content-between">
                 <h5 class="mb-0">
@@ -300,34 +311,7 @@
         </div>
     </div>
 
-    @if(auth()->user()->role !== 'mahasiswa')
-    <!-- SAW Formula Explanation -->
-    <div class="card mt-4 shadow-sm">
-        <div class="card-header bg-info text-white">
-            <h5 class="mb-0"><i class="bi bi-info-circle"></i> Rumus SAW (Simple Additive Weighting)</h5>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <h6>Langkah Perhitungan:</h6>
-                    <ol>
-                        <li><strong>Normalisasi (Benefit):</strong> r<sub>ij</sub> = x<sub>ij</sub> / max(x<sub>j</sub>)</li>
-                        <li><strong>Skor SAW:</strong> V<sub>i</sub> = Σ (w<sub>j</sub> × r<sub>ij</sub>)</li>
-                    </ol>
-                </div>
-                <div class="col-md-6">
-                    <h6>Keterangan:</h6>
-                    <ul>
-                        <li>x<sub>ij</sub> = Nilai asli kriteria j untuk mahasiswa i</li>
-                        <li>max(x<sub>j</sub>) = Nilai maksimum kriteria j</li>
-                        <li>w<sub>j</sub> = Bobot kriteria j</li>
-                        <li>V<sub>i</sub> = Skor akhir mahasiswa i</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
+
 </div>
 
 <script>

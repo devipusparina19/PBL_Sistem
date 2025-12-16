@@ -46,20 +46,46 @@
                     <div class="col-12 mb-3">
                         <div class="alert alert-secondary">
                             <i class="bi bi-gear-fill me-2"></i>
-                            Nilai untuk <strong>Pemrograman Web, Integrasi Sistem, Pengambilan Keputusan, IT Proyek, dan Kontribusi Kelompok</strong> 
+                            Nilai untuk <strong>Pemrograman Web, Integrasi Sistem, Pengambilan Keputusan, dan IT Proyek</strong> 
                             akan diambil secara <strong>otomatis</strong> dari rata-rata nilai mata kuliah anggota kelompok.
                         </div>
                     </div>
 
+                    <!-- Kontribusi Kelompok -->
+                    <div class="col-md-6 mb-3">
+                        <label for="kontribusi_kelompok" class="form-label">Kontribusi Kelompok <span class="text-danger">*</span></label>
+                        <input type="number" name="kontribusi_kelompok" id="kontribusi_kelompok" 
+                               class="form-control @error('kontribusi_kelompok') is-invalid @enderror" 
+                               value="{{ old('kontribusi_kelompok', 0) }}" 
+                               min="0" max="100" step="0.01" required>
+                        <small class="text-muted">Nilai kontribusi kelompok secara keseluruhan (0-100)</small>
+                        @error('kontribusi_kelompok')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <!-- Penilaian Dosen -->
-                    <div class="col-md-12 mb-3">
+                    <div class="col-md-6 mb-3">
                         <label for="penilaian_dosen" class="form-label">Penilaian Dosen <span class="text-danger">*</span></label>
                         <input type="number" name="penilaian_dosen" id="penilaian_dosen" 
                                class="form-control @error('penilaian_dosen') is-invalid @enderror" 
-                               value="{{ old('penilaian_dosen') }}" 
+                               value="{{ old('penilaian_dosen', 0) }}" 
                                min="0" max="100" step="0.01" required>
                         <small class="text-muted">Penilaian subjektif dosen pembimbing (0-100)</small>
                         @error('penilaian_dosen')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <!-- Hasil Akhir Proyek -->
+                    <div class="col-md-12 mb-3">
+                        <label for="hasil_akhir" class="form-label">Hasil Akhir Proyek <span class="text-danger">*</span></label>
+                        <input type="number" name="hasil_akhir" id="hasil_akhir" 
+                               class="form-control @error('hasil_akhir') is-invalid @enderror" 
+                               value="{{ old('hasil_akhir', 0) }}" 
+                               min="0" max="100" step="0.01" required>
+                        <small class="text-muted">Nilai akhir proyek secara keseluruhan (0-100)</small>
+                        @error('hasil_akhir')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -72,7 +98,7 @@
                 <!-- Info -->
                 <div class="alert alert-info" role="alert">
                     <i class="bi bi-info-circle-fill me-2"></i>
-                    <strong>Catatan:</strong> Hasil akhir akan dihitung otomatis sebagai rata-rata dari 6 komponen penilaian kelompok.
+                    <strong>Catatan:</strong> Nilai Kontribusi dan Hasil Akhir Proyek akan digunakan untuk perhitungan ranking mahasiswa (AHP/SAW).
                 </div>
 
                 <!-- Buttons -->

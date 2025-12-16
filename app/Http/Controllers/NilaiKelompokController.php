@@ -104,30 +104,49 @@ class NilaiKelompokController extends Controller
     }
 
     /**
-     * Menyimpan nilai kelompok baru (berbasis milestone)
-     */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'kelompok_id' => 'required|exists:kelompok,id_kelompok',
-        ]);
+ * Menyimpan nilai kelompok baru (berbasis milestone)
+ */
+public function store(Request $request)
+{
+    $request->validate([
+        'kelompok_id' => 'required|exists:kelompok,id_kelompok',
+        'penilaian_dosen' => 'required|numeric|min:0|max:100',
+        'kontribusi_kelompok' => 'required|numeric|min:0|max:100',
+        'hasil_akhir' => 'required|numeric|min:0|max:100',
+    ]);
 
-        $kelompok = Kelompok::findOrFail($request->kelompok_id);
-        
-        // Hitung nilai berdasarkan milestone
-        $result = $this->calculateMilestoneGrade($kelompok);
-        
-        if (isset($result['error'])) {
-            return redirect()->back()
-                ->with('error', $result['error']);
-        }
-        
-        // Update nilai kelompok
-        $kelompok->update($result);
+    $kelompok = Kelompok::findOrFail($request->kelompok_id);
+    $kelompokId = $kelompok->id_kelompok;
+    
+    // Calculate average grades from mata kuliah
+    $pemrogramanWeb = $this->getAverageGradeForSubject($kelompokId, ['pwl', 'pemrograman web']);
+    $integrasiSistem = $this->getAverageGradeForSubject($kelompokId, ['integrasi sistem']);
+    $pengambilanKeputusan = $this->getAverageGradeForSubject($kelompokId, ['pengambilan keputusan']);
+    $itProyek = $this->getAverageGradeForSubject($kelompokId, ['it project', 'it proyek']);
 
-        return redirect()->route('nilai_kelompok.index')
-            ->with('success', 'Nilai kelompok berhasil dihitung berdasarkan milestone!');
+    // Calculate nilai rata-rata anggota (for kelompok ranking)
+    $studentIds = Mahasiswa::where('kelompok_id', $kelompokId)->pluck('id');
+    $nilaiRataAnggota = 0;
+    if ($studentIds->count() > 0) {
+        $allGrades = Nilai::whereIn('mahasiswa_id', $studentIds)->pluck('nilai_akhir');
+        $nilaiRataAnggota = $allGrades->isEmpty() ? 0 : $allGrades->avg();
     }
+    
+    // Update nilai kelompok
+    $kelompok->update([
+        'pemrograman_web' => round($pemrogramanWeb, 2),
+        'integrasi_sistem' => round($integrasiSistem, 2),
+        'pengambilan_keputusan' => round($pengambilanKeputusan, 2),
+        'it_proyek' => round($itProyek, 2),
+        'kontribusi_kelompok' => $request->kontribusi_kelompok,
+        'penilaian_dosen' => $request->penilaian_dosen,
+        'hasil_akhir' => $request->hasil_akhir,
+        'nilai_rata_anggota' => round($nilaiRataAnggota, 2),
+    ]);
+
+    return redirect()->route('nilai_kelompok.index')
+        ->with('success', 'Nilai kelompok berhasil disimpan!');
+}    
 
     /**
      * Menampilkan form edit nilai kelompok
@@ -139,55 +158,46 @@ class NilaiKelompokController extends Controller
     }
 
     /**
-     * Mengupdate nilai kelompok
-     */
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'penilaian_dosen' => 'required|numeric|min:0|max:100',
-        ]);
-        
-        $kelompokId = $id; // ID here is kelompok ID based on routes usually? Wait, route resource.
-        // Route::resource('nilai_kelompok', ...);
-        // ID passed is likely the Kelompok ID since we are editing a Kelompok's grades.
-        
-        // Recalculate everything to ensure up-to-date data
-        $pemrogramanWeb = $this->getAverageGradeForSubject($kelompokId, ['pwl', 'pemrograman web']);
-        $integrasiSistem = $this->getAverageGradeForSubject($kelompokId, ['integrasi sistem']);
-        $pengambilanKeputusan = $this->getAverageGradeForSubject($kelompokId, ['pengambilan keputusan']);
-        $itProyek = $this->getAverageGradeForSubject($kelompokId, ['it project', 'it proyek']);
-        
-        $studentIds = Mahasiswa::where('kelompok_id', $kelompokId)->pluck('id');
-        $kontribusiGrades = Nilai::whereIn('mahasiswa_id', $studentIds)
-            ->whereHas('mataKuliah', function ($q) {
-                $q->where('nama_mk', 'like', '%it project%')
-                  ->orWhere('nama_mk', 'like', '%it proyek%');
-            })->pluck('kontribusi');
-        $kontribusiKelompok = $kontribusiGrades->isEmpty() ? 0 : $kontribusiGrades->avg();
+ * Mengupdate nilai kelompok
+ */
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'penilaian_dosen' => 'required|numeric|min:0|max:100',
+        'kontribusi_kelompok' => 'required|numeric|min:0|max:100',
+        'hasil_akhir' => 'required|numeric|min:0|max:100',
+    ]);
+    
+    $kelompokId = $id;
+    
+    // Calculate average grades from mata kuliah
+    $pemrogramanWeb = $this->getAverageGradeForSubject($kelompokId, ['pwl', 'pemrograman web']);
+    $integrasiSistem = $this->getAverageGradeForSubject($kelompokId, ['integrasi sistem']);
+    $pengambilanKeputusan = $this->getAverageGradeForSubject($kelompokId, ['pengambilan keputusan']);
+    $itProyek = $this->getAverageGradeForSubject($kelompokId, ['it project', 'it proyek']);
 
-        // Hitung ulang hasil akhir
-        $hasil_akhir = (
-            $pemrogramanWeb +
-            $integrasiSistem +
-            $pengambilanKeputusan +
-            $itProyek +
-            $kontribusiKelompok +
-            $request->penilaian_dosen
-        ) / 6;
-
-        $kelompok = Kelompok::findOrFail($id);
-        $kelompok->update([
-            'pemrograman_web' => round($pemrogramanWeb, 2),
-            'integrasi_sistem' => round($integrasiSistem, 2),
-            'pengambilan_keputusan' => round($pengambilanKeputusan, 2),
-            'it_proyek' => round($itProyek, 2),
-            'kontribusi_kelompok' => round($kontribusiKelompok, 2),
-            'penilaian_dosen' => $request->penilaian_dosen,
-            'hasil_akhir' => round($hasil_akhir, 2),
-        ]);
-
-        return redirect()->route('nilai_kelompok.index')->with('success', 'Nilai kelompok berhasil diperbarui!');
+    // Calculate nilai rata-rata anggota (for kelompok ranking)
+    $studentIds = Mahasiswa::where('kelompok_id', $kelompokId)->pluck('id');
+    $nilaiRataAnggota = 0;
+    if ($studentIds->count() > 0) {
+        $allGrades = Nilai::whereIn('mahasiswa_id', $studentIds)->pluck('nilai_akhir');
+        $nilaiRataAnggota = $allGrades->isEmpty() ? 0 : $allGrades->avg();
     }
+
+    $kelompok = Kelompok::findOrFail($id);
+    $kelompok->update([
+        'pemrograman_web' => round($pemrogramanWeb, 2),
+        'integrasi_sistem' => round($integrasiSistem, 2),
+        'pengambilan_keputusan' => round($pengambilanKeputusan, 2),
+        'it_proyek' => round($itProyek, 2),
+        'kontribusi_kelompok' => $request->kontribusi_kelompok,
+        'penilaian_dosen' => $request->penilaian_dosen,
+        'hasil_akhir' => $request->hasil_akhir,
+        'nilai_rata_anggota' => round($nilaiRataAnggota, 2),
+    ]);
+
+    return redirect()->route('nilai_kelompok.index')->with('success', 'Nilai kelompok berhasil diperbarui!');
+}    
 
     /**
      * Update pengaturan bobot penilaian kelompok

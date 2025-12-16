@@ -91,8 +91,8 @@ Route::middleware('auth')->group(function () {
     | Perangkingan Kelompok
     |--------------------------------------------------------------------------
     */
-    // Perangkingan Kelompok
-    Route::get('/perangkingan', [RangkingController::class, 'kelompok'])->name('perangkingan.index');
+    // Perangkingan Kelompok - redirect to new AHP/SAW kelompok ranking
+    Route::get('/perangkingan', [App\Http\Controllers\KelompokRankingController::class, 'index'])->name('perangkingan.index');
 
     // Perangkingan Mahasiswa
     Route::get('/perangkingan/mahasiswa', [RangkingController::class, 'mahasiswa'])->name('perangkingan.mahasiswa');
@@ -118,11 +118,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/data_akademik', [DataAkademikController::class, 'index'])->name('data_akademik.index');
     Route::get('/kelompok/rangking', [RangkingController::class, 'kelompok'])->name('kelompok.rangking');
     Route::get('/kelompok/sinkron', [KelompokController::class, 'sinkron'])->name('kelompok.sinkron');
-    // Route Perangkingan
+    // Route Perangkingan Mahasiswa
     Route::get('/ranking', [App\Http\Controllers\RankingController::class, 'index'])->name('ranking.index');
     Route::post('/ranking/weights', [App\Http\Controllers\RankingController::class, 'updateWeights'])->name('ranking.updateWeights');
     Route::get('/ranking/ahp', [App\Http\Controllers\RankingController::class, 'ahpConfig'])->name('ranking.ahpConfig');
     Route::post('/ranking/ahp/calculate', [App\Http\Controllers\RankingController::class, 'calculateAhp'])->name('ranking.calculateAhp');
+    Route::get('/ranking/export/excel', [App\Http\Controllers\RankingController::class, 'exportExcel'])->name('ranking.exportExcel');
+    Route::get('/ranking/export/pdf', [App\Http\Controllers\RankingController::class, 'exportPdf'])->name('ranking.exportPdf');
+    
+    // Route Perangkingan Kelompok (AHP/SAW)
+    Route::get('/kelompok-ranking', [App\Http\Controllers\KelompokRankingController::class, 'index'])->name('kelompok.ranking');
+    Route::post('/kelompok-ranking/weights', [App\Http\Controllers\KelompokRankingController::class, 'updateWeights'])->name('kelompok.ranking.updateWeights');
+    Route::get('/kelompok-ranking/ahp', [App\Http\Controllers\KelompokRankingController::class, 'ahpConfig'])->name('kelompok.ranking.ahp');
+    Route::post('/kelompok-ranking/ahp/calculate', [App\Http\Controllers\KelompokRankingController::class, 'calculateAhp'])->name('kelompok.ranking.calculateAhp');
+    Route::get('/kelompok-ranking/export/excel', [App\Http\Controllers\KelompokRankingController::class, 'exportExcel'])->name('kelompok.ranking.exportExcel');
+    Route::get('/kelompok-ranking/export/pdf', [App\Http\Controllers\KelompokRankingController::class, 'exportPdf'])->name('kelompok.ranking.exportPdf');
     
     // Route Kelompok
     Route::resource('kelompok', App\Http\Controllers\KelompokController::class);
