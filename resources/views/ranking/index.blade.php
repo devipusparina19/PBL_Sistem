@@ -53,20 +53,7 @@
                 </table>
             </div>
             
-            <div class="mt-4">
-                <div class="alert alert-info d-flex align-items-center">
-                    <i class="bi bi-info-circle-fill me-2 fs-4"></i>
-                    <div>
-                        <strong>Keterangan Perhitungan:</strong><br>
-                        Total Skor = (Nilai Akademik + Nilai Proyek + Nilai Sejawat) / 3<br>
-                        <small>
-                        • <strong>Nilai Akademik:</strong> Rata-rata dari IT Project, Pengambilan Keputusan, Integrasi Sistem, Pemrograman Web.<br>
-                        • <strong>Nilai Proyek:</strong> Hasil Akhir dari Penilaian Kelompok.<br>
-                        • <strong>Nilai Sejawat:</strong> Rata-rata Penilaian Sejawat (Peer Assessment).
-                        </small>
-                    </div>
-                </div>
-            </div>
+
         </div>
     </div>
 </div>

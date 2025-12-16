@@ -19,9 +19,8 @@ class DataAkademikController extends Controller
             $kelas = $user->kelas;
             
             // Ambil data untuk kelas mahasiswa
-            $dosens = Dosen::where('kelas', $kelas)
-                ->orderBy('nama', 'asc')
-                ->get();
+            // Tampilkan semua dosen (tidak difilter per kelas)
+            $dosens = Dosen::orderBy('nama', 'asc')->get();
             
             $mataKuliah = MataKuliah::where('kelas', $kelas)
                 ->orderBy('nama_mk', 'asc')
@@ -47,9 +46,9 @@ class DataAkademikController extends Controller
         $mahasiswaByKelas = [];
 
         foreach ($kelasList as $kelasItem) {
-            $dosenByKelas[$kelasItem] = Dosen::where('kelas', $kelasItem)
-                ->orderBy('nama', 'asc')
-                ->get();
+            // Dosen tidak difilter per kelas - tampilkan semua dosen di setiap tab
+            // Karena dosen bisa mengajar di banyak kelas
+            $dosenByKelas[$kelasItem] = Dosen::orderBy('nama', 'asc')->get();
             
             // Filter Mata Kuliah
             $queryMataKuliah = MataKuliah::where('kelas', $kelasItem);

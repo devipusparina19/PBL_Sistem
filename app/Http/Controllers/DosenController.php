@@ -23,10 +23,8 @@ class DosenController extends Controller
             // Ambil kelas mahasiswa langsung dari tabel users
             $kelas = $user->kelas;
             
-            // Ambil dosen sesuai kelas mahasiswa
-            $dosens = Dosen::where('kelas', $kelas)
-                ->orderBy('nama', 'asc')
-                ->get();
+            // Tampilkan semua dosen (tidak difilter per kelas)
+            $dosens = Dosen::orderBy('nama', 'asc')->get();
                 
             return view('data_dosen.index', compact('dosens', 'isStudent', 'kelas'));
         }
@@ -35,10 +33,10 @@ class DosenController extends Controller
         $kelasList = ['3A', '3B', '3C', '3D', '3E'];
         $dosenByKelas = [];
 
+        // Tampilkan semua dosen di setiap tab (tidak difilter per kelas)
+        $allDosens = Dosen::orderBy('nama', 'asc')->get();
         foreach ($kelasList as $kelasItem) {
-            $dosenByKelas[$kelasItem] = Dosen::where('kelas', $kelasItem)
-                ->orderBy('nama', 'asc')
-                ->get();
+            $dosenByKelas[$kelasItem] = $allDosens;
         }
 
         return view('data_dosen.index', compact('dosenByKelas', 'kelasList', 'isStudent'));
@@ -50,9 +48,8 @@ class DosenController extends Controller
             abort(404);
         }
 
-        $dosens = Dosen::where('kelas', $kelas)
-            ->orderBy('nama', 'asc')
-            ->paginate(15);
+        // Tampilkan semua dosen (tidak filter per kelas)
+        $dosens = Dosen::orderBy('nama', 'asc')->paginate(15);
 
         return view('data_dosen.kelas', compact('dosens', 'kelas'));
     }

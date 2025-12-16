@@ -54,14 +54,23 @@ class AkunController extends Controller
         $nimNipDefault = $request->nim_nip ?? ($request->role == 'dosen' ? 'NIP-' . time() : 'NIM-' . time());
 
         if ($request->role === 'dosen') {
-            Dosen::create([
-                'nama'        => $request->name,
-                'nip'         => $request->nim_nip ?? $nimNipDefault,
-                'email'       => $request->email,
-                'no_telp'     => '-',
-                'kelas'       => '-',
-                'mata_kuliah' => '-',
-            ]);
+            try {
+                // Gunakan updateOrCreate untuk menghindari duplikat NIP
+                $dosenNip = $request->nim_nip ?? $nimNipDefault;
+                Dosen::updateOrCreate(
+                    ['nip' => $dosenNip], // Cari berdasarkan NIP
+                    [
+                        'nama'        => $request->name,
+                        'email'       => $request->email,
+                        'no_telp'     => '-',
+                        'kelas'       => '-',
+                        'mata_kuliah' => '-',
+                    ]
+                );
+                \Log::info('Dosen berhasil didaftarkan: ' . $request->name . ' (NIP: ' . $dosenNip . ')');
+            } catch (\Exception $e) {
+                \Log::error('Gagal auto-register dosen: ' . $e->getMessage());
+            }
         }
 
         // ✅ AUTO REGISTER MAHASISWA
