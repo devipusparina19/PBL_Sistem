@@ -72,4 +72,16 @@ class ProfileController extends Controller
 
         return back()->with('success', 'Profil berhasil diperbarui!');
     }
+    public function deletePhoto()
+{
+    $user = Auth::user();
+
+    if ($user->photo && file_exists(public_path($user->photo))) {
+        unlink(public_path($user->photo));
+    }
+
+    $user->update(['photo' => null]);
+
+    return back()->with('success', 'Foto profil berhasil dihapus.');
+}
 }
