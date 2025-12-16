@@ -169,6 +169,7 @@ Route::middleware('auth')->group(function () {
     | Nilai Kelompok
     |--------------------------------------------------------------------------
     */
+    Route::post('nilai_kelompok/settings', [NilaiKelompokController::class, 'updateSettings'])->name('nilai_kelompok.updateSettings');
     Route::resource('nilai_kelompok', NilaiKelompokController::class);
     /*
     |--------------------------------------------------------------------------

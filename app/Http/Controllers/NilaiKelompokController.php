@@ -16,7 +16,8 @@ class NilaiKelompokController extends Controller
     public function index()
     {
         $kelompoks = Kelompok::with('mahasiswa')->orderBy('nama_kelompok', 'asc')->get();
-        return view('nilai_kelompok.index', compact('kelompoks'));
+        $settings = Setting::all()->keyBy('key');
+        return view('nilai_kelompok.index', compact('kelompoks', 'settings'));
     }
 
     /**
@@ -186,6 +187,29 @@ class NilaiKelompokController extends Controller
         ]);
 
         return redirect()->route('nilai_kelompok.index')->with('success', 'Nilai kelompok berhasil diperbarui!');
+    }
+
+    /**
+     * Update pengaturan bobot penilaian kelompok
+     */
+    public function updateSettings(Request $request)
+    {
+        $request->validate([
+            'bobot_milestone' => 'required|numeric|min:0|max:100',
+            'bobot_nilai_anggota' => 'required|numeric|min:0|max:100',
+            'minimum_milestone' => 'required|integer|min:1',
+            'bonus_per_minggu' => 'required|numeric|min:0|max:20',
+            'penalty_per_minggu' => 'required|numeric|min:0|max:20',
+        ]);
+        
+        Setting::set('bobot_milestone', $request->bobot_milestone);
+        Setting::set('bobot_nilai_anggota', $request->bobot_nilai_anggota);
+        Setting::set('minimum_milestone', $request->minimum_milestone);
+        Setting::set('bonus_per_minggu', $request->bonus_per_minggu);
+        Setting::set('penalty_per_minggu', $request->penalty_per_minggu);
+        
+        return redirect()->route('nilai_kelompok.index')
+            ->with('success', 'Pengaturan bobot berhasil disimpan!');
     }
 
     /**

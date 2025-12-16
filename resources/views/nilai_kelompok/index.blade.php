@@ -20,10 +20,80 @@
 
     <!-- Button Tambah / Input Nilai Kelompok (Khusus Dosen) -->
     @if(Auth::user()->role === 'dosen')
-        <div class="mb-4">
+        <div class="mb-4 d-flex gap-2">
             <a href="{{ route('nilai_kelompok.create') }}" class="btn btn-primary">
                 <i class="bi bi-plus-circle me-2"></i>Input Nilai Kelompok
             </a>
+            <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#settingsCollapse">
+                <i class="bi bi-gear me-1"></i>Pengaturan Bobot
+            </button>
+        </div>
+
+        <!-- Pengaturan Bobot Collapsible -->
+        <div class="collapse mb-4" id="settingsCollapse">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-primary text-white rounded-top-4">
+                    <h5 class="mb-0"><i class="bi bi-sliders me-2"></i>Pengaturan Penilaian Kelompok</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('nilai_kelompok.updateSettings') }}" method="POST">
+                        @csrf
+                        <div class="row">
+                            <!-- Bobot Milestone & Anggota -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Bobot Nilai Milestone (%)</label>
+                                <input type="number" name="bobot_milestone" class="form-control" 
+                                       value="{{ $settings['bobot_milestone']->value ?? 50 }}" min="0" max="100">
+                                <small class="text-muted">Persentase nilai dari milestone</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold">Bobot Nilai Rata-rata Anggota (%)</label>
+                                <input type="number" name="bobot_nilai_anggota" class="form-control" 
+                                       value="{{ $settings['bobot_nilai_anggota']->value ?? 50 }}" min="0" max="100">
+                                <small class="text-muted">Persentase nilai dari mahasiswa</small>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info py-2 mb-3">
+                            <i class="bi bi-info-circle me-1"></i>Total bobot harus = 100% (Milestone + Nilai Anggota)
+                        </div>
+                        
+                        <!-- Minimum Milestone -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Minimum Milestone Disetujui</label>
+                            <input type="number" name="minimum_milestone" class="form-control" 
+                                   value="{{ $settings['minimum_milestone']->value ?? 1 }}" min="1">
+                            <small class="text-muted">Jumlah minimum milestone yang harus disetujui sebelum nilai bisa dihitung</small>
+                        </div>
+                        
+                        <!-- Bonus/Penalty -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold"><i class="bi bi-plus-circle text-success me-1"></i>Bonus per Minggu Lebih Cepat</label>
+                                <div class="input-group">
+                                    <input type="number" name="bonus_per_minggu" class="form-control" 
+                                           value="{{ $settings['bonus_per_minggu']->value ?? 5 }}" min="0" max="20">
+                                    <span class="input-group-text">poin</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-semibold"><i class="bi bi-dash-circle text-danger me-1"></i>Penalty per Minggu Terlambat</label>
+                                <div class="input-group">
+                                    <input type="number" name="penalty_per_minggu" class="form-control" 
+                                           value="{{ $settings['penalty_per_minggu']->value ?? 5 }}" min="0" max="20">
+                                    <span class="input-group-text">poin</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-1"></i>Simpan Pengaturan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     @endif
 
