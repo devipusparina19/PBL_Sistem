@@ -373,4 +373,38 @@ public function sinkron()
         return redirect()->route('kelompok.byKelas', $kelas)
             ->with('success', 'Kelompok berhasil dihapus!');
     }
+
+    // ===============================
+    // Update Judul Proyek (oleh Ketua Kelompok)
+    // ===============================
+    public function updateJudulProyek(Request $request, Kelompok $kelompok)
+    {
+        $user = auth()->user();
+        
+        // Verifikasi: hanya mahasiswa yang bisa edit
+        if ($user->role !== 'mahasiswa') {
+            return redirect()->back()->with('warning', 'Hanya mahasiswa yang dapat mengubah judul proyek.');
+        }
+        
+        // Cek apakah mahasiswa adalah anggota kelompok ini
+        $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        if (!$mahasiswa || $mahasiswa->kelompok_id != $kelompok->id_kelompok) {
+            return redirect()->back()->with('warning', 'Anda bukan anggota kelompok ini.');
+        }
+        
+        // Verifikasi: hanya ketua kelompok yang bisa edit judul proyek
+        if ($kelompok->ketua_id != $mahasiswa->id) {
+            return redirect()->back()->with('warning', 'Hanya ketua kelompok yang dapat mengubah judul proyek.');
+        }
+        
+        $request->validate([
+            'judul_proyek' => 'required|string|max:255',
+        ]);
+        
+        $kelompok->update([
+            'judul_proyek' => $request->judul_proyek,
+        ]);
+        
+        return redirect()->back()->with('success', 'Judul proyek berhasil diperbarui!');
+    }
 }

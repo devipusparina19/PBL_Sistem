@@ -126,6 +126,7 @@ Route::middleware('auth')->group(function () {
     // Route khusus manage anggota (fix error route missing)
     Route::get('kelompok/{kelompok}/anggota', [KelompokController::class, 'manageAnggota'])->name('kelompok.anggota.manage');
     Route::put('kelompok/{kelompok}/anggota', [KelompokController::class, 'updateAnggota'])->name('kelompok.anggota.update');
+    Route::put('kelompok/{kelompok}/judul-proyek', [KelompokController::class, 'updateJudulProyek'])->name('kelompok.updateJudulProyek');
     Route::resource('logbook', LogbookController::class);
 
     /*

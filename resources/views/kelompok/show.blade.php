@@ -129,7 +129,30 @@
 
             <div class="mb-3">
                 <label class="form-label fw-semibold">Judul Proyek</label>
-                <input type="text" class="form-control" value="{{ $kelompok->judul_proyek }}" readonly>
+                @php
+                    $currentMahasiswa = auth()->user()->role === 'mahasiswa' 
+                        ? \App\Models\Mahasiswa::where('email', auth()->user()->email)->first() 
+                        : null;
+                    $isKetua = $currentMahasiswa && $kelompok->ketua_id == $currentMahasiswa->id;
+                    $isAnggota = $currentMahasiswa && $currentMahasiswa->kelompok_id == $kelompok->id_kelompok;
+                @endphp
+                
+                @if($isKetua)
+                    <form action="{{ route('kelompok.updateJudulProyek', $kelompok->id_kelompok) }}" method="POST" class="d-flex gap-2">
+                        @csrf
+                        @method('PUT')
+                        <input type="text" name="judul_proyek" class="form-control" value="{{ $kelompok->judul_proyek }}" required>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> Simpan
+                        </button>
+                    </form>
+                    <small class="text-success"><i class="bi bi-shield-check"></i> Anda adalah ketua kelompok dan dapat mengubah judul proyek.</small>
+                @elseif($isAnggota)
+                    <input type="text" class="form-control" value="{{ $kelompok->judul_proyek }}" readonly>
+                    <small class="text-muted"><i class="bi bi-info-circle"></i> Hanya ketua kelompok yang dapat mengubah judul proyek.</small>
+                @else
+                    <input type="text" class="form-control" value="{{ $kelompok->judul_proyek }}" readonly>
+                @endif
             </div>
 
         </div>
