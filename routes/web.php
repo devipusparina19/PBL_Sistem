@@ -206,6 +206,9 @@ Route::middleware('auth')->group(function () {
     */
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/photo/delete', [ProfileController::class, 'deletePhoto'])
+    ->name('profile.photo.delete');
+
 
     /*
     |--------------------------------------------------------------------------
