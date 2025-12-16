@@ -57,11 +57,27 @@
                     <td>
                         <form action="{{ route('milestone.updateStatus', $m->id) }}" method="POST">
                             @csrf
-                            <select name="status" class="form-select mb-2" required>
+                            <select name="status" class="form-select mb-2" required onchange="toggleNilaiFields(this, {{ $m->id }})">
                                 <option value="">-- Pilih Status --</option>
                                 <option value="disetujui">Disetujui</option>
                                 <option value="ditolak">Ditolak</option>
                             </select>
+                            
+                            <div id="nilai-fields-{{ $m->id }}" style="display: none;">
+                                <div class="mb-2">
+                                    <label class="form-label small fw-semibold">Target Minggu</label>
+                                    <input type="number" name="target_minggu" class="form-control form-control-sm"
+                                           value="{{ $m->minggu_ke }}" min="1" placeholder="Target minggu">
+                                    <small class="text-muted">Submit: Minggu {{ $m->minggu_ke }}</small>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label small fw-semibold">Nilai (0-100)</label>
+                                    <input type="number" name="nilai" class="form-control form-control-sm"
+                                           min="0" max="100" step="0.01" placeholder="Nilai milestone">
+                                    <small class="text-muted">Bonus/penalty dihitung otomatis</small>
+                                </div>
+                            </div>
+                            
                             <textarea name="catatan_dosen" class="form-control mb-2" placeholder="Catatan (opsional)"></textarea>
                             <button type="submit" class="btn btn-success btn-sm w-100">Update Status</button>
                         </form>
@@ -72,4 +88,15 @@
         </table>
     @endif
 </div>
+
+<script>
+function toggleNilaiFields(select, id) {
+    const nilaiFields = document.getElementById('nilai-fields-' + id);
+    if (select.value === 'disetujui') {
+        nilaiFields.style.display = 'block';
+    } else {
+        nilaiFields.style.display = 'none';
+    }
+}
+</script>
 @endsection

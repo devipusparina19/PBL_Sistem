@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Kelompok;
 use App\Models\Nilai;
 use App\Models\Mahasiswa;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class NilaiKelompokController extends Controller
@@ -61,64 +62,70 @@ class NilaiKelompokController extends Controller
     }
 
     /**
-     * Menyimpan nilai kelompok baru
+     * Helper: Hitung nilai kelompok berdasarkan milestone
+     */
+    private function calculateMilestoneGrade($kelompok)
+    {
+        // Ambil settings
+        $bobotMilestone = (int) Setting::get('bobot_milestone', 50);
+        $bobotAnggota = (int) Setting::get('bobot_nilai_anggota', 50);
+        $minMilestone = (int) Setting::get('minimum_milestone', 1);
+        
+        // Hitung nilai milestone (rata-rata nilai_akhir dari milestone yang disetujui)
+        $milestoneApproved = $kelompok->milestones()
+            ->where('status', 'disetujui')
+            ->whereNotNull('nilai_akhir')
+            ->get();
+        
+        if ($milestoneApproved->count() < $minMilestone) {
+            return [
+                'error' => "Minimum {$minMilestone} milestone harus disetujui.",
+                'milestone_count' => $milestoneApproved->count(),
+            ];
+        }
+        
+        $nilaiMilestone = $milestoneApproved->avg('nilai_akhir');
+        
+        // Hitung rata-rata nilai anggota kelompok
+        $studentIds = Mahasiswa::where('kelompok_id', $kelompok->id_kelompok)->pluck('id');
+        $nilaiAnggota = Nilai::whereIn('mahasiswa_id', $studentIds)->get();
+        $rataRataAnggota = $nilaiAnggota->isEmpty() ? 0 : $nilaiAnggota->avg('hasil_proyek');
+        
+        // Hitung hasil akhir dengan bobot dinamis
+        $hasilAkhir = ($nilaiMilestone * $bobotMilestone / 100) + ($rataRataAnggota * $bobotAnggota / 100);
+        
+        return [
+            'nilai_milestone_avg' => round($nilaiMilestone, 2),
+            'milestone_approved_count' => $milestoneApproved->count(),
+            'nilai_rata_anggota' => round($rataRataAnggota, 2),
+            'hasil_akhir' => round($hasilAkhir, 2),
+        ];
+    }
+
+    /**
+     * Menyimpan nilai kelompok baru (berbasis milestone)
      */
     public function store(Request $request)
     {
         $request->validate([
             'kelompok_id' => 'required|exists:kelompok,id_kelompok',
-            'penilaian_dosen' => 'required|numeric|min:0|max:100',
         ]);
 
-        $kelompokId = $request->kelompok_id;
-
-        // 1. Pemrograman Web (Average of 'PWL' or 'Pemrograman Web')
-        $pemrogramanWeb = $this->getAverageGradeForSubject($kelompokId, ['pwl', 'pemrograman web']);
-
-        // 2. Integrasi Sistem
-        $integrasiSistem = $this->getAverageGradeForSubject($kelompokId, ['integrasi sistem']);
-
-        // 3. Pengambilan Keputusan
-        $pengambilanKeputusan = $this->getAverageGradeForSubject($kelompokId, ['pengambilan keputusan']);
-
-        // 4. IT Proyek
-        $itProyek = $this->getAverageGradeForSubject($kelompokId, ['it project', 'it proyek']);
-
-        // 5. Kontribusi Kelompok (Average of 'Kontribusi' from IT Project grades ideally, or similar)
-        // For now, let's fetch the average of 'kontribusi' column from IT Project grades
-        // Reuse logic but specifically pick 'kontribusi' column.
-         $studentIds = Mahasiswa::where('kelompok_id', $kelompokId)->pluck('id');
-         $kontribusiGrades = Nilai::whereIn('mahasiswa_id', $studentIds)
-            ->whereHas('mataKuliah', function ($q) {
-                $q->where('nama_mk', 'like', '%it project%')
-                  ->orWhere('nama_mk', 'like', '%it proyek%');
-            })->pluck('kontribusi');
+        $kelompok = Kelompok::findOrFail($request->kelompok_id);
         
-        $kontribusiKelompok = $kontribusiGrades->isEmpty() ? 0 : $kontribusiGrades->avg();
+        // Hitung nilai berdasarkan milestone
+        $result = $this->calculateMilestoneGrade($kelompok);
+        
+        if (isset($result['error'])) {
+            return redirect()->back()
+                ->with('error', $result['error']);
+        }
+        
+        // Update nilai kelompok
+        $kelompok->update($result);
 
-
-        // Hitung hasil akhir (rata-rata 6 komponen)
-        $hasil_akhir = (
-            $pemrogramanWeb +
-            $integrasiSistem +
-            $pengambilanKeputusan +
-            $itProyek +
-            $kontribusiKelompok +
-            $request->penilaian_dosen
-        ) / 6;
-
-        $kelompok = Kelompok::findOrFail($kelompokId);
-        $kelompok->update([
-            'pemrograman_web' => round($pemrogramanWeb, 2),
-            'integrasi_sistem' => round($integrasiSistem, 2),
-            'pengambilan_keputusan' => round($pengambilanKeputusan, 2),
-            'it_proyek' => round($itProyek, 2),
-            'kontribusi_kelompok' => round($kontribusiKelompok, 2),
-            'penilaian_dosen' => $request->penilaian_dosen,
-            'hasil_akhir' => round($hasil_akhir, 2),
-        ]);
-
-        return redirect()->route('nilai_kelompok.index')->with('success', 'Nilai kelompok berhasil disimpan! Data diambil otomatis dari penilaian mata kuliah.');
+        return redirect()->route('nilai_kelompok.index')
+            ->with('success', 'Nilai kelompok berhasil dihitung berdasarkan milestone!');
     }
 
     /**

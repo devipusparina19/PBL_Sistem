@@ -38,13 +38,10 @@
                             <th width="3%">No</th>
                             <th>Nama Kelompok</th>
                             <th>Judul Proyek</th>
-                            <th width="8%">Anggota</th>
-                            <th width="8%">Pemrog. Web</th>
-                            <th width="8%">Integrasi</th>
-                            <th width="8%">Keputusan</th>
-                            <th width="8%">IT Proyek</th>
-                            <th width="8%">Kontribusi</th>
-                            <th width="8%">Nilai Dosen</th>
+                            <th width="6%">Anggota</th>
+                            <th width="6%">Milestone</th>
+                            <th width="7%">Nilai Milestone</th>
+                            <th width="7%">Nilai Anggota</th>
                             <th width="8%">Hasil Akhir</th>
                             @if(Auth::user()->role === 'dosen')
                                 <th width="10%">Aksi</th>
@@ -59,22 +56,13 @@
                                 <td class="small">{{ $kelompok->judul_proyek ?? '-' }}</td>
                                 <td class="text-center small">{{ $kelompok->mahasiswa->count() }} orang</td>
                                 <td class="text-center">
-                                    {{ $kelompok->pemrograman_web !== null ? number_format($kelompok->pemrograman_web, 1) : '-' }}
+                                    <span class="badge bg-info">{{ $kelompok->milestone_approved_count ?? 0 }}</span>
                                 </td>
                                 <td class="text-center">
-                                    {{ $kelompok->integrasi_sistem !== null ? number_format($kelompok->integrasi_sistem, 1) : '-' }}
+                                    {{ $kelompok->nilai_milestone_avg !== null ? number_format($kelompok->nilai_milestone_avg, 1) : '-' }}
                                 </td>
                                 <td class="text-center">
-                                    {{ $kelompok->pengambilan_keputusan !== null ? number_format($kelompok->pengambilan_keputusan, 1) : '-' }}
-                                </td>
-                                <td class="text-center">
-                                    {{ $kelompok->it_proyek !== null ? number_format($kelompok->it_proyek, 1) : '-' }}
-                                </td>
-                                <td class="text-center">
-                                    {{ $kelompok->kontribusi_kelompok !== null ? number_format($kelompok->kontribusi_kelompok, 1) : '-' }}
-                                </td>
-                                <td class="text-center">
-                                    {{ $kelompok->penilaian_dosen !== null ? number_format($kelompok->penilaian_dosen, 1) : '-' }}
+                                    {{ $kelompok->nilai_rata_anggota !== null ? number_format($kelompok->nilai_rata_anggota, 1) : '-' }}
                                 </td>
                                 <td class="text-center">
                                     @if($kelompok->hasil_akhir !== null)
@@ -119,7 +107,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="{{ Auth::user()->role === 'dosen' ? 13 : 12 }}" class="text-center text-muted">
+                                <td colspan="{{ Auth::user()->role === 'dosen' ? 9 : 8 }}" class="text-center text-muted">
                                     Belum ada data kelompok.
                                 </td>
                             </tr>

@@ -28,6 +28,10 @@ class Kelompok extends Model
         'kontribusi_kelompok',
         'penilaian_dosen',
         'hasil_akhir',
+        // Kolom Nilai Milestone
+        'nilai_milestone_avg',
+        'milestone_approved_count',
+        'nilai_rata_anggota',
     ];
 
     public $timestamps = true;

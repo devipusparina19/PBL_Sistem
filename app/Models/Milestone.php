@@ -21,6 +21,9 @@ class Milestone extends Model
         'kelompok_id',
         'status',
         'catatan_dosen',
+        'nilai',
+        'target_minggu',
+        'nilai_akhir',
     ];
 
     /**

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
 use App\Models\Nilai;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -81,7 +82,10 @@ class NilaiController extends Controller
             $mataKuliah = MataKuliah::orderBy('nama_mk', 'asc')->get();
         }
         
-        return view('nilai.create', compact('mahasiswa', 'mataKuliah'));
+        // Get current weight settings for inline editing
+        $settings = Setting::all()->keyBy('key');
+        
+        return view('nilai.create', compact('mahasiswa', 'mataKuliah', 'settings'));
     }
 
     /**
@@ -121,12 +125,30 @@ class NilaiController extends Controller
         'uas' => 'required|numeric|min:0|max:100',
     ]);
 
-    $aktivitas_partisipatif = ($request->nilai_kerja * 0.6) + ($request->nilai_laporan * 0.4);
-    $hasil_project = ($request->ujian_praktikum_1 * 0.5) + ($request->ujian_praktikum_2 * 0.5);
-    $nilai_akhir = ($aktivitas_partisipatif * 0.45) +
-                   ($hasil_project * 0.25) +
-                   ($request->uts * 0.15) +
-                   ($request->uas * 0.15);
+    // Get weights from form (inline editing) or fallback to settings
+    $wNilaiKerja = (float) ($request->w_integrasi_nilai_kerja ?? Setting::get('integrasi_nilai_kerja', 27)) / 100;
+    $wNilaiLaporan = (float) ($request->w_integrasi_nilai_laporan ?? Setting::get('integrasi_nilai_laporan', 18)) / 100;
+    $wUP1 = (float) ($request->w_integrasi_up1 ?? Setting::get('integrasi_ujian_praktikum_1', 12.5)) / 100;
+    $wUP2 = (float) ($request->w_integrasi_up2 ?? Setting::get('integrasi_ujian_praktikum_2', 12.5)) / 100;
+    $wUTS = (float) ($request->w_integrasi_uts ?? Setting::get('integrasi_uts', 15)) / 100;
+    $wUAS = (float) ($request->w_integrasi_uas ?? Setting::get('integrasi_uas', 15)) / 100;
+    
+    // Save weights to settings if changed
+    if ($request->has('w_integrasi_nilai_kerja')) {
+        Setting::set('integrasi_nilai_kerja', $request->w_integrasi_nilai_kerja);
+        Setting::set('integrasi_nilai_laporan', $request->w_integrasi_nilai_laporan);
+        Setting::set('integrasi_ujian_praktikum_1', $request->w_integrasi_up1);
+        Setting::set('integrasi_ujian_praktikum_2', $request->w_integrasi_up2);
+        Setting::set('integrasi_uts', $request->w_integrasi_uts);
+        Setting::set('integrasi_uas', $request->w_integrasi_uas);
+    }
+    
+    $nilai_akhir = ($request->nilai_kerja * $wNilaiKerja) +
+                   ($request->nilai_laporan * $wNilaiLaporan) +
+                   ($request->ujian_praktikum_1 * $wUP1) +
+                   ($request->ujian_praktikum_2 * $wUP2) +
+                   ($request->uts * $wUTS) +
+                   ($request->uas * $wUAS);
 
     Nilai::create([
         'mahasiswa_id' => $request->mahasiswa_id,
@@ -157,11 +179,27 @@ class NilaiController extends Controller
                 'it_dokumentasi' => 'required|numeric|min:0|max:100',
             ]);
 
-            $nilaiAkhir = ($request->it_proposal * 0.15) + 
-                          ($request->it_progress_report * 0.15) + 
-                          ($request->it_final_project * 0.4) + 
-                          ($request->it_presentasi * 0.2) + 
-                          ($request->it_dokumentasi * 0.1);
+            // Get weights from form (inline editing) or fallback to settings
+            $wProposal = (float) ($request->w_pwl_proposal ?? Setting::get('pwl_proposal', 15)) / 100;
+            $wProgressReport = (float) ($request->w_pwl_progress_report ?? Setting::get('pwl_progress_report', 15)) / 100;
+            $wFinalProject = (float) ($request->w_pwl_final_project ?? Setting::get('pwl_final_project', 40)) / 100;
+            $wPresentasi = (float) ($request->w_pwl_presentasi ?? Setting::get('pwl_presentasi', 20)) / 100;
+            $wDokumentasi = (float) ($request->w_pwl_dokumentasi ?? Setting::get('pwl_dokumentasi', 10)) / 100;
+            
+            // Save weights to settings if changed
+            if ($request->has('w_pwl_proposal')) {
+                Setting::set('pwl_proposal', $request->w_pwl_proposal);
+                Setting::set('pwl_progress_report', $request->w_pwl_progress_report);
+                Setting::set('pwl_final_project', $request->w_pwl_final_project);
+                Setting::set('pwl_presentasi', $request->w_pwl_presentasi);
+                Setting::set('pwl_dokumentasi', $request->w_pwl_dokumentasi);
+            }
+            
+            $nilaiAkhir = ($request->it_proposal * $wProposal) + 
+                          ($request->it_progress_report * $wProgressReport) + 
+                          ($request->it_final_project * $wFinalProject) + 
+                          ($request->it_presentasi * $wPresentasi) + 
+                          ($request->it_dokumentasi * $wDokumentasi);
 
             Nilai::create([
                 'mahasiswa_id' => $request->mahasiswa_id,
@@ -192,12 +230,30 @@ class NilaiController extends Controller
                 'it_final_project' => 'required|numeric|min:0|max:100', // Produk Aplikasi (40%)
             ]);
 
-            $nilaiAkhir = ($request->kontribusi * 0.20) + 
-                          ($request->it_presentasi * 0.10) +
-                          ($request->it_proposal * 0.10) +
-                          ($request->it_progress_report * 0.10) +
-                          ($request->it_dokumentasi * 0.10) +
-                          ($request->it_final_project * 0.40);
+            // Get weights from form (inline editing) or fallback to settings
+            $wAktivitas = (float) ($request->w_it_aktivitas ?? Setting::get('it_aktivitas_partisipatif', 20)) / 100;
+            $wPresentasi = (float) ($request->w_it_presentasi ?? Setting::get('it_presentasi', 10)) / 100;
+            $wObjektivitas = (float) ($request->w_it_objektivitas ?? Setting::get('it_objektivitas', 10)) / 100;
+            $wLapProgres = (float) ($request->w_it_laporan_progres ?? Setting::get('it_laporan_progres', 10)) / 100;
+            $wLapAkhir = (float) ($request->w_it_laporan_akhir ?? Setting::get('it_laporan_akhir', 10)) / 100;
+            $wProduk = (float) ($request->w_it_produk ?? Setting::get('it_produk_aplikasi', 40)) / 100;
+            
+            // Save weights to settings if changed
+            if ($request->has('w_it_aktivitas')) {
+                Setting::set('it_aktivitas_partisipatif', $request->w_it_aktivitas);
+                Setting::set('it_presentasi', $request->w_it_presentasi);
+                Setting::set('it_objektivitas', $request->w_it_objektivitas);
+                Setting::set('it_laporan_progres', $request->w_it_laporan_progres);
+                Setting::set('it_laporan_akhir', $request->w_it_laporan_akhir);
+                Setting::set('it_produk_aplikasi', $request->w_it_produk);
+            }
+            
+            $nilaiAkhir = ($request->kontribusi * $wAktivitas) + 
+                          ($request->it_presentasi * $wPresentasi) +
+                          ($request->it_proposal * $wObjektivitas) +
+                          ($request->it_progress_report * $wLapProgres) +
+                          ($request->it_dokumentasi * $wLapAkhir) +
+                          ($request->it_final_project * $wProduk);
 
             Nilai::create([
                 'mahasiswa_id' => $request->mahasiswa_id,
@@ -228,12 +284,30 @@ class NilaiController extends Controller
                 'hasil_proyek' => 'required|numeric|min:0|max:100',
             ]);
 
-            $nilaiAkhir = ($request->uts * 0.1) + 
-                          ($request->uas * 0.1) + 
-                          ($request->aktivitas_partisipatif * 0.1) + 
-                          ($request->nilai_kerja * 0.2) + 
-                          ($request->penyajian_dokumentasi * 0.2) + 
-                          ($request->hasil_proyek * 0.3);
+            // Get weights from form (inline editing) or fallback to settings
+            $wUTS = (float) ($request->w_tpk_uts ?? Setting::get('tpk_uts', 10)) / 100;
+            $wUAS = (float) ($request->w_tpk_uas ?? Setting::get('tpk_uas', 10)) / 100;
+            $wKeaktifan = (float) ($request->w_tpk_keaktifan ?? Setting::get('tpk_aktivitas_partisipatif', 10)) / 100;
+            $wNilaiKerja = (float) ($request->w_tpk_nilai_kerja ?? Setting::get('tpk_nilai_kerja', 20)) / 100;
+            $wPenyajian = (float) ($request->w_tpk_penyajian ?? Setting::get('tpk_penyajian_dokumentasi', 20)) / 100;
+            $wHasilProyek = (float) ($request->w_tpk_hasil_proyek ?? Setting::get('tpk_hasil_proyek', 30)) / 100;
+            
+            // Save weights to settings if changed
+            if ($request->has('w_tpk_uts')) {
+                Setting::set('tpk_uts', $request->w_tpk_uts);
+                Setting::set('tpk_uas', $request->w_tpk_uas);
+                Setting::set('tpk_aktivitas_partisipatif', $request->w_tpk_keaktifan);
+                Setting::set('tpk_nilai_kerja', $request->w_tpk_nilai_kerja);
+                Setting::set('tpk_penyajian_dokumentasi', $request->w_tpk_penyajian);
+                Setting::set('tpk_hasil_proyek', $request->w_tpk_hasil_proyek);
+            }
+            
+            $nilaiAkhir = ($request->uts * $wUTS) + 
+                          ($request->uas * $wUAS) + 
+                          ($request->aktivitas_partisipatif * $wKeaktifan) + 
+                          ($request->nilai_kerja * $wNilaiKerja) + 
+                          ($request->penyajian_dokumentasi * $wPenyajian) + 
+                          ($request->hasil_proyek * $wHasilProyek);
 
             Nilai::create([
                 'mahasiswa_id' => $request->mahasiswa_id,

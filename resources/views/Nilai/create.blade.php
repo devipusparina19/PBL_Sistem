@@ -69,108 +69,153 @@
 
                 <!-- Form Pengambilan Keputusan -->
                 <div id="form-nilai-pengambilan-keputusan" style="display: none;">
-                    <div class="alert alert-info">
-                        <strong>Komponen Penilaian Pengambilan Keputusan:</strong><br>
-                        • UTS (10%)<br>
-                        • UAS (10%)<br>
-                        • Keaktifan (10%)<br>
-                        • Nilai Kerja (20%)<br>
-                        • Penyajian & Dokumentasi (20%)<br>
-                        • Hasil Proyek (30%)
+                    <h5 class="mb-3">📈 Komponen Penilaian Pengambilan Keputusan</h5>
+                    
+                    <div class="alert alert-info mb-3">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Tip:</strong> Anda dapat mengubah bobot (%) setiap komponen. Pastikan total = 100%
                     </div>
 
                     <div class="row">
-                        @php
-                            $fields = [
-                                ['uts', 'UTS - 10%'],
-                                ['uas', 'UAS - 10%'],
-                                ['aktivitas_partisipatif', 'Aktivitas Partisipatif (10%)'],
-                                ['nilai_kerja', 'Nilai Kerja (20%)'],
-                                ['penyajian_dokumentasi', 'Penyajian & Dokumentasi (20%)'],
-                                ['hasil_proyek', 'Hasil Proyek (30%)'],
-                            ];
-                        @endphp
-
-                        @foreach($fields as [$name, $label])
                         <div class="col-md-6 mb-3">
-                            <label for="tpk_{{ $name }}" class="form-label">{{ $label }}</label>
-                            <input type="number" name="{{ $name }}" id="tpk_{{ $name }}"
-                                   class="form-control" min="0" max="100" step="0.01" placeholder="0-100">
+                            <label class="form-label">UTS</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="uts" id="tpk_uts" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_tpk_uts" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['tpk_uts']->value ?? 10 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
                         </div>
-                        @endforeach
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">UAS</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="uas" id="tpk_uas" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_tpk_uas" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['tpk_uas']->value ?? 10 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Keaktifan</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="aktivitas_partisipatif" id="tpk_aktivitas_partisipatif" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_tpk_keaktifan" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['tpk_aktivitas_partisipatif']->value ?? 10 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nilai Kerja</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="nilai_kerja" id="tpk_nilai_kerja" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_tpk_nilai_kerja" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['tpk_nilai_kerja']->value ?? 20 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Penyajian & Dokumentasi</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="penyajian_dokumentasi" id="tpk_penyajian_dokumentasi" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_tpk_penyajian" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['tpk_penyajian_dokumentasi']->value ?? 20 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Hasil Proyek</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="hasil_proyek" id="tpk_hasil_proyek" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_tpk_hasil_proyek" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['tpk_hasil_proyek']->value ?? 30 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="alert alert-success">
-                        <strong>Nilai Akhir:</strong> <span id="preview-nilai-akhir">0</span>
+                    <div class="alert alert-primary mt-3">
+                        <h5>🎯 Nilai Akhir: <span id="preview-nilai-akhir">0.00</span></h5>
+                        <small>Grade: <span id="grade_tpk">-</span></small>
                     </div>
                 </div>
 
                 <!-- Form Integrasi Sistem -->
                 <div id="form-integrasi-sistem" style="display: none;">
                     <h5 class="mb-3">📊 Komponen Penilaian Integrasi Sistem</h5>
-
-                    <!-- Aktivitas Partisipatif -->
-                    <div class="card mb-3">
-        <div class="card-header bg-info text-white">
-            <strong>Aktivitas Partisipatif (45%)</strong>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Nilai Kerja (60%)</label>
-                    <!-- UBAH name dan id -->
-                    <input type="number" class="form-control" name="nilai_kerja"
-                        id="nilai_kerja" min="0" max="100" step="0.01">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Nilai Laporan (40%)</label>
-                    <input type="number" class="form-control" name="nilai_laporan"
-                        id="nilai_laporan" min="0" max="100" step="0.01">
-                </div>
-            </div>
-                            <div class="alert alert-info">
-                                <strong>Preview Aktivitas:</strong> <span id="preview_aktivitas">0.00</span>
-                            </div>
-                        </div>
+                    
+                    <div class="alert alert-info mb-3">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Tip:</strong> Anda dapat mengubah bobot (%) setiap komponen. Pastikan total = 100%
                     </div>
 
-                    <!-- Hasil Project -->
-                    <div class="card mb-3">
-                        <div class="card-header bg-success text-white">
-                            <strong>Hasil Project (25%)</strong>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Ujian Praktikum 1 (50%)</label>
-                                    <input type="number" class="form-control" name="ujian_praktikum_1"
-                                        id="ujian_praktikum_1" min="0" max="100" step="0.01">
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Ujian Praktikum 2 (50%)</label>
-                                    <input type="number" class="form-control" name="ujian_praktikum_2"
-                                        id="ujian_praktikum_2" min="0" max="100" step="0.01">
-                                </div>
-                            </div>
-                            <div class="alert alert-success">
-                                <strong>Preview Project:</strong> <span id="preview_project">0.00</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- UTS & UAS -->
                     <div class="row">
-        <div class="col-md-6 mb-3">
-            <label class="form-label">UTS Teori (15%)</label>
-            <input type="number" class="form-control" name="uts"
-                id="integrasi_uts" min="0" max="100" step="0.01">
-        </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label">UAS (15%)</label>
-            <input type="number" class="form-control" name="uas"
-                id="integrasi_uas" min="0" max="100" step="0.01">
-        </div>
-    </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nilai Kerja</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="nilai_kerja" id="nilai_kerja" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_integrasi_nilai_kerja" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['integrasi_nilai_kerja']->value ?? 27 }}" min="0" max="100" step="0.1">
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nilai Laporan</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="nilai_laporan" id="nilai_laporan" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_integrasi_nilai_laporan" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['integrasi_nilai_laporan']->value ?? 18 }}" min="0" max="100" step="0.1">
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Ujian Praktikum 1</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="ujian_praktikum_1" id="ujian_praktikum_1" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_integrasi_up1" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['integrasi_ujian_praktikum_1']->value ?? 12.5 }}" min="0" max="100" step="0.1">
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Ujian Praktikum 2</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="ujian_praktikum_2" id="ujian_praktikum_2" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_integrasi_up2" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['integrasi_ujian_praktikum_2']->value ?? 12.5 }}" min="0" max="100" step="0.1">
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">UTS Teori</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="uts" id="integrasi_uts" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_integrasi_uts" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['integrasi_uts']->value ?? 15 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">UAS</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="uas" id="integrasi_uas" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_integrasi_uas" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['integrasi_uas']->value ?? 15 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="alert alert-primary mt-3">
                         <h5>🎯 Nilai Akhir: <span id="preview_nilai_akhir_integrasi">0.00</span></h5>
@@ -184,40 +229,61 @@
                 <div id="form-pwl" style="display: none;">
                     <h5 class="mb-3">💻 Komponen Penilaian PWL</h5>
                     
-                    <div class="alert alert-info">
-                        <strong>Komponen Penilaian Pemrograman Web Lanjut:</strong><br>
-                        • Proposal (15%)<br>
-                        • Progress Report (15%)<br>
-                        • Final Project (40%)<br>
-                        • Presentasi (20%)<br>
-                        • Dokumentasi (10%)
+                    <div class="alert alert-info mb-3">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Tip:</strong> Anda dapat mengubah bobot (%) setiap komponen. Pastikan total = 100%
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Proposal (15%)</label>
-                            <input type="number" class="form-control" name="it_proposal" id="pwl_proposal" 
-                                   min="0" max="100" step="0.01" placeholder="0-100">
+                            <label class="form-label">Proposal</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="it_proposal" id="pwl_proposal" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_pwl_proposal" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['pwl_proposal']->value ?? 15 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Progress Report (15%)</label>
-                            <input type="number" class="form-control" name="it_progress_report" id="pwl_progress_report" 
-                                   min="0" max="100" step="0.01" placeholder="0-100">
+                            <label class="form-label">Progress Report</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="it_progress_report" id="pwl_progress_report" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_pwl_progress_report" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['pwl_progress_report']->value ?? 15 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Presentasi (20%)</label>
-                            <input type="number" class="form-control" name="it_presentasi" id="pwl_presentasi" 
-                                   min="0" max="100" step="0.01" placeholder="0-100">
+                            <label class="form-label">Presentasi</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="it_presentasi" id="pwl_presentasi" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_pwl_presentasi" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['pwl_presentasi']->value ?? 20 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Dokumentasi (10%)</label>
-                            <input type="number" class="form-control" name="it_dokumentasi" id="pwl_dokumentasi" 
-                                   min="0" max="100" step="0.01" placeholder="0-100">
+                            <label class="form-label">Dokumentasi</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="it_dokumentasi" id="pwl_dokumentasi" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_pwl_dokumentasi" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['pwl_dokumentasi']->value ?? 10 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Final Project (40%)</label>
-                            <input type="number" class="form-control" name="it_final_project" id="pwl_final_project" 
-                                   min="0" max="100" step="0.01" placeholder="0-100">
+                            <label class="form-label">Final Project</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="it_final_project" id="pwl_final_project" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_pwl_final_project" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['pwl_final_project']->value ?? 40 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
                         </div>
                     </div>
 
@@ -231,46 +297,71 @@
                 <div id="form-it-project" style="display: none;">
                     <h5 class="mb-3">🚀 Komponen Penilaian IT Project</h5>
                     
-                    <div class="alert alert-info">
-                        <strong>Komponen Penilaian IT Project:</strong><br>
-                        • Aktivitas Partisipatif (20%) - Dinamika, Kerjasama<br>
-                        • Presentasi (10%) - Keruntutan, Penguasaan Materi<br>
-                        • Objektivitas / Tanya Jawab (10%) - Ketepatan Jawaban<br>
-                        • Laporan Progres (10%) - Kerapian, Dokumen<br>
-                        • Laporan Akhir (10%) - Kerapian, Dokumen<br>
-                        • Produk Aplikasi (40%) - Hasil Proyek
+                    <div class="alert alert-info mb-3">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Tip:</strong> Anda dapat mengubah bobot (%) setiap komponen. Pastikan total = 100%
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Aktivitas Partisipatif (20%)</label>
-                            <input type="number" class="form-control" name="kontribusi" id="it_kontribusi" 
-                                   min="0" max="100" step="0.01" placeholder="0-100">
+                            <label class="form-label">Aktivitas Partisipatif</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="kontribusi" id="it_kontribusi" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_it_aktivitas" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['it_aktivitas_partisipatif']->value ?? 20 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Presentasi (10%)</label>
-                            <input type="number" class="form-control" name="it_presentasi" id="it_presentasi" 
-                                   min="0" max="100" step="0.01" placeholder="0-100">
+                            <label class="form-label">Presentasi</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="it_presentasi" id="it_presentasi" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_it_presentasi" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['it_presentasi']->value ?? 10 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Objektivitas / Tanya Jawab (10%)</label>
-                            <input type="number" class="form-control" name="it_proposal" id="it_proposal" 
-                                   min="0" max="100" step="0.01" placeholder="0-100">
+                            <label class="form-label">Objektivitas / Tanya Jawab</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="it_proposal" id="it_proposal" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_it_objektivitas" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['it_objektivitas']->value ?? 10 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Laporan Progres (10%)</label>
-                            <input type="number" class="form-control" name="it_progress_report" id="it_progress_report" 
-                                   min="0" max="100" step="0.01" placeholder="0-100">
+                            <label class="form-label">Laporan Progres</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="it_progress_report" id="it_progress_report" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_it_laporan_progres" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['it_laporan_progres']->value ?? 10 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label class="form-label">Laporan Akhir (10%)</label>
-                            <input type="number" class="form-control" name="it_dokumentasi" id="it_dokumentasi" 
-                                   min="0" max="100" step="0.01" placeholder="0-100">
+                            <label class="form-label">Laporan Akhir</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="it_dokumentasi" id="it_dokumentasi" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_it_laporan_akhir" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['it_laporan_akhir']->value ?? 10 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
                         </div>
                         <div class="col-md-12 mb-3">
-                            <label class="form-label">Produk Aplikasi (40%)</label>
-                            <input type="number" class="form-control" name="it_final_project" id="it_final_project" 
-                                   min="0" max="100" step="0.01" placeholder="0-100">
+                            <label class="form-label">Produk Aplikasi</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="it_final_project" id="it_final_project" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                                <input type="number" name="w_it_produk" class="form-control text-center" style="max-width: 70px;"
+                                       value="{{ $settings['it_produk_aplikasi']->value ?? 40 }}" min="0" max="100">
+                                <span class="input-group-text">%</span>
+                            </div>
                         </div>
                     </div>
 

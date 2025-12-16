@@ -29,6 +29,7 @@ use App\Http\Controllers\PenilaianSejawatController;
 use App\Http\Controllers\LaporanController; // ✅ Tambahan untuk laporan penilaian
 use App\Http\Controllers\DataAkademikController;
 use App\Http\Controllers\NotificationController; // ✅ Tambahan untuk notifikasi
+use App\Http\Controllers\SettingController; // ✅ Tambahan untuk pengaturan penilaian
 
 /*
 |--------------------------------------------------------------------------
@@ -184,6 +185,16 @@ Route::middleware('auth')->group(function () {
     Route::middleware('isAdmin')->group(function () {
         Route::get('/manajemen_akun', [AdminController::class, 'manajemenAkun'])->name('manajemen_akun');
         Route::resource('akun', AkunController::class);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Settings / Pengaturan Penilaian (Admin & Dosen)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:dosen')->group(function () {
+        Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
     });
 
     /*

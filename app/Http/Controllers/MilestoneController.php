@@ -228,24 +228,60 @@ class MilestoneController extends Controller
         $request->validate([
             'status'        => 'required|in:disetujui,ditolak',
             'catatan_dosen' => 'nullable|string',
+            'nilai'         => 'nullable|numeric|min:0|max:100',
+            'target_minggu' => 'nullable|integer|min:1',
         ]);
 
         $milestone = Milestone::findOrFail($id);
 
-        $milestone->update([
+        $data = [
             'status'        => $request->status,
             'catatan_dosen' => $request->catatan_dosen,
-        ]);
+        ];
+
+        // Hitung nilai akhir dengan bonus/penalty jika disetujui
+        if ($request->status === 'disetujui' && $request->nilai) {
+            $bonusPerMinggu = (int) \App\Models\Setting::get('bonus_per_minggu', 5);
+            $penaltyPerMinggu = (int) \App\Models\Setting::get('penalty_per_minggu', 5);
+            
+            $data['nilai'] = $request->nilai;
+            $data['target_minggu'] = $request->target_minggu ?? $milestone->minggu_ke;
+            
+            // Hitung selisih minggu (target - submit)
+            $targetMinggu = $data['target_minggu'];
+            $submitMinggu = $milestone->minggu_ke;
+            $selisih = $targetMinggu - $submitMinggu;
+            
+            if ($selisih > 0) {
+                // Submit lebih cepat = BONUS
+                $nilaiAkhir = min($request->nilai + ($selisih * $bonusPerMinggu), 100);
+            } elseif ($selisih < 0) {
+                // Submit terlambat = PENALTY
+                $nilaiAkhir = max($request->nilai - (abs($selisih) * $penaltyPerMinggu), 0);
+            } else {
+                // Tepat waktu
+                $nilaiAkhir = $request->nilai;
+            }
+            
+            $data['nilai_akhir'] = round($nilaiAkhir, 2);
+        }
+
+        $milestone->update($data);
 
         // ✅ Buat notifikasi untuk pembuat milestone
         $messageType = $request->status === 'disetujui' ? 'milestone_approved' : 'milestone_rejected';
         $statusText = $request->status === 'disetujui' ? 'disetujui' : 'ditolak';
         
+        $notifMessage = "Milestone \"{$milestone->judul}\" (Minggu {$milestone->minggu_ke}) telah {$statusText} oleh dosen.";
+        if ($request->status === 'disetujui' && isset($data['nilai_akhir'])) {
+            $notifMessage .= " Nilai: {$data['nilai_akhir']}";
+        }
+        
         \App\Models\Notification::create([
             'user_id'      => $milestone->user_id,
             'milestone_id' => $milestone->id,
             'type'         => $messageType,
-            'message'      => "Milestone \"{$milestone->judul}\" (Minggu {$milestone->minggu_ke}) telah {$statusText} oleh dosen.",
+            'message'      => $notifMessage,
         ]);
 
         return redirect()->route('milestone.validasi')
