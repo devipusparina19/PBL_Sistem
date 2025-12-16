@@ -2,78 +2,255 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AhpSawCalculator;
 use App\Models\Mahasiswa;
 use App\Models\Nilai;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class RankingController extends Controller
 {
-    public function index()
+    /**
+     * Display ranking with AHP/SAW calculation
+     */
+    public function index(Request $request)
     {
+        // Get ranking method preference
+        $method = $request->get('method', Setting::get('ranking_method', 'saw'));
+        
+        // Get SAW weights from settings
+        $weights = $this->getWeights();
+        
+        // Get mahasiswa data with individual scores
         $mahasiswas = Mahasiswa::with('kelompok')->get();
+        
+        $data = $mahasiswas->map(function ($mhs) {
+            return $this->getMahasiswaScores($mhs);
+        })->toArray();
+        
+        // Apply SAW or simple average calculation
+        if ($method === 'saw') {
+            $rankings = AhpSawCalculator::calculateSaw($data, $weights);
+        } else {
+            $rankings = $this->calculateSimpleAverage($data);
+        }
+        
+        return view('ranking.index', [
+            'rankings' => $rankings,
+            'weights' => $weights,
+            'method' => $method,
+            'criteria' => AhpSawCalculator::getDefaultCriteria(),
+        ]);
+    }
 
-        $rankings = $mahasiswas->map(function ($mhs) {
-            // 1. Nilai Akademik
-            // Ambil nilai dari mata kuliah tertentu
-            $grades = Nilai::where('mahasiswa_id', $mhs->id)
-                ->with('mataKuliah')
-                ->get();
+    /**
+     * Get individual scores for a mahasiswa
+     */
+    private function getMahasiswaScores(Mahasiswa $mhs): array
+    {
+        $grades = Nilai::where('mahasiswa_id', $mhs->id)
+            ->with('mataKuliah')
+            ->get();
 
-            $academicSum = 0;
-            $academicCount = 0;
-            $subjects = ['it project', 'it proyek', 'pengambilan keputusan', 'integrasi sistem', 'pwl', 'pemrograman web'];
+        // Initialize scores - 7 kriteria
+        $scores = [
+            'nim' => $mhs->nim,
+            'nama' => $mhs->nama,
+            'kelas' => $mhs->kelas,
+            'kelompok' => $mhs->kelompok ? $mhs->kelompok->nama_kelompok : '-',
+            'pwl' => 0,              // Kriteria 1 - Dinamis
+            'integrasi' => 0,        // Kriteria 2 - Dinamis
+            'tpk' => 0,              // Kriteria 3 - Dinamis
+            'it_project' => 0,       // Kriteria 4 - Dinamis
+            'kontribusi' => 0,       // Kriteria 5 - Tetap (Kontribusi Kelompok)
+            'sejawat' => 0,          // Kriteria 6 - Tetap (Penilaian Teman Sejawat)
+            'proyek' => 0,           // Kriteria 7 - Tetap (Hasil Akhir Proyek)
+        ];
 
-            foreach ($grades as $grade) {
-                if ($grade->mataKuliah) {
-                    $mkName = strtolower($grade->mataKuliah->nama_mk);
-                    foreach ($subjects as $subject) {
-                        if (strpos($mkName, $subject) !== false) {
-                            $academicSum += $grade->nilai_akhir; // Menggunakan accessor nilai_akhir
-                            $academicCount++;
-                            break; // Count subject once
-                        }
-                    }
-                }
-            }
-
-            $scoreAcademic = $academicCount > 0 ? ($academicSum / $academicCount) : 0;
-
-            // 2. Nilai Proyek
-            // Ambil dari Nilai Kelompok
-            $scoreProject = $mhs->kelompok ? $mhs->kelompok->hasil_akhir : 0;
-
-            // 3. Nilai Sejawat (Peer Assessment)
-            // Cari User berdasarkan NIM
-            $user = User::where('nim_nip', $mhs->nim)->first();
-            $scorePeer = 0;
-            if ($user) {
-                $scorePeer = DB::table('penilaian_sejawat')
-                    ->where('dinilai_id', $user->id)
-                    ->avg('nilai');
-            }
-            $scorePeer = $scorePeer ? round($scorePeer, 2) : 0;
-
-            // Total Score (Rata-rata dari 3 komponen)
-            // Jika salah satu komponen 0, apakah tetap dibagi 3? 
-            // Asumsi: Tetap dibagi 3 untuk fairness, atau sesuai bobot.
-            // Formula: (Akademik + Proyek + Sejawat) / 3
+        // Map grades to criteria (4 mata kuliah dinamis)
+        foreach ($grades as $grade) {
+            if (!$grade->mataKuliah) continue;
             
-            $totalScore = ($scoreAcademic + $scoreProject + $scorePeer) / 3;
+            $mkName = strtolower($grade->mataKuliah->nama_mk);
+            $nilai = $grade->nilai_akhir ?? 0;
+            
+            if (strpos($mkName, 'pwl') !== false || strpos($mkName, 'pemrograman web') !== false) {
+                $scores['pwl'] = $nilai;
+            } elseif (strpos($mkName, 'integrasi') !== false) {
+                $scores['integrasi'] = $nilai;
+            } elseif (strpos($mkName, 'pengambilan keputusan') !== false || strpos($mkName, 'tpk') !== false) {
+                $scores['tpk'] = $nilai;
+            } elseif (strpos($mkName, 'it project') !== false || strpos($mkName, 'it proyek') !== false) {
+                $scores['it_project'] = $nilai;
+            }
+        }
 
-            return [
-                'nim' => $mhs->nim,
-                'nama' => $mhs->nama,
-                'kelas' => $mhs->kelas,
-                'kelompok' => $mhs->kelompok ? $mhs->kelompok->nama_kelompok : '-',
-                'score_academic' => round($scoreAcademic, 2),
-                'score_project' => round($scoreProject, 2),
-                'score_peer' => round($scorePeer, 2),
-                'total_score' => round($totalScore, 2),
-            ];
-        })->sortByDesc('total_score')->values();
+        // Kriteria 5 - Kontribusi Kelompok (dari tabel kelompok)
+        $scores['kontribusi'] = $mhs->kelompok ? ($mhs->kelompok->kontribusi_kelompok ?? 0) : 0;
 
-        return view('ranking.index', compact('rankings'));
+        // Kriteria 6 - Penilaian Teman Sejawat
+        $user = User::where('nim_nip', $mhs->nim)->first();
+        if ($user) {
+            $peerScore = DB::table('penilaian_sejawat')
+                ->where('dinilai_id', $user->id)
+                ->avg('nilai');
+            $scores['sejawat'] = $peerScore ? round($peerScore, 2) : 0;
+        }
+
+        // Kriteria 7 - Hasil Akhir Proyek (dari tabel kelompok)
+        $scores['proyek'] = $mhs->kelompok ? ($mhs->kelompok->hasil_akhir ?? 0) : 0;
+
+        return $scores;
+    }
+
+    /**
+     * Calculate simple average (old method)
+     */
+    private function calculateSimpleAverage(array $data): array
+    {
+        foreach ($data as $key => $item) {
+            $academicSum = $item['it_project'] + $item['pwl'] + $item['integrasi'] + $item['tpk'];
+            $academicCount = 0;
+            if ($item['it_project'] > 0) $academicCount++;
+            if ($item['pwl'] > 0) $academicCount++;
+            if ($item['integrasi'] > 0) $academicCount++;
+            if ($item['tpk'] > 0) $academicCount++;
+            
+            $academicAvg = $academicCount > 0 ? $academicSum / $academicCount : 0;
+            
+            $data[$key]['saw_score'] = round(
+                ($academicAvg + $item['proyek'] + $item['sejawat']) / 3, 
+                2
+            );
+        }
+
+        // Sort by score
+        usort($data, fn($a, $b) => $b['saw_score'] <=> $a['saw_score']);
+        
+        // Add rank
+        foreach ($data as $key => $item) {
+            $data[$key]['rank'] = $key + 1;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get weights from settings
+     */
+    private function getWeights(): array
+    {
+        return [
+            'pwl' => (int) Setting::get('saw_weight_pwl', 15),
+            'integrasi' => (int) Setting::get('saw_weight_integrasi', 15),
+            'tpk' => (int) Setting::get('saw_weight_tpk', 15),
+            'it_project' => (int) Setting::get('saw_weight_it_project', 15),
+            'kontribusi' => (int) Setting::get('saw_weight_kontribusi', 15),
+            'sejawat' => (int) Setting::get('saw_weight_sejawat', 10),
+            'proyek' => (int) Setting::get('saw_weight_proyek', 15),
+        ];
+    }
+
+    /**
+     * Update SAW weights
+     */
+    public function updateWeights(Request $request)
+    {
+        $request->validate([
+            'pwl' => 'required|numeric|min:0|max:100',
+            'integrasi' => 'required|numeric|min:0|max:100',
+            'tpk' => 'required|numeric|min:0|max:100',
+            'it_project' => 'required|numeric|min:0|max:100',
+            'kontribusi' => 'required|numeric|min:0|max:100',
+            'sejawat' => 'required|numeric|min:0|max:100',
+            'proyek' => 'required|numeric|min:0|max:100',
+        ]);
+
+        // Validate total = 100
+        $total = $request->pwl + $request->integrasi + $request->tpk + 
+                 $request->it_project + $request->kontribusi + 
+                 $request->sejawat + $request->proyek;
+        
+        if ($total != 100) {
+            return back()->with('error', 'Total bobot harus = 100%. Saat ini: ' . $total . '%');
+        }
+
+        // Save weights (7 kriteria)
+        Setting::set('saw_weight_pwl', $request->pwl);
+        Setting::set('saw_weight_integrasi', $request->integrasi);
+        Setting::set('saw_weight_tpk', $request->tpk);
+        Setting::set('saw_weight_it_project', $request->it_project);
+        Setting::set('saw_weight_kontribusi', $request->kontribusi);
+        Setting::set('saw_weight_sejawat', $request->sejawat);
+        Setting::set('saw_weight_proyek', $request->proyek);
+
+        return back()->with('success', 'Bobot SAW berhasil diperbarui!');
+    }
+
+    /**
+     * Show AHP matrix configuration page
+     */
+    public function ahpConfig()
+    {
+        $criteria = AhpSawCalculator::getDefaultCriteria();
+        $currentWeights = $this->getWeights();
+        
+        return view('ranking.ahp_config', [
+            'criteria' => $criteria,
+            'currentWeights' => $currentWeights,
+            'scale' => AhpSawCalculator::SCALE,
+        ]);
+    }
+
+    /**
+     * Calculate weights from AHP matrix
+     */
+    public function calculateAhp(Request $request)
+    {
+        $criteria = array_keys(AhpSawCalculator::getDefaultCriteria());
+        $n = count($criteria);
+        
+        // Build matrix from form input
+        $upperTriangle = [];
+        for ($i = 0; $i < $n; $i++) {
+            for ($j = $i + 1; $j < $n; $j++) {
+                $key = "ahp_{$i}_{$j}";
+                $upperTriangle[$i][$j] = (float) $request->get($key, 1);
+            }
+        }
+        
+        // Build full reciprocal matrix
+        $matrix = AhpSawCalculator::buildReciprocalMatrix($upperTriangle, $n);
+        
+        // Calculate AHP weights
+        $result = AhpSawCalculator::calculateAhpWeights($matrix);
+        
+        if (!$result['consistent']) {
+            return back()->with('error', 
+                'Matriks tidak konsisten! CR = ' . ($result['cr'] * 100) . '% (harus ≤ 10%). ' .
+                'Silakan periksa kembali perbandingan Anda.'
+            );
+        }
+        
+        // Convert weights to percentage (total = 100)
+        $weights = $result['weights'];
+        $percentWeights = [];
+        foreach ($criteria as $i => $key) {
+            $percentWeights[$key] = round($weights[$i] * 100, 2);
+        }
+        
+        // Save to settings
+        Setting::set('saw_weight_it_project', $percentWeights['it_project']);
+        Setting::set('saw_weight_pwl', $percentWeights['pwl']);
+        Setting::set('saw_weight_integrasi', $percentWeights['integrasi']);
+        Setting::set('saw_weight_tpk', $percentWeights['tpk']);
+        Setting::set('saw_weight_proyek', $percentWeights['proyek']);
+        Setting::set('saw_weight_sejawat', $percentWeights['sejawat']);
+        
+        return back()->with('success', 
+            'Bobot AHP berhasil dihitung dan disimpan! CR = ' . ($result['cr'] * 100) . '% (Konsisten)'
+        )->with('ahp_result', $result);
     }
 }

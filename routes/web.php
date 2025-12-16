@@ -120,6 +120,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/kelompok/sinkron', [KelompokController::class, 'sinkron'])->name('kelompok.sinkron');
     // Route Perangkingan
     Route::get('/ranking', [App\Http\Controllers\RankingController::class, 'index'])->name('ranking.index');
+    Route::post('/ranking/weights', [App\Http\Controllers\RankingController::class, 'updateWeights'])->name('ranking.updateWeights');
+    Route::get('/ranking/ahp', [App\Http\Controllers\RankingController::class, 'ahpConfig'])->name('ranking.ahpConfig');
+    Route::post('/ranking/ahp/calculate', [App\Http\Controllers\RankingController::class, 'calculateAhp'])->name('ranking.calculateAhp');
     
     // Route Kelompok
     Route::resource('kelompok', App\Http\Controllers\KelompokController::class);
