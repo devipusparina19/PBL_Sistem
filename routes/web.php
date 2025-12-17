@@ -176,6 +176,8 @@ Route::middleware('auth')->group(function () {
     | Nilai Mahasiswa
     |--------------------------------------------------------------------------
     */
+    Route::get('nilai/export-excel', [NilaiController::class, 'exportExcel'])->name('nilai.exportExcel');
+    Route::get('nilai/export-pdf', [NilaiController::class, 'exportPdf'])->name('nilai.exportPdf');
     Route::resource('nilai', NilaiController::class);
 
     /*

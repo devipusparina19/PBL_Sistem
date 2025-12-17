@@ -644,4 +644,197 @@ class NilaiController extends Controller
 
         return view('dosen.input_nilai', compact('mataKuliah', 'mahasiswa'));
     }
+
+    /**
+     * Export nilai mahasiswa to Excel (CSV format)
+     */
+    public function exportExcel()
+    {
+        $user = Auth::user();
+        
+        // Get mahasiswa data
+        $mahasiswa = Mahasiswa::where('nim', $user->nim_nip)->first();
+        
+        if (!$mahasiswa) {
+            return back()->with('error', 'Data mahasiswa tidak ditemukan.');
+        }
+        
+        $nilai = Nilai::where('mahasiswa_id', $mahasiswa->id)
+            ->with('mataKuliah')
+            ->get();
+        
+        $filename = 'nilai_' . $mahasiswa->nim . '_' . date('Y-m-d') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+        
+        $callback = function() use ($nilai, $mahasiswa) {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF)); // UTF-8 BOM
+            
+            // Header info
+            fputcsv($file, ['REKAP NILAI MAHASISWA']);
+            fputcsv($file, ['Nama', $mahasiswa->nama]);
+            fputcsv($file, ['NIM', $mahasiswa->nim]);
+            fputcsv($file, ['Kelas', $mahasiswa->kelas ?? '-']);
+            fputcsv($file, ['Tanggal Export', date('d/m/Y H:i:s')]);
+            fputcsv($file, []); // Empty row
+            
+            // Column headers
+            fputcsv($file, ['No', 'Mata Kuliah', 'Nilai Akhir', 'Grade']);
+            
+            // Data
+            $no = 1;
+            foreach ($nilai as $n) {
+                $nilaiAkhir = $this->calculateNilaiAkhir($n);
+                $grade = $this->getGrade($nilaiAkhir);
+                
+                fputcsv($file, [
+                    $no++,
+                    $n->mataKuliah->nama_mk ?? '-',
+                    number_format($nilaiAkhir, 2),
+                    $grade
+                ]);
+            }
+            
+            fclose($file);
+        };
+        
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export nilai mahasiswa to PDF
+     */
+    public function exportPdf()
+    {
+        $user = Auth::user();
+        
+        // Get mahasiswa data
+        $mahasiswa = Mahasiswa::where('nim', $user->nim_nip)->first();
+        
+        if (!$mahasiswa) {
+            return back()->with('error', 'Data mahasiswa tidak ditemukan.');
+        }
+        
+        $nilai = Nilai::where('mahasiswa_id', $mahasiswa->id)
+            ->with('mataKuliah')
+            ->get();
+        
+        // Generate HTML for PDF
+        $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Nilai ' . $mahasiswa->nama . '</title>
+        <style>
+            body { font-family: Arial, sans-serif; font-size: 12px; padding: 20px; }
+            h1 { text-align: center; color: #333; font-size: 18px; }
+            .info { margin-bottom: 20px; }
+            .info p { margin: 5px 0; }
+            table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+            th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+            th { background-color: #0d6efd; color: white; }
+            tr:nth-child(even) { background-color: #f8f9fa; }
+            .grade-A { color: #198754; font-weight: bold; }
+            .grade-B { color: #0d6efd; font-weight: bold; }
+            .grade-C { color: #ffc107; font-weight: bold; }
+            .grade-D { color: #dc3545; font-weight: bold; }
+            .footer { margin-top: 30px; text-align: right; font-size: 10px; color: #666; }
+        </style>
+        </head><body>
+        <h1>REKAP NILAI MAHASISWA PBL</h1>
+        <div class="info">
+            <p><strong>Nama:</strong> ' . $mahasiswa->nama . '</p>
+            <p><strong>NIM:</strong> ' . $mahasiswa->nim . '</p>
+            <p><strong>Kelas:</strong> ' . ($mahasiswa->kelas ?? '-') . '</p>
+            <p><strong>Program Studi:</strong> Teknologi Informasi</p>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 50px;">No</th>
+                    <th>Mata Kuliah</th>
+                    <th style="width: 100px;">Nilai Akhir</th>
+                    <th style="width: 80px;">Grade</th>
+                </tr>
+            </thead>
+            <tbody>';
+        
+        $no = 1;
+        foreach ($nilai as $n) {
+            $nilaiAkhir = $this->calculateNilaiAkhir($n);
+            $grade = $this->getGrade($nilaiAkhir);
+            $gradeClass = 'grade-' . substr($grade, 0, 1);
+            
+            $html .= '<tr>
+                <td>' . $no++ . '</td>
+                <td style="text-align: left;">' . ($n->mataKuliah->nama_mk ?? '-') . '</td>
+                <td>' . number_format($nilaiAkhir, 2) . '</td>
+                <td class="' . $gradeClass . '">' . $grade . '</td>
+            </tr>';
+        }
+        
+        $html .= '</tbody></table>
+        <div class="footer">Dicetak pada: ' . date('d/m/Y H:i:s') . '</div>
+        </body></html>';
+        
+        return response($html)
+            ->header('Content-Type', 'text/html')
+            ->header('Content-Disposition', 'attachment; filename="nilai_' . $mahasiswa->nim . '_' . date('Y-m-d') . '.html"');
+    }
+
+    /**
+     * Calculate nilai akhir based on mata kuliah type
+     */
+    private function calculateNilaiAkhir($n)
+    {
+        $nilaiAkhir = $n->laporan ?? 0;
+
+        // Pengambilan Keputusan
+        if($n->mataKuliah && (stripos($n->mataKuliah->nama_mk, 'pengambilan keputusan') !== false || stripos($n->mataKuliah->nama_mk, 'teknik pengambilan') !== false)) {
+            $nilaiAkhir = (($n->uts ?? 0) * 0.1) + (($n->uas ?? 0) * 0.1) + 
+                          (($n->presentasi ?? 0) * 0.1) + (($n->kontribusi ?? 0) * 0.2) +
+                          (($n->laporan ?? 0) * 0.2) + (($n->hasil_proyek ?? 0) * 0.3);
+        }
+        // Integrasi Sistem
+        elseif($n->mataKuliah && $n->mataKuliah->nama_mk == 'Integrasi Sistem') {
+            $aktivitas = (($n->nilai_kerja ?? 0) * 0.6) + (($n->nilai_laporan ?? 0) * 0.4);
+            $project = (($n->ujian_praktikum_1 ?? 0) * 0.5) + (($n->ujian_praktikum_2 ?? 0) * 0.5);
+            $nilaiAkhir = ($aktivitas * 0.45) + ($project * 0.25) + 
+                          (($n->uts ?? 0) * 0.15) + (($n->uas ?? 0) * 0.15);
+        }
+        // PWL
+        elseif($n->mataKuliah && (stripos($n->mataKuliah->nama_mk, 'pwl') !== false || stripos($n->mataKuliah->nama_mk, 'pemrograman web') !== false)) {
+            $nilaiAkhir = (($n->it_proposal ?? 0) * 0.15) + 
+                          (($n->it_progress_report ?? 0) * 0.15) + 
+                          (($n->it_final_project ?? 0) * 0.4) + 
+                          (($n->it_presentasi ?? 0) * 0.2) + 
+                          (($n->it_dokumentasi ?? 0) * 0.1);
+        }
+        // IT Project
+        elseif($n->mataKuliah && (stripos($n->mataKuliah->nama_mk, 'it project') !== false || stripos($n->mataKuliah->nama_mk, 'it proyek') !== false)) {
+            $nilaiAkhir = (($n->it_proposal ?? 0) * 0.15) + 
+                          (($n->it_progress_report ?? 0) * 0.15) + 
+                          (($n->it_final_project ?? 0) * 0.4) + 
+                          (($n->it_presentasi ?? 0) * 0.2) + 
+                          (($n->it_dokumentasi ?? 0) * 0.1);
+        }
+        
+        return $nilaiAkhir;
+    }
+
+    /**
+     * Get grade letter from nilai
+     */
+    private function getGrade($nilai)
+    {
+        if ($nilai >= 85) return 'A';
+        if ($nilai >= 80) return 'A-';
+        if ($nilai >= 75) return 'B+';
+        if ($nilai >= 70) return 'B';
+        if ($nilai >= 65) return 'B-';
+        if ($nilai >= 60) return 'C+';
+        if ($nilai >= 55) return 'C';
+        if ($nilai >= 50) return 'D';
+        return 'E';
+    }
 }

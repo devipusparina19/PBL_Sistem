@@ -8,6 +8,19 @@
         <h2 class="fw-semibold text-primary mb-2">Nilai Mahasiswa PBL</h2>
         <p class="text-muted fs-5">Berikut rekap penilaian Anda berdasarkan hasil proyek, kontribusi, dan penilaian sejawat</p>
         <hr class="mx-auto mt-3" style="width: 80px; height: 3px; background-color: #0d6efd; border: none;">
+        
+        @if(Auth::user()->role === 'mahasiswa' && $selectedMahasiswa)
+        <div class="mt-4">
+            <div class="btn-group">
+                <a href="{{ route('nilai.exportExcel') }}" class="btn btn-success">
+                    <i class="bi bi-file-earmark-excel"></i> Export Excel
+                </a>
+                <a href="{{ route('nilai.exportPdf') }}" class="btn btn-danger">
+                    <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                </a>
+            </div>
+        </div>
+        @endif
     </div>
 
     <!-- Alert Success -->
