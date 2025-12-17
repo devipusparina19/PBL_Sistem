@@ -98,7 +98,23 @@
                 </div>
             </div>
 
-
+            <!-- Progres Logbook Mahasiswa -->
+            <div class="col-md-4 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-journal-text text-primary" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h5 class="fw-semibold mb-2 text-dark">Progres Logbook Mahasiswa</h5>
+                        <p class="text-secondary mb-4" style="font-size: 0.95rem;">
+                            Pantau progres logbook mingguan mahasiswa.
+                        </p>
+                        <a href="{{ route('logbook.dosen') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
+                            Lihat Logbook
+                        </a>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>

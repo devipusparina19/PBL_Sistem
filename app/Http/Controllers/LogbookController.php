@@ -15,6 +15,15 @@ class LogbookController extends Controller
         return view('logbook.index', compact('logbooks'));
     }
 
+    /**
+     * Display a listing of logbooks for dosen (view-only mode).
+     */
+    public function indexForDosen()
+    {
+        $logbooks = Logbook::latest()->get();
+        return view('logbook.dosen_view', compact('logbooks'));
+    }
+
     public function create()
     {
         return view('logbook.create');

@@ -158,6 +158,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:dosen')->group(function () {
         Route::get('/milestone/validasi', [MilestoneController::class, 'indexForDosen'])->name('milestone.validasi');
         Route::post('/milestone/validasi/{id}', [MilestoneController::class, 'updateStatus'])->name('milestone.updateStatus');
+        Route::get('/logbook/dosen', [LogbookController::class, 'indexForDosen'])->name('logbook.dosen');
     });
 
     /*
