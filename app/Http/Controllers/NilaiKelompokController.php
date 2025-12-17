@@ -128,8 +128,11 @@ public function store(Request $request)
     $studentIds = Mahasiswa::where('kelompok_id', $kelompokId)->pluck('id');
     $nilaiRataAnggota = 0;
     if ($studentIds->count() > 0) {
-        $allGrades = Nilai::whereIn('mahasiswa_id', $studentIds)->pluck('nilai_akhir');
-        $nilaiRataAnggota = $allGrades->isEmpty() ? 0 : $allGrades->avg();
+        // nilai_akhir is an accessor, need to get models first then calculate average
+        $allGrades = Nilai::whereIn('mahasiswa_id', $studentIds)->with('mataKuliah')->get();
+        if ($allGrades->isNotEmpty()) {
+            $nilaiRataAnggota = $allGrades->avg(fn($nilai) => $nilai->nilai_akhir ?? 0);
+        }
     }
     
     // Update nilai kelompok
@@ -180,8 +183,11 @@ public function update(Request $request, $id)
     $studentIds = Mahasiswa::where('kelompok_id', $kelompokId)->pluck('id');
     $nilaiRataAnggota = 0;
     if ($studentIds->count() > 0) {
-        $allGrades = Nilai::whereIn('mahasiswa_id', $studentIds)->pluck('nilai_akhir');
-        $nilaiRataAnggota = $allGrades->isEmpty() ? 0 : $allGrades->avg();
+        // nilai_akhir is an accessor, need to get models first then calculate average
+        $allGrades = Nilai::whereIn('mahasiswa_id', $studentIds)->with('mataKuliah')->get();
+        if ($allGrades->isNotEmpty()) {
+            $nilaiRataAnggota = $allGrades->avg(fn($nilai) => $nilai->nilai_akhir ?? 0);
+        }
     }
 
     $kelompok = Kelompok::findOrFail($id);

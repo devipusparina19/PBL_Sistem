@@ -255,7 +255,7 @@ class RankingController extends Controller
     }
 
     /**
-     * Export ranking data to Excel (CSV format)
+     * Export ranking data to Excel (XLSX format)
      */
     public function exportExcel()
     {
@@ -266,43 +266,78 @@ class RankingController extends Controller
         
         $rankings = AhpSawCalculator::calculateSaw($data->toArray(), $weights);
         
-        $filename = 'ranking_mahasiswa_' . date('Y-m-d_His') . '.csv';
+        // Create spreadsheet
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Ranking Mahasiswa');
         
-        $headers = [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        // Header styling
+        $headerStyle = [
+            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+            'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['rgb' => '4CAF50']],
+            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER],
+            'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
         ];
         
-        $callback = function() use ($rankings) {
-            $file = fopen('php://output', 'w');
-            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF)); // UTF-8 BOM
-            
-            // Header
-            fputcsv($file, ['Peringkat', 'NIM', 'Nama', 'Kelas', 'Kelompok', 'PWL', 'Integrasi', 'TPK', 'IT Projek', 'Kontribusi', 'Sejawat', 'Proyek', 'Skor Akhir']);
-            
-            // Data
-            $rank = 1;
-            foreach ($rankings as $row) {
-                fputcsv($file, [
-                    $rank++,
-                    $row['nim'],
-                    $row['nama'],
-                    $row['kelas'],
-                    $row['kelompok'],
-                    $row['pwl'],
-                    $row['integrasi'],
-                    $row['tpk'],
-                    $row['it_project'],
-                    $row['kontribusi'],
-                    $row['sejawat'],
-                    $row['proyek'],
-                    number_format($row['saw_score'], 2)
-                ]);
-            }
-            fclose($file);
-        };
+        // Set headers
+        $headers = ['Peringkat', 'NIM', 'Nama', 'Kelas', 'Kelompok', 'PWL', 'Integrasi', 'TPK', 'IT Projek', 'Kontribusi', 'Sejawat', 'Proyek', 'Skor Akhir'];
+        $col = 'A';
+        foreach ($headers as $header) {
+            $sheet->setCellValue($col . '1', $header);
+            $col++;
+        }
+        $sheet->getStyle('A1:M1')->applyFromArray($headerStyle);
         
-        return response()->stream($callback, 200, $headers);
+        // Add data
+        $row = 2;
+        $rank = 1;
+        foreach ($rankings as $item) {
+            $sheet->setCellValue('A' . $row, $rank++);
+            $sheet->setCellValue('B' . $row, $item['nim']);
+            $sheet->setCellValue('C' . $row, $item['nama']);
+            $sheet->setCellValue('D' . $row, $item['kelas']);
+            $sheet->setCellValue('E' . $row, $item['kelompok']);
+            $sheet->setCellValue('F' . $row, $item['pwl']);
+            $sheet->setCellValue('G' . $row, $item['integrasi']);
+            $sheet->setCellValue('H' . $row, $item['tpk']);
+            $sheet->setCellValue('I' . $row, $item['it_project']);
+            $sheet->setCellValue('J' . $row, $item['kontribusi']);
+            $sheet->setCellValue('K' . $row, $item['sejawat']);
+            $sheet->setCellValue('L' . $row, $item['proyek']);
+            $sheet->setCellValue('M' . $row, number_format($item['saw_score'], 2));
+            $row++;
+        }
+        
+        // Auto-size columns
+        foreach (range('A', 'M') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+        
+        // Add borders to data
+        $lastRow = $row - 1;
+        $sheet->getStyle('A2:M' . $lastRow)->applyFromArray([
+            'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
+        ]);
+        
+        // Alternate row colors
+        for ($i = 2; $i <= $lastRow; $i++) {
+            if ($i % 2 == 0) {
+                $sheet->getStyle('A' . $i . ':M' . $i)->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB('F2F2F2');
+            }
+        }
+        
+        $filename = 'ranking_mahasiswa_' . date('Y-m-d_His') . '.xlsx';
+        
+        // Output
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
     }
 
     /**
@@ -320,16 +355,20 @@ class RankingController extends Controller
         // Generate HTML for PDF
         $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Ranking Mahasiswa</title>
         <style>
-            body { font-family: Arial, sans-serif; font-size: 12px; }
-            h1 { text-align: center; color: #333; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-            th { background-color: #4CAF50; color: white; }
+            body { font-family: Arial, sans-serif; font-size: 10px; margin: 20px; }
+            h1 { text-align: center; color: #333; font-size: 18px; margin-bottom: 5px; }
+            .subtitle { text-align: center; color: #666; margin-bottom: 15px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            th, td { border: 1px solid #ddd; padding: 6px; text-align: center; }
+            th { background-color: #4CAF50; color: white; font-size: 9px; }
+            td { font-size: 9px; }
             tr:nth-child(even) { background-color: #f2f2f2; }
-            .date { text-align: right; color: #666; margin-bottom: 10px; }
+            .date { text-align: right; color: #666; margin-bottom: 10px; font-size: 10px; }
+            .footer { text-align: center; margin-top: 20px; font-size: 9px; color: #666; }
         </style>
         </head><body>
         <h1>Ranking Mahasiswa</h1>
+        <p class="subtitle">Sistem Penilaian Kinerja Mahasiswa dan Kelompok PBL</p>
         <p class="date">Dicetak: ' . date('d/m/Y H:i:s') . '</p>
         <table>
             <thead>
@@ -346,7 +385,7 @@ class RankingController extends Controller
             $html .= '<tr>
                 <td>' . $rank++ . '</td>
                 <td>' . $row['nim'] . '</td>
-                <td>' . $row['nama'] . '</td>
+                <td style="text-align:left;">' . $row['nama'] . '</td>
                 <td>' . $row['kelas'] . '</td>
                 <td>' . $row['kelompok'] . '</td>
                 <td>' . $row['pwl'] . '</td>
@@ -360,10 +399,13 @@ class RankingController extends Controller
             </tr>';
         }
         
-        $html .= '</tbody></table></body></html>';
+        $html .= '</tbody></table>
+        <p class="footer">Total Mahasiswa: ' . count($rankings) . '</p>
+        </body></html>';
         
-        return response($html)
-            ->header('Content-Type', 'text/html')
-            ->header('Content-Disposition', 'attachment; filename="ranking_mahasiswa_' . date('Y-m-d') . '.html"');
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHTML($html);
+        $pdf->setPaper('A4', 'landscape');
+        
+        return $pdf->download('ranking_mahasiswa_' . date('Y-m-d') . '.pdf');
     }
 }

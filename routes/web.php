@@ -140,7 +140,10 @@ Route::middleware('auth')->group(function () {
     Route::get('kelompok/{kelompok}/anggota', [KelompokController::class, 'manageAnggota'])->name('kelompok.anggota.manage');
     Route::put('kelompok/{kelompok}/anggota', [KelompokController::class, 'updateAnggota'])->name('kelompok.anggota.update');
     Route::put('kelompok/{kelompok}/judul-proyek', [KelompokController::class, 'updateJudulProyek'])->name('kelompok.updateJudulProyek');
-    Route::resource('logbook', LogbookController::class);
+    
+    // Route logbook khusus dosen (harus sebelum resource!)
+    Route::get('logbook/dosen', [LogbookController::class, 'indexForDosen'])->name('logbook.dosen')->middleware('role:dosen');
+    Route::resource('logbook', LogbookController::class)->except(['show']);
 
     /*
     |--------------------------------------------------------------------------
@@ -158,7 +161,6 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:dosen')->group(function () {
         Route::get('/milestone/validasi', [MilestoneController::class, 'indexForDosen'])->name('milestone.validasi');
         Route::post('/milestone/validasi/{id}', [MilestoneController::class, 'updateStatus'])->name('milestone.updateStatus');
-        Route::get('/logbook/dosen', [LogbookController::class, 'indexForDosen'])->name('logbook.dosen');
     });
 
     /*
