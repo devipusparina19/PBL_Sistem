@@ -264,8 +264,7 @@ class RankingController extends Controller
         
         $data = $mahasiswas->map(fn($mhs) => $this->getMahasiswaScores($mhs))->filter(fn($item) => $item['nama'] !== null);
         
-        $rankings = AhpSawCalculator::calculateSawScores($data->toArray(), $weights);
-        usort($rankings, fn($a, $b) => $b['saw_score'] <=> $a['saw_score']);
+        $rankings = AhpSawCalculator::calculateSaw($data->toArray(), $weights);
         
         $filename = 'ranking_mahasiswa_' . date('Y-m-d_His') . '.csv';
         
@@ -316,8 +315,7 @@ class RankingController extends Controller
         
         $data = $mahasiswas->map(fn($mhs) => $this->getMahasiswaScores($mhs))->filter(fn($item) => $item['nama'] !== null);
         
-        $rankings = AhpSawCalculator::calculateSawScores($data->toArray(), $weights);
-        usort($rankings, fn($a, $b) => $b['saw_score'] <=> $a['saw_score']);
+        $rankings = AhpSawCalculator::calculateSaw($data->toArray(), $weights);
         
         // Generate HTML for PDF
         $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Ranking Mahasiswa</title>
