@@ -19,8 +19,27 @@ class DataAkademikController extends Controller
             $kelas = $user->kelas;
             
             // Ambil data untuk kelas mahasiswa
-            // Tampilkan semua dosen (tidak difilter per kelas)
-            $dosens = Dosen::orderBy('nama', 'asc')->get();
+            // Filter dosen berdasarkan mata kuliah yang diampu di kelas mahasiswa
+            $mataKuliahKelas = MataKuliah::where('kelas', $kelas)->get();
+            
+            // Ambil semua NIP dosen yang mengampu di kelas ini
+            $nipDosens = [];
+            foreach ($mataKuliahKelas as $mk) {
+                if (!empty($mk->nip_dosen)) {
+                    $nips = array_map('trim', explode(',', $mk->nip_dosen));
+                    $nipDosens = array_merge($nipDosens, $nips);
+                }
+            }
+            $nipDosens = array_unique($nipDosens);
+            
+            // Ambil dosen berdasarkan NIP
+            if (!empty($nipDosens)) {
+                $dosens = Dosen::whereIn('nip', $nipDosens)
+                    ->orderBy('nama', 'asc')
+                    ->get();
+            } else {
+                $dosens = collect();
+            }
             
             $mataKuliah = MataKuliah::where('kelas', $kelas)
                 ->orderBy('nama_mk', 'asc')
@@ -46,9 +65,27 @@ class DataAkademikController extends Controller
         $mahasiswaByKelas = [];
 
         foreach ($kelasList as $kelasItem) {
-            // Dosen tidak difilter per kelas - tampilkan semua dosen di setiap tab
-            // Karena dosen bisa mengajar di banyak kelas
-            $dosenByKelas[$kelasItem] = Dosen::orderBy('nama', 'asc')->get();
+            // Filter dosen berdasarkan mata kuliah yang diampu di kelas ini
+            $mataKuliahKelasDosen = MataKuliah::where('kelas', $kelasItem)->get();
+            
+            // Ambil semua NIP dosen yang mengampu di kelas ini
+            $nipDosensKelas = [];
+            foreach ($mataKuliahKelasDosen as $mk) {
+                if (!empty($mk->nip_dosen)) {
+                    $nips = array_map('trim', explode(',', $mk->nip_dosen));
+                    $nipDosensKelas = array_merge($nipDosensKelas, $nips);
+                }
+            }
+            $nipDosensKelas = array_unique($nipDosensKelas);
+            
+            // Ambil dosen berdasarkan NIP
+            if (!empty($nipDosensKelas)) {
+                $dosenByKelas[$kelasItem] = Dosen::whereIn('nip', $nipDosensKelas)
+                    ->orderBy('nama', 'asc')
+                    ->get();
+            } else {
+                $dosenByKelas[$kelasItem] = collect();
+            }
             
             // Filter Mata Kuliah
             $queryMataKuliah = MataKuliah::where('kelas', $kelasItem);

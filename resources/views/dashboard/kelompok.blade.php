@@ -98,7 +98,7 @@
                     </div>
                     <div class="card-body text-center py-4">
                         <p class="text-muted small mb-4">Lihat peringkat kelompok PBL.</p>
-                        <a href="{{ route('kelompok.rangking') }}" 
+                        <a href="{{ route('kelompok.ranking') }}" 
                            class="btn btn-outline-warning w-100 rounded-pill fw-semibold">
                             Lihat Ranking
                         </a>

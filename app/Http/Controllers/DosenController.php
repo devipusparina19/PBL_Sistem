@@ -23,20 +23,57 @@ class DosenController extends Controller
             // Ambil kelas mahasiswa langsung dari tabel users
             $kelas = $user->kelas;
             
-            // Tampilkan semua dosen (tidak difilter per kelas)
-            $dosens = Dosen::orderBy('nama', 'asc')->get();
+            // Filter dosen berdasarkan mata kuliah yang diampu di kelas mahasiswa
+            $mataKuliahKelas = \App\Models\MataKuliah::where('kelas', $kelas)->get();
+            
+            // Ambil semua NIP dosen yang mengampu di kelas ini
+            $nipDosens = [];
+            foreach ($mataKuliahKelas as $mk) {
+                if (!empty($mk->nip_dosen)) {
+                    $nips = array_map('trim', explode(',', $mk->nip_dosen));
+                    $nipDosens = array_merge($nipDosens, $nips);
+                }
+            }
+            $nipDosens = array_unique($nipDosens);
+            
+            // Ambil dosen berdasarkan NIP
+            if (!empty($nipDosens)) {
+                $dosens = Dosen::whereIn('nip', $nipDosens)
+                    ->orderBy('nama', 'asc')
+                    ->get();
+            } else {
+                $dosens = collect();
+            }
                 
             return view('data_dosen.index', compact('dosens', 'isStudent', 'kelas'));
         }
 
-        // Logic untuk admin/dosen (tampilkan semua kelas)
+        // Logic untuk admin/dosen (tampilkan per kelas)
         $kelasList = ['3A', '3B', '3C', '3D', '3E'];
         $dosenByKelas = [];
 
-        // Tampilkan semua dosen di setiap tab (tidak difilter per kelas)
-        $allDosens = Dosen::orderBy('nama', 'asc')->get();
         foreach ($kelasList as $kelasItem) {
-            $dosenByKelas[$kelasItem] = $allDosens;
+            // Ambil semua mata kuliah di kelas ini
+            $mataKuliahKelas = \App\Models\MataKuliah::where('kelas', $kelasItem)->get();
+            
+            // Ambil semua NIP dosen yang mengampu di kelas ini
+            $nipDosens = [];
+            foreach ($mataKuliahKelas as $mk) {
+                if (!empty($mk->nip_dosen)) {
+                    $nips = array_map('trim', explode(',', $mk->nip_dosen));
+                    $nipDosens = array_merge($nipDosens, $nips);
+                }
+            }
+            $nipDosens = array_unique($nipDosens);
+            
+            // Ambil dosen berdasarkan NIP yang mengampu di kelas ini
+            if (!empty($nipDosens)) {
+                $dosenByKelas[$kelasItem] = Dosen::whereIn('nip', $nipDosens)
+                    ->orderBy('nama', 'asc')
+                    ->get();
+            } else {
+                $dosenByKelas[$kelasItem] = collect();
+            }
         }
 
         return view('data_dosen.index', compact('dosenByKelas', 'kelasList', 'isStudent'));
@@ -48,8 +85,27 @@ class DosenController extends Controller
             abort(404);
         }
 
-        // Tampilkan semua dosen (tidak filter per kelas)
-        $dosens = Dosen::orderBy('nama', 'asc')->paginate(15);
+        // Filter dosen berdasarkan mata kuliah yang diampu di kelas ini
+        $mataKuliahKelas = \App\Models\MataKuliah::where('kelas', $kelas)->get();
+        
+        // Ambil semua NIP dosen yang mengampu di kelas ini
+        $nipDosens = [];
+        foreach ($mataKuliahKelas as $mk) {
+            if (!empty($mk->nip_dosen)) {
+                $nips = array_map('trim', explode(',', $mk->nip_dosen));
+                $nipDosens = array_merge($nipDosens, $nips);
+            }
+        }
+        $nipDosens = array_unique($nipDosens);
+        
+        // Ambil dosen berdasarkan NIP
+        if (!empty($nipDosens)) {
+            $dosens = Dosen::whereIn('nip', $nipDosens)
+                ->orderBy('nama', 'asc')
+                ->paginate(15);
+        } else {
+            $dosens = collect()->paginate(15);
+        }
 
         return view('data_dosen.kelas', compact('dosens', 'kelas'));
     }
