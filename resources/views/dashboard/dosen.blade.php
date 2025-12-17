@@ -80,23 +80,7 @@
                 </div>
             </div>
 
-            <!-- Perangkingan Kelompok -->
-            <div class="col-md-4 col-lg-3">
-                <div class="card h-100 border-0 shadow-sm rounded-4 hover-card">
-                    <div class="card-body text-center p-4">
-                        <div class="mb-3">
-                            <i class="bi bi-trophy-fill text-primary" style="font-size: 2.5rem;"></i>
-                        </div>
-                        <h5 class="fw-semibold mb-2 text-dark">Perangkingan Kelompok</h5>
-                        <p class="text-secondary mb-4" style="font-size: 0.95rem;">
-                            Lihat peringkat kelompok berdasarkan kriteria.
-                        </p>
-                        <a href="{{ route('kelompok.ranking') }}" class="btn btn-primary w-100 py-2 rounded-3 fw-medium">
-                            Lihat Ranking
-                        </a>
-                    </div>
-                </div>
-            </div>
+
 
             <!-- Progres Logbook Mahasiswa -->
             <div class="col-md-4 col-lg-3">

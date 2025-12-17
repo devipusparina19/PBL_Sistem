@@ -98,7 +98,7 @@ class KelompokRankingController extends Controller
     /**
      * Get kelompok weights from settings
      */
-    private function getWeights(): array
+    public function getWeights(): array
     {
         return [
             'milestone' => (int) Setting::get('kelompok_weight_milestone', 30),

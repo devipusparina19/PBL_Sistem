@@ -37,11 +37,41 @@ class RankingController extends Controller
             $rankings = $this->calculateSimpleAverage($data);
         }
         
+        // ✅ Get Kelompok Rankings
+        $kelompokController = new \App\Http\Controllers\KelompokRankingController();
+        $kelompokWeights = $kelompokController->getWeights();
+        $kelompokCriteria = \App\Http\Controllers\KelompokRankingController::getKelompokCriteria();
+        
+        $kelompoks = \App\Models\Kelompok::with(['mahasiswa', 'ketua'])->get();
+        $kelompokData = $kelompoks->map(function ($kelompok) {
+            return [
+                'id' => $kelompok->id_kelompok,
+                'nama_kelompok' => $kelompok->nama_kelompok,
+                'judul_proyek' => $kelompok->judul_proyek ?? '-',
+                'kelas' => $kelompok->kelas ?? '-',
+                'ketua' => $kelompok->ketua ? $kelompok->ketua->nama : '-',
+                'jumlah_anggota' => $kelompok->mahasiswa->count(),
+                'milestone' => $kelompok->nilai_milestone_avg ?? 0,
+                'rata_anggota' => $kelompok->nilai_rata_anggota ?? 0,
+                'kontribusi' => $kelompok->kontribusi_kelompok ?? 0,
+                'penilaian_dosen' => $kelompok->penilaian_dosen ?? 0,
+            ];
+        })->toArray();
+        
+        if ($method === 'saw' && count($kelompokData) > 0) {
+            $kelompokRankings = AhpSawCalculator::calculateSaw($kelompokData, $kelompokWeights, array_keys($kelompokCriteria));
+        } else {
+            $kelompokRankings = [];
+        }
+        
         return view('ranking.index', [
             'rankings' => $rankings,
             'weights' => $weights,
             'method' => $method,
             'criteria' => AhpSawCalculator::getDefaultCriteria(),
+            'kelompokRankings' => $kelompokRankings,
+            'kelompokWeights' => $kelompokWeights,
+            'kelompokCriteria' => $kelompokCriteria,
         ]);
     }
 
