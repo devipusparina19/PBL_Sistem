@@ -10,6 +10,25 @@ use Illuminate\Http\Request;
 class DosenController extends Controller
 {
     /* ========================================================
+     |  IMPORT EXCEL
+     ======================================================== */
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+            'kelas' => 'required|string'
+        ]);
+
+        try {
+            \Maatwebsite\Excel\Facades\Excel::import(new \App\Imports\DosenImport($request->kelas), $request->file('file'));
+            return back()->with('success', 'Data dosen berhasil diimpor!');
+        } catch (\Exception $e) {
+            return back()->withErrors(['file' => 'Gagal import: ' . $e->getMessage()]);
+        }
+    }
+
+    /* ========================================================
      |  BAGIAN 1 — MANAJEMEN DATA DOSEN
      ======================================================== */
 

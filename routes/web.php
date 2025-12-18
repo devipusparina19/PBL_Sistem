@@ -106,6 +106,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('mahasiswa', MahasiswaController::class);
 
     Route::get('data_dosen/kelas/{kelas}', [DosenController::class, 'showByKelas'])->name('data_dosen.kelas');
+    Route::post('data_dosen/import', [DosenController::class, 'import'])->name('data_dosen.import');
     Route::resource('data_dosen', DosenController::class);
 
     Route::get('mata_kuliah/kelas/{kelas}', [MataKuliahController::class, 'showByKelas'])->name('mata_kuliah.kelas');

@@ -25,10 +25,42 @@
             <p class="text-muted mb-0">Total: {{ $dosens->total() }} Dosen</p>
         </div>
         @unless($isRestricted)
-            <a href="{{ route('data_dosen.create', ['kelas' => $kelas]) }}" class="btn btn-info btn-lg text-white">
-                <i class="bi bi-plus-circle"></i> Tambah Dosen
-            </a>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-success text-white" data-bs-toggle="modal" data-bs-target="#importModal">
+                    <i class="bi bi-file-earmark-spreadsheet"></i> Import Excel
+                </button>
+                <a href="{{ route('data_dosen.create', ['kelas' => $kelas]) }}" class="btn btn-info text-white">
+                    <i class="bi bi-plus-circle"></i> Tambah Dosen
+                </a>
+            </div>
         @endunless
+    </div>
+
+    {{-- Modal Import --}}
+    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ route('data_dosen.import') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="kelas" value="{{ $kelas }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="importModalLabel">Import Data Dosen - Kelas {{ $kelas }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Pilih File Excel (.xlsx / .csv)</label>
+                            <input type="file" class="form-control" name="file" required accept=".xlsx, .xls, .csv">
+                            <div class="form-text">Pastikan format kolom: <strong>Nama, NIP, Email, No Telp, Mata Kuliah</strong></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-success">Import</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     @if(session('success'))
