@@ -51,7 +51,10 @@
                         <div class="mb-3">
                             <label for="file" class="form-label">Pilih File Excel (.xlsx / .csv)</label>
                             <input type="file" class="form-control" name="file" required accept=".xlsx, .xls, .csv">
-                            <div class="form-text">Pastikan format kolom: <strong>Nama, NIP, Email, No Telp, Mata Kuliah</strong></div>
+                            <div class="form-text">
+                                Pastikan format kolom: <strong>Nama, NIP, Email</strong> (wajib)<br>
+                                <small class="text-muted">No Telp dan Mata Kuliah bersifat opsional, dapat diisi manual oleh admin</small>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">

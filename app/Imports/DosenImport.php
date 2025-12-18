@@ -44,9 +44,9 @@ class DosenImport implements ToModel, WithHeadingRow, WithValidation
             'nama'        => $row['nama'],
             'nip'         => $row['nip'],
             'email'       => $row['email'],
-            'no_telp'     => $row['no_telp'] ?? '', // Default empty if missing
+            'no_telp'     => $row['no_telp'] ?? '', // Optional - can be set manually
             'kelas'       => $this->kelas,
-            'mata_kuliah' => $row['mata_kuliah'],
+            'mata_kuliah' => $row['mata_kuliah'] ?? '', // Optional - can be set manually
         ]);
 
         // Auto Create User Account
@@ -66,10 +66,10 @@ class DosenImport implements ToModel, WithHeadingRow, WithValidation
     public function rules(): array
     {
         return [
-            'nama'        => 'required',
-            'nip'         => 'required',
-            'email'       => 'required|email',
-            'mata_kuliah' => 'required',
+            'nama'  => 'required',
+            'nip'   => 'required',
+            'email' => 'required|email',
+            // no_telp dan mata_kuliah optional - bisa diisi manual oleh admin
         ];
     }
 }
