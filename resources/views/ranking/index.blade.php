@@ -311,6 +311,109 @@
         </div>
     </div>
 
+    {{-- ================= RANKING KELOMPOK SECTION ================= --}}
+    <div class="card shadow-lg border-0 ranking-card mt-5">
+        <div class="card-header text-white py-3" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+            <div class="d-flex align-items-center justify-content-between">
+                <h5 class="mb-0">
+                    <i class="bi bi-people-fill me-2"></i> Ranking Kelompok
+                </h5>
+                <span class="badge bg-light text-dark">
+                    <i class="bi bi-diagram-3-fill"></i> {{ count($kelompokRankings) }} Kelompok
+                </span>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 ranking-table">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 80px;">Peringkat</th>
+                            <th>Kelompok</th>
+                            <th>Judul Proyek</th>
+                            <th class="text-center">Kelas</th>
+                            <th>Ketua</th>
+                            <th class="text-center">Anggota</th>
+                            @if(auth()->user()->role !== 'mahasiswa')
+                            <th class="text-center">Milestone</th>
+                            <th class="text-center">Rata-rata</th>
+                            <th class="text-center">Kontribusi</th>
+                            <th class="text-center">Dosen</th>
+                            @endif
+                            <th class="text-center score-header">Skor Akhir</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($kelompokRankings as $kelompok)
+                        <tr class="ranking-row {{ $kelompok['rank'] <= 3 ? 'top-rank rank-' . $kelompok['rank'] : '' }}">
+                            <td class="text-center">
+                                @if($kelompok['rank'] == 1)
+                                    <div class="rank-badge rank-gold">
+                                        <i class="bi bi-trophy-fill"></i>
+                                        <span>1</span>
+                                    </div>
+                                @elseif($kelompok['rank'] == 2)
+                                    <div class="rank-badge rank-silver">
+                                        <i class="bi bi-award-fill"></i>
+                                        <span>2</span>
+                                    </div>
+                                @elseif($kelompok['rank'] == 3)
+                                    <div class="rank-badge rank-bronze">
+                                        <i class="bi bi-award"></i>
+                                        <span>3</span>
+                                    </div>
+                                @else
+                                    <div class="rank-badge rank-normal">
+                                        <span>{{ $kelompok['rank'] }}</span>
+                                    </div>
+                                @endif
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle me-3" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+                                        {{ strtoupper(substr($kelompok['nama_kelompok'], 0, 1)) }}
+                                    </div>
+                                    <strong>{{ $kelompok['nama_kelompok'] }}</strong>
+                                </div>
+                            </td>
+                            <td>
+                                <small class="text-muted">{{ Str::limit($kelompok['judul_proyek'], 40) }}</small>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-primary-subtle text-primary px-3 py-2">{{ $kelompok['kelas'] }}</span>
+                            </td>
+                            <td>{{ $kelompok['ketua'] }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-secondary">{{ $kelompok['jumlah_anggota'] }}</span>
+                            </td>
+                            @if(auth()->user()->role !== 'mahasiswa')
+                            <td class="text-center"><span class="score-cell">{{ $kelompok['milestone'] }}</span></td>
+                            <td class="text-center"><span class="score-cell">{{ $kelompok['rata_anggota'] }}</span></td>
+                            <td class="text-center"><span class="score-cell">{{ $kelompok['kontribusi'] }}</span></td>
+                            <td class="text-center"><span class="score-cell">{{ $kelompok['penilaian_dosen'] }}</span></td>
+                            @endif
+                            <td class="text-center">
+                                <div class="final-score {{ $kelompok['rank'] <= 3 ? 'top-score' : '' }}">
+                                    {{ number_format($kelompok['saw_score'], 2) }}
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="{{ auth()->user()->role !== 'mahasiswa' ? '11' : '7' }}" class="text-center py-5">
+                                <div class="empty-state">
+                                    <i class="bi bi-inbox"></i>
+                                    <p>Belum ada data kelompok</p>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 
 </div>
 

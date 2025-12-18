@@ -438,7 +438,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // console.log("Comparing with Course Class:", mkKelas);
 
-            if (mkKelas === mhsKelas) {
+            // ✅ FIX: Jika mata kuliah tidak punya kelas, tampilkan untuk semua mahasiswa
+            if (!mkKelas || mkKelas === mhsKelas) {
                 opt.style.display = ''; // Show
                 matchCount++;
                 lastMatchValue = opt.value;

@@ -38,19 +38,7 @@
             </div>
         </div>
 
-        <!-- Perangkingan Kelompok -->
-        <div class="col-md-4">
-            <div class="card border-0 shadow-lg h-100 rounded-4 hover-card">
-                <div class="card-body text-center p-4">
-                    <div class="mb-3 text-primary fs-1">
-                        <i class="bi bi-trophy"></i>
-                    </div>
-                    <h5 class="fw-bold text-dark">Perangkingan Kelompok</h5>
-                    <p class="text-muted">Lihat peringkat kelompok berdasarkan kriteria</p>
-                    <a href="{{ route('kelompok.ranking') }}" class="btn btn-primary w-100 text-white">Lihat Ranking</a>
-                </div>
-            </div>
-        </div>
+
 
         <!-- Opsi lain hanya untuk admin -->
         @if(Auth::user()->role == 'admin')
