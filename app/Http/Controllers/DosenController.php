@@ -148,7 +148,7 @@ class DosenController extends Controller
                     }
                 },
             ],
-            'no_telp'       => 'nullable|string|max:20',
+            'no_telp'       => 'required|string|max:20',
             'kelas'         => 'nullable|string|max:50',
             'mata_kuliah'   => 'required|array',
             'mata_kuliah.*' => 'string|max:100',
@@ -246,7 +246,7 @@ class DosenController extends Controller
                     }
                 },
             ],
-            'no_telp'       => 'nullable|string|max:20',
+            'no_telp'       => 'required|string|max:20',
             'kelas'         => 'nullable|string|max:50',
             'mata_kuliah'   => 'required|array',
             'mata_kuliah.*' => 'string|max:100',
