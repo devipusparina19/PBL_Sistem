@@ -321,11 +321,22 @@ class DosenController extends Controller
     {
         $dosen = Dosen::findOrFail($id);
         $kelas = $dosen->kelas;
+        
+        // Delete user account if exists
+        $user = \App\Models\User::where('nim_nip', $dosen->nip)->first();
+        if ($user) {
+            $user->delete();
+        }
+        
         $dosen->delete();
 
+        // Validasi kelas sebelum redirect
         if (request()->server('HTTP_REFERER') && str_contains(request()->server('HTTP_REFERER'), 'data_dosen/kelas/')) {
-            return redirect()->route('data_dosen.kelas', $kelas)
-                ->with('success', 'Data dosen berhasil dihapus!');
+            // Pastikan kelas valid (tidak null, tidak kosong, tidak "-")
+            if (!empty($kelas) && $kelas !== '-' && in_array($kelas, ['3A', '3B', '3C', '3D', '3E'])) {
+                return redirect()->route('data_dosen.kelas', $kelas)
+                    ->with('success', 'Data dosen berhasil dihapus!');
+            }
         }
 
         return redirect()->route('data_dosen.index')
