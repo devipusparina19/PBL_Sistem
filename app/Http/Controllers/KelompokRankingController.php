@@ -225,41 +225,99 @@ class KelompokRankingController extends Controller
 
         $rankings = AhpSawCalculator::calculateSaw($data, $weights, array_keys($criteria));
         
-        $filename = 'ranking_kelompok_' . date('Y-m-d_His') . '.csv';
+        // Create new Spreadsheet
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
         
-        $headers = [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        // Set document properties
+        $spreadsheet->getProperties()
+            ->setCreator('Sistem PBL')
+            ->setTitle('Ranking Kelompok')
+            ->setSubject('Ranking Kelompok PBL')
+            ->setDescription('Data Ranking Kelompok');
+        
+        // Title
+        $sheet->setCellValue('A1', 'RANKING KELOMPOK PBL');
+        $sheet->mergeCells('A1:K1');
+        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
+        $sheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        
+        // Date
+        $sheet->setCellValue('A2', 'Tanggal Export: ' . date('d/m/Y H:i:s'));
+        $sheet->mergeCells('A2:K2');
+        $sheet->getStyle('A2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        
+        // Headers
+        $headers = ['PERINGKAT', 'KELOMPOK', 'JUDUL PROYEK', 'KELAS', 'KETUA', 'ANGGOTA', 'MILESTONE', 'RATA-RATA ANGGOTA', 'KONTRIBUSI', 'PENILAIAN DOSEN', 'SKOR AKHIR'];
+        $sheet->fromArray($headers, null, 'A4');
+        
+        // Style headers
+        $headerStyle = [
+            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+            'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['rgb' => '6366F1']],
+            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER],
+            'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]]
         ];
+        $sheet->getStyle('A4:K4')->applyFromArray($headerStyle);
         
-        $callback = function() use ($rankings) {
-            $file = fopen('php://output', 'w');
-            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF)); // UTF-8 BOM
-            
-            // Header
-            fputcsv($file, ['Peringkat', 'Nama Kelompok', 'Judul Proyek', 'Kelas', 'Ketua', 'Anggota', 'Milestone', 'Rata-rata Anggota', 'Kontribusi', 'Penilaian Dosen', 'Skor Akhir']);
-            
-            // Data
-            $rank = 1;
-            foreach ($rankings as $row) {
-                fputcsv($file, [
-                    $rank++,
-                    $row['nama_kelompok'],
-                    $row['judul_proyek'],
-                    $row['kelas'],
-                    $row['ketua'],
-                    $row['jumlah_anggota'],
-                    $row['milestone'],
-                    $row['rata_anggota'],
-                    $row['kontribusi'],
-                    $row['penilaian_dosen'],
-                    number_format($row['saw_score'], 2)
-                ]);
-            }
-            fclose($file);
-        };
+        // Data
+        $row = 5;
+        $rank = 1;
+        foreach ($rankings as $ranking) {
+            $sheet->setCellValue('A' . $row, $rank++);
+            $sheet->setCellValue('B' . $row, $ranking['nama_kelompok']);
+            $sheet->setCellValue('C' . $row, $ranking['judul_proyek']);
+            $sheet->setCellValue('D' . $row, $ranking['kelas']);
+            $sheet->setCellValue('E' . $row, $ranking['ketua']);
+            $sheet->setCellValue('F' . $row, $ranking['jumlah_anggota']);
+            $sheet->setCellValue('G' . $row, number_format($ranking['milestone'], 2));
+            $sheet->setCellValue('H' . $row, number_format($ranking['rata_anggota'], 2));
+            $sheet->setCellValue('I' . $row, number_format($ranking['kontribusi'], 2));
+            $sheet->setCellValue('J' . $row, number_format($ranking['penilaian_dosen'], 2));
+            $sheet->setCellValue('K' . $row, number_format($ranking['saw_score'], 2));
+            $row++;
+        }
         
-        return response()->stream($callback, 200, $headers);
+        // Style data rows
+        $dataStyle = [
+            'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
+            'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER]
+        ];
+        $sheet->getStyle('A5:K' . ($row - 1))->applyFromArray($dataStyle);
+        
+        // Style ranking column (bold)
+        $sheet->getStyle('A5:A' . ($row - 1))->getFont()->setBold(true);
+        
+        // Style score column (bold, green)
+        $scoreStyle = [
+            'font' => ['bold' => true, 'color' => ['rgb' => '059669']],
+            'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['rgb' => 'D1FAE5']]
+        ];
+        $sheet->getStyle('K5:K' . ($row - 1))->applyFromArray($scoreStyle);
+        
+        // Auto-size columns
+        foreach (range('A', 'K') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+        
+        // Set row height
+        $sheet->getRowDimension(1)->setRowHeight(30);
+        $sheet->getRowDimension(4)->setRowHeight(25);
+        
+        // Freeze header row
+        $sheet->freezePane('A5');
+        
+        // Generate file
+        $filename = 'ranking_kelompok_' . date('Y-m-d_His') . '.xlsx';
+        
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        
+        $writer->save('php://output');
+        exit;
     }
 
     /**
@@ -289,48 +347,151 @@ class KelompokRankingController extends Controller
         $rankings = AhpSawCalculator::calculateSaw($data, $weights, array_keys($criteria));
         
         // Generate HTML for PDF
-        $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Ranking Kelompok</title>
-        <style>
-            body { font-family: Arial, sans-serif; font-size: 12px; }
-            h1 { text-align: center; color: #333; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-            th { background-color: #6366f1; color: white; }
-            tr:nth-child(even) { background-color: #f2f2f2; }
-            .date { text-align: right; color: #666; margin-bottom: 10px; }
-        </style>
-        </head><body>
-        <h1>Ranking Kelompok</h1>
-        <p class="date">Dicetak: ' . date('d/m/Y H:i:s') . '</p>
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th><th>Kelompok</th><th>Judul Proyek</th><th>Kelas</th><th>Ketua</th>
-                    <th>Milestone</th><th>Rata-rata</th><th>Kontribusi</th><th>Dosen</th><th>Skor</th>
-                </tr>
-            </thead>
-            <tbody>';
+        $html = '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ranking Kelompok</title>
+    <style>
+        @page {
+            margin: 20mm;
+            size: A4 landscape;
+        }
+        body {
+            font-family: "DejaVu Sans", Arial, sans-serif;
+            font-size: 10px;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #6366f1;
+            padding-bottom: 10px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #1e293b;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .header .subtitle {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th {
+            background-color: #6366f1;
+            color: white;
+            font-weight: bold;
+            padding: 10px 6px;
+            text-align: center;
+            border: 1px solid #4f46e5;
+            font-size: 9px;
+        }
+        td {
+            border: 1px solid #e2e8f0;
+            padding: 8px 6px;
+            text-align: center;
+            font-size: 9px;
+        }
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        tr:hover {
+            background-color: #f1f5f9;
+        }
+        .rank-column {
+            font-weight: bold;
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .score-column {
+            font-weight: bold;
+            background-color: #d1fae5;
+            color: #065f46;
+            font-size: 11px;
+        }
+        .footer {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #e2e8f0;
+            text-align: right;
+            font-size: 9px;
+            color: #64748b;
+        }
+        .project-title {
+            text-align: left;
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏆 RANKING KELOMPOK PBL</h1>
+        <div class="subtitle">Program Studi Teknologi Informasi - Politeknik Negeri Jember</div>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 40px;">RANK</th>
+                <th style="width: 100px;">KELOMPOK</th>
+                <th style="width: 180px;">JUDUL PROYEK</th>
+                <th style="width: 50px;">KELAS</th>
+                <th style="width: 120px;">KETUA</th>
+                <th style="width: 50px;">ANGGOTA</th>
+                <th style="width: 60px;">MILESTONE</th>
+                <th style="width: 60px;">RATA ANGGOTA</th>
+                <th style="width: 60px;">KONTRIBUSI</th>
+                <th style="width: 60px;">PENILAIAN DOSEN</th>
+                <th style="width: 70px;">SKOR AKHIR</th>
+            </tr>
+        </thead>
+        <tbody>';
         
         $rank = 1;
         foreach ($rankings as $row) {
             $html .= '<tr>
-                <td>' . $rank++ . '</td>
-                <td>' . $row['nama_kelompok'] . '</td>
-                <td>' . $row['judul_proyek'] . '</td>
-                <td>' . $row['kelas'] . '</td>
-                <td>' . $row['ketua'] . '</td>
-                <td>' . $row['milestone'] . '</td>
-                <td>' . $row['rata_anggota'] . '</td>
-                <td>' . $row['kontribusi'] . '</td>
-                <td>' . $row['penilaian_dosen'] . '</td>
-                <td><strong>' . number_format($row['saw_score'], 2) . '</strong></td>
+                <td class="rank-column">' . $rank++ . '</td>
+                <td>' . htmlspecialchars($row['nama_kelompok']) . '</td>
+                <td class="project-title">' . htmlspecialchars($row['judul_proyek']) . '</td>
+                <td>' . htmlspecialchars($row['kelas']) . '</td>
+                <td>' . htmlspecialchars($row['ketua']) . '</td>
+                <td>' . $row['jumlah_anggota'] . '</td>
+                <td>' . number_format($row['milestone'], 2) . '</td>
+                <td>' . number_format($row['rata_anggota'], 2) . '</td>
+                <td>' . number_format($row['kontribusi'], 2) . '</td>
+                <td>' . number_format($row['penilaian_dosen'], 2) . '</td>
+                <td class="score-column">' . number_format($row['saw_score'], 2) . '</td>
             </tr>';
         }
         
-        $html .= '</tbody></table></body></html>';
+        $html .= '
+        </tbody>
+    </table>
+    
+    <div class="footer">
+        <strong>Keterangan:</strong> Ranking dihitung menggunakan metode SAW (Simple Additive Weighting)<br>
+        Dicetak pada: ' . date('d/m/Y H:i:s') . ' | Total Kelompok: ' . count($rankings) . '
+    </div>
+</body>
+</html>';
         
-        return response($html)
-            ->header('Content-Type', 'text/html')
-            ->header('Content-Disposition', 'attachment; filename="ranking_kelompok_' . date('Y-m-d') . '.html"');
+        // Generate PDF using DomPDF
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHTML($html);
+        $pdf->setPaper('A4', 'landscape');
+        
+        $filename = 'ranking_kelompok_' . date('Y-m-d_His') . '.pdf';
+        
+        return $pdf->download($filename);
     }
 }
