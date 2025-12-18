@@ -512,11 +512,17 @@ function toggleNilaiForm() {
     } else if (namaMK.includes('integrasi sistem')) {
         formIntegrasi.style.display = 'block';
         setupIntegrasiSistemCalculation();
-    // Cek untuk "Perograman Web Lanjut" (ada typo di database: pero-G-raman)
+    // Cek untuk "Pemrograman Web Lanjut" (ada typo di database: pero-G-raman)
     } else if (namaMK.includes('pwl') || namaMK.includes('pemrograman web') || namaMK.includes('perograman web') || namaMK.includes('web lanjut')) {
         formPWL.style.display = 'block';
         setupPWLCalculation();
-    } else if (namaMK.includes('it project') || namaMK.includes('it proyek')) {
+    // ✅ Enhanced IT Project detection - more variations
+    } else if (namaMK.includes('it project') || 
+               namaMK.includes('it proyek') || 
+               namaMK.includes('itproject') || 
+               namaMK.includes('it-project') || 
+               namaMK.includes('project it') || 
+               namaMK.includes('proyek it')) {
         formIT.style.display = 'block';
         setupITProjectCalculation();
     } else if (namaMK) {
