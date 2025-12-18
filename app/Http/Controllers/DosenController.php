@@ -104,7 +104,7 @@ class DosenController extends Controller
                 ->orderBy('nama', 'asc')
                 ->paginate(15);
         } else {
-            $dosens = collect()->paginate(15);
+            $dosens = Dosen::whereIn('nip', [])->paginate(15);
         }
 
         return view('data_dosen.kelas', compact('dosens', 'kelas'));
